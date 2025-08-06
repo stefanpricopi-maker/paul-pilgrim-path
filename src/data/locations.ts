@@ -101,20 +101,6 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   
   {
-    id: 'antiochia-pisidia',
-    name: 'ANTIOCHIA PISIDIEI',
-    type: 'city',
-    journey: 1,
-    price: 100,
-    rent: 6,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Paul\'s famous sermon in the synagogue',
-    color: '#FF4500' // Orange red
-  },
-  
-  {
     id: 'har1',
     name: 'HAR',
     type: 'chance',
@@ -127,8 +113,36 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'Chance - Draw a card',
     color: '#FFA500' // Orange
   },
-  
 
+  {
+    id: 'listra',
+    name: 'LISTRA',
+    type: 'city',
+    journey: 1,
+    price: 140,
+    rent: 10,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Where Paul healed a lame man',
+    color: '#FF1493' // Deep pink
+  },
+
+
+  
+{
+    id: 'antiochia-pisidia',
+    name: 'ANTIOCHIA PISIDIEI',
+    type: 'city',
+    journey: 1,
+    price: 100,
+    rent: 6,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Paul\'s famous sermon in the synagogue',
+    color: '#FF4500' // Orange red
+  },
   
 
   
@@ -166,19 +180,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   
   // LEFT COLUMN: positions 11-19 (moving up from PRISON)
-  {
-    id: 'listra',
-    name: 'LISTRA',
-    type: 'city',
-    journey: 1,
-    price: 140,
-    rent: 10,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Where Paul healed a lame man',
-    color: '#FF1493' // Deep pink
-  },
+  
   
   {
     id: 'port2',
