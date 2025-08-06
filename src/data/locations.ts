@@ -154,7 +154,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Just visiting or in prison',
-    color: '#808080' // Gray
+    color: '#ffffff' // white
   },
     
   // LEFT COLUMN: positions 11-19 (moving up from PRISON)
@@ -295,7 +295,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Sabbath - Skip next turn',
-    color: '#4B0082' // Indigo
+    color: '#ffffff' // white
   },
   
   // TOP ROW: positions 21-29 (moving right from SABAT)
@@ -369,12 +369,6 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#ffffff' // white
   },
 
-
-
-
-
-
-  
   {
     id: 'jertfa1',
     name: 'JERTFA',
@@ -403,36 +397,6 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#00FF00' // Green
   },
   
-  {
-    id: 'har3',
-    name: 'HAR',
-    type: 'chance',
-    journey: 3,
-    price: 0,
-    rent: 0,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Chance - Draw a card',
-    color: '#FFA500' // Orange
-  },
-  
-  {
-    id: 'rodos',
-    name: 'RODOS',
-    type: 'city',
-    journey: 3,
-    price: 260,
-    rent: 22,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Island stop on return journey',
-    color: '#00FF00' // Green
-  },
-  
-
-
   // CORNER: GO TO PRISON (top-right corner) - position 30
   {
     id: 'go-to-prison',
@@ -445,11 +409,23 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Go directly to prison',
-    color: '#8B0000' // Dark red
+    color: '#ffffff' // white
   },
   
   // RIGHT COLUMN: positions 31-39 (moving down from GO TO PRISON)
-
+ {
+    id: 'rodos',
+    name: 'RODOS',
+    type: 'city',
+    journey: 3,
+    price: 260,
+    rent: 22,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Island stop on return journey',
+    color: '#00FF00' // Green
+  },
   
   {
     id: 'sidonia',
@@ -479,17 +455,17 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#87CEEB' // Light blue
   },
   
-  {
-    id: 'cezareea',
-    name: 'CEZAREEA',
+ {
+    id: 'malta',
+    name: 'MALTA',
     type: 'city',
     journey: 4,
-    price: 300,
-    rent: 26,
+    price: 320,
+    rent: 28,
     churchCost: 50,
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'Roman capital of Judea',
+    description: 'Island where Paul was shipwrecked',
     color: '#0000FF' // Blue
   },
   
@@ -508,19 +484,32 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   
   {
-    id: 'malta',
-    name: 'MALTA',
+    id: 'har3',
+    name: 'HAR',
+    type: 'chance',
+    journey: 3,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Chance - Draw a card',
+    color: '#FFA500' // Orange
+  },
+  
+ {
+    id: 'cezareea',
+    name: 'CEZAREEA',
     type: 'city',
     journey: 4,
-    price: 320,
-    rent: 28,
+    price: 300,
+    rent: 26,
     churchCost: 50,
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'Island where Paul was shipwrecked',
+    description: 'Roman capital of Judea',
     color: '#0000FF' // Blue
   },
-  
   {
     id: 'jertfa2',
     name: 'JERTFA',
@@ -547,20 +536,5 @@ export const GAME_LOCATIONS: GameLocation[] = [
     buildings: { churches: 0, synagogues: 0 },
     description: 'The eternal city, Paul\'s final destination',
     color: '#800080' // Purple
-  },
-
-  // Special location (not part of board movement)
-  {
-    id: 'ierusalem',
-    name: 'IERUSALEM',
-    type: 'special',
-    journey: 1,
-    price: 0,
-    rent: 0,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'The holy city, center of early Christianity',
-    color: '#FFD700' // Gold
   }
 ];
