@@ -168,10 +168,48 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul\'s famous sermon in the synagogue',
-    color: '#FF4500' // Orange red
+    color: '#ea2b8a' // black pink
   },
   
-
+  {
+    id: 'cort',
+    name: 'CORT',
+    type: 'court',
+    journey: 4,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Free Parking - Court',
+    color: '#FF0000' // Red
+  },
+  {
+    id: 'tars',
+    name: 'TARS',
+    type: 'city',
+    journey: 3,
+    price: 280,
+    rent: 24,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Paul\'s birthplace',
+    color: '#ea2b8a' // black pink
+  },
+  {
+    id: 'troas',
+    name: 'TROAS',
+    type: 'city',
+    journey: 2,
+    price: 160,
+    rent: 12,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Port where Paul had his Macedonian vision',
+    color: '#ea2b8a' // black pink
+  },
   
   {
     id: 'jertfa1',
@@ -212,19 +250,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
   
  
   
-  {
-    id: 'troas',
-    name: 'TROAS',
-    type: 'city',
-    journey: 2,
-    price: 160,
-    rent: 12,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Port where Paul had his Macedonian vision',
-    color: '#FF1493' // Deep pink
-  },
+
   
   {
     id: 'filipi',
@@ -410,19 +436,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#00FF00' // Green
   },
   
-  {
-    id: 'tars',
-    name: 'TARS',
-    type: 'city',
-    journey: 3,
-    price: 280,
-    rent: 24,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Paul\'s birthplace',
-    color: '#00FF00' // Green
-  },
+
 
   // CORNER: GO TO PRISON (top-right corner) - position 30
   {
@@ -440,19 +454,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   
   // RIGHT COLUMN: positions 31-39 (moving down from GO TO PRISON)
-  {
-    id: 'cort',
-    name: 'CORT',
-    type: 'court',
-    journey: 4,
-    price: 0,
-    rent: 0,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Free Parking - Court',
-    color: '#FF0000' // Red
-  },
+
   
   {
     id: 'sidonia',
