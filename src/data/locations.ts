@@ -368,6 +368,32 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'Mediterranean Port',
     color: '#ffffff' // white
   },
+    {
+    id: 'amfipolis',
+    name: 'AMFIPOLIS',
+    type: 'city',
+    journey: 3,
+    price: 260,
+    rent: 22,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Paul passed through it',
+    color: '#00FF00' // Green
+  },
+    {
+    id: 'apolonia',
+    name: 'APOLONIA',
+    type: 'city',
+    journey: 3,
+    price: 260,
+    rent: 22,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Paul passed through it',
+    color: '#00FF00' // Green
+  },
 
   {
     id: 'jertfa1',
