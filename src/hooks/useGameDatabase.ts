@@ -87,9 +87,31 @@ export const useGameDatabase = () => {
 
   // Create a new game
   const createGame = useCallback(async (playerName: string, characterName: string) => {
-    if (!user) return null;
+    // Check authentication first
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to create a game.",
+        variant: "destructive"
+      });
+      return null;
+    }
 
+    // Verify we have a valid session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      console.error('Session validation failed:', sessionError);
+      toast({
+        title: "Session Error",
+        description: "Your session has expired. Please sign in again.",
+        variant: "destructive"
+      });
+      return null;
+    }
+
+    console.log('Creating game with user:', user.id, 'session:', !!session);
     setLoading(true);
+    
     try {
       // Create game
       const { data: game, error: gameError } = await (supabase as any)
@@ -103,7 +125,12 @@ export const useGameDatabase = () => {
         .select()
         .single();
 
-      if (gameError) throw gameError;
+      if (gameError) {
+        console.error('Game creation error:', gameError);
+        throw gameError;
+      }
+
+      console.log('Game created successfully:', game.id);
 
       // Add host as game member
       const { error: memberError } = await (supabase as any)
@@ -114,7 +141,12 @@ export const useGameDatabase = () => {
           role: 'host'
         });
 
-      if (memberError) throw memberError;
+      if (memberError) {
+        console.error('Game member creation error:', memberError);
+        throw memberError;
+      }
+
+      console.log('Game member created successfully');
 
       // Create player for host
       const { error: playerError } = await (supabase as any)
@@ -128,7 +160,12 @@ export const useGameDatabase = () => {
           position: 0
         });
 
-      if (playerError) throw playerError;
+      if (playerError) {
+        console.error('Player creation error:', playerError);
+        throw playerError;
+      }
+
+      console.log('Player created successfully');
 
       // Load the created game
       await loadGame(game!.id);
@@ -140,9 +177,23 @@ export const useGameDatabase = () => {
 
       return game!.id;
     } catch (error) {
+      console.error('Game creation failed:', error);
+      
+      // Provide specific error messages based on the error type
+      let errorMessage = "Failed to create game";
+      if (error instanceof Error) {
+        if (error.message.includes('row-level security')) {
+          errorMessage = "Authentication error: Unable to create game. Please try signing out and back in.";
+        } else if (error.message.includes('duplicate key')) {
+          errorMessage = "A game with this information already exists.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+      
       toast({
         title: "Error Creating Game",
-        description: error instanceof Error ? error.message : "Failed to create game",
+        description: errorMessage,
         variant: "destructive"
       });
       return null;
@@ -153,8 +204,29 @@ export const useGameDatabase = () => {
 
   // Join an existing game
   const joinGame = useCallback(async (gameId: string, playerName: string, characterName: string) => {
-    if (!user) return false;
+    // Check authentication first
+    if (!user) {
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to join a game.",
+        variant: "destructive"
+      });
+      return false;
+    }
 
+    // Verify we have a valid session
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError || !session) {
+      console.error('Session validation failed:', sessionError);
+      toast({
+        title: "Session Error",
+        description: "Your session has expired. Please sign in again.",
+        variant: "destructive"
+      });
+      return false;
+    }
+
+    console.log('Joining game with user:', user.id, 'session:', !!session);
     setLoading(true);
     try {
       // Check if game exists and is joinable
