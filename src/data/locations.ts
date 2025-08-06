@@ -28,7 +28,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'First port in Cyprus where Paul preached',
-    color: '#8B4513' // Brown
+    color: '#693d11' // Brown
   },
    {
     id: 'comunitate1',
@@ -55,7 +55,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Capital of Cyprus, where Paul met the proconsul',
-    color: '#8B4513' // Brown
+    color: '#693d11' // Brown
   },
 
   {
@@ -69,7 +69,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'City in Pamphylia where John Mark left them',
-    color: '#FF4500' // Orange red
+    color: '#693d11' // Orange red
   },
 
     {
@@ -128,7 +128,19 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#FF1493' // Deep pink
   },
 
-
+ {
+    id: 'derbe',
+    name: 'DERBE',
+    type: 'city',
+    journey: 1,
+    price: 140,
+    rent: 10,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Eastern end of first journey',
+    color: '#FF1493' // Deep pink
+  },
   
 {
     id: 'antiochia-pisidia',
@@ -196,19 +208,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#000000' // Black
   },
   
-  {
-    id: 'derbe',
-    name: 'DERBE',
-    type: 'city',
-    journey: 1,
-    price: 140,
-    rent: 10,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Eastern end of first journey',
-    color: '#FF1493' // Deep pink
-  },
+ 
   
   {
     id: 'troas',
