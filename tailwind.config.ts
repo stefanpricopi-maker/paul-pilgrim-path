@@ -61,7 +61,29 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				game: {
+					board: 'hsl(var(--board-bg))',
+					water: 'hsl(var(--water))',
+					land: 'hsl(var(--land))',
+					church: 'hsl(var(--church))',
+					synagogue: 'hsl(var(--synagogue))',
+					player1: 'hsl(var(--player-1))',
+					player2: 'hsl(var(--player-2))',
+					player3: 'hsl(var(--player-3))',
+					player4: 'hsl(var(--player-4))',
+					player5: 'hsl(var(--player-5))',
+					player6: 'hsl(var(--player-6))'
 				}
+			},
+			backgroundImage: {
+				'gradient-board': 'var(--gradient-board)',
+				'gradient-parchment': 'var(--gradient-parchment)',
+				'gradient-gold': 'var(--gradient-gold)'
+			},
+			boxShadow: {
+				'ancient': 'var(--shadow-ancient)',
+				'glow': 'var(--shadow-glow)'
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

@@ -2,95 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Biblical Board Game Design System - Ancient Mediterranean Theme */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Ancient parchment and stone colors */
+    --background: 35 25% 95%;
+    --foreground: 25 15% 15%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    /* Papyrus card background */
+    --card: 35 20% 92%;
+    --card-foreground: 25 20% 20%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 35 20% 92%;
+    --popover-foreground: 25 20% 20%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Deep biblical blue */
+    --primary: 220 60% 35%;
+    --primary-foreground: 35 20% 95%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Warm sandstone */
+    --secondary: 35 25% 85%;
+    --secondary-foreground: 25 30% 25%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    /* Muted stone */
+    --muted: 35 15% 88%;
+    --muted-foreground: 25 10% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    /* Gold accent for treasures */
+    --accent: 45 80% 55%;
+    --accent-foreground: 25 30% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Warning red for obstacles */
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 35 20% 95%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Subtle borders */
+    --border: 35 20% 80%;
+    --input: 35 20% 85%;
+    --ring: 220 60% 35%;
 
-    --radius: 0.5rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Game-specific colors */
+    --board-bg: 35 30% 75%;
+    --water: 200 80% 60%;
+    --land: 35 35% 70%;
+    --church: 260 50% 45%;
+    --synagogue: 30 60% 50%;
+    --player-1: 0 70% 60%;
+    --player-2: 120 60% 50%;
+    --player-3: 240 70% 60%;
+    --player-4: 280 60% 55%;
+    --player-5: 35 70% 55%;
+    --player-6: 180 60% 50%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    /* Gradients */
+    --gradient-board: linear-gradient(135deg, hsl(var(--board-bg)), hsl(35 25% 70%));
+    --gradient-parchment: linear-gradient(145deg, hsl(var(--card)), hsl(35 15% 88%));
+    --gradient-gold: linear-gradient(135deg, hsl(var(--accent)), hsl(45 70% 50%));
 
-    --sidebar-primary: 240 5.9% 10%;
+    /* Shadows */
+    --shadow-ancient: 0 8px 25px -8px hsl(25 20% 30% / 0.3);
+    --shadow-glow: 0 0 20px hsl(var(--accent) / 0.4);
 
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    /* Sidebar colors remain unchanged for this game */
+    --sidebar-background: 35 20% 92%;
+    --sidebar-foreground: 25 20% 25%;
+    --sidebar-primary: 220 60% 35%;
+    --sidebar-primary-foreground: 35 20% 95%;
+    --sidebar-accent: 35 15% 88%;
+    --sidebar-accent-foreground: 25 20% 25%;
+    --sidebar-border: 35 20% 80%;
+    --sidebar-ring: 220 60% 35%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark ancient theme */
+    --background: 25 15% 12%;
+    --foreground: 35 20% 90%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 25 20% 15%;
+    --card-foreground: 35 20% 88%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 25 20% 15%;
+    --popover-foreground: 35 20% 88%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 220 70% 55%;
+    --primary-foreground: 25 15% 12%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 25 25% 22%;
+    --secondary-foreground: 35 20% 88%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 25 20% 18%;
+    --muted-foreground: 35 10% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 45 85% 65%;
+    --accent-foreground: 25 20% 15%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 80% 60%;
+    --destructive-foreground: 35 20% 90%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --border: 25 20% 25%;
+    --input: 25 20% 22%;
+    --ring: 220 70% 55%;
+
+    /* Dark game colors */
+    --board-bg: 25 20% 25%;
+    --water: 200 60% 40%;
+    --land: 35 25% 35%;
+
+    --sidebar-background: 25 20% 15%;
+    --sidebar-foreground: 35 20% 85%;
+    --sidebar-primary: 220 70% 55%;
+    --sidebar-primary-foreground: 25 15% 12%;
+    --sidebar-accent: 25 15% 20%;
+    --sidebar-accent-foreground: 35 20% 85%;
+    --sidebar-border: 25 20% 25%;
+    --sidebar-ring: 220 70% 55%;
   }
 }
 
@@ -100,6 +129,47 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-serif;
+    background-image: 
+      radial-gradient(circle at 25% 25%, hsl(var(--accent) / 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, hsl(var(--primary) / 0.05) 0%, transparent 50%);
+  }
+
+  /* Game board styling */
+  .board-cell {
+    @apply transition-all duration-300 hover:shadow-lg;
+    background: hsl(var(--gradient-parchment));
+    box-shadow: var(--shadow-ancient);
+  }
+
+  .board-cell:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+  }
+
+  .player-piece {
+    @apply transition-all duration-500 ease-in-out;
+    filter: drop-shadow(0 2px 4px hsl(0 0% 0% / 0.3));
+  }
+
+  .dice-container {
+    @apply transition-transform duration-700 ease-out;
+  }
+
+  .dice-roll {
+    animation: diceRoll 0.8s ease-out;
+  }
+
+  @keyframes diceRoll {
+    0% { transform: rotate(0deg) scale(1); }
+    25% { transform: rotate(90deg) scale(1.1); }
+    50% { transform: rotate(180deg) scale(1.2); }
+    75% { transform: rotate(270deg) scale(1.1); }
+    100% { transform: rotate(360deg) scale(1); }
+  }
+
+  .ancient-text {
+    font-family: 'Times New Roman', serif;
+    text-shadow: 1px 1px 2px hsl(0 0% 0% / 0.2);
   }
 }
