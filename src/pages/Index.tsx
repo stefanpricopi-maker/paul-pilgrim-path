@@ -6,31 +6,84 @@ import GameLobby from '@/components/game/GameLobby';
 import GameBoard from '@/components/game/GameBoard';
 import PlayerCard from '@/components/game/PlayerCard';
 import Dice from '@/components/game/Dice';
+import GameModeSelector from '@/components/game/GameModeSelector';
+import LocalGameSetup from '@/components/game/LocalGameSetup';
+import LocalGameBoard from '@/components/game/LocalGameBoard';
 import { useGameDatabase } from '@/hooks/useGameDatabase';
+import { useLocalGame } from '@/hooks/useLocalGame';
 import { useAuth } from '@/hooks/useAuth';
 import { GameLocation } from '@/types/game';
 import { BIBLICAL_CHARACTERS } from '@/types/game';
 import { Church, Building2, Coins, MapPin, LogOut, User } from 'lucide-react';
 
 const Index = () => {
+  const [gameMode, setGameMode] = useState<'online' | 'local' | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
+
+  // Online game state
   const { 
-    gameState,
+    gameState: onlineGameState,
     loading,
     createGame,
     joinGame,
     startGame,
-    rollDice,
-    endTurn
+    rollDice: onlineRollDice,
+    endTurn: onlineEndTurn
   } = useGameDatabase();
   
+  // Local game state
+  const {
+    gameState: localGameState,
+    currentPlayerPrivate,
+    createLocalGame,
+    loadLocalGame,
+    rollDice: localRollDice,
+    endTurn: localEndTurn,
+    resetGame,
+    showCurrentPlayer,
+    hideCurrentPlayer,
+  } = useLocalGame();
+  
   const { user, signOut } = useAuth();
-  const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
 
-  // Show lobby if no game or game not started
-  if (!gameState.game || !gameState.gameStarted) {
+  // Check if we have a saved local game
+  const hasExistingLocalGame = localStorage.getItem('localGameState') !== null;
+
+  // Show game mode selector if no mode selected
+  if (!gameMode) {
+    return <GameModeSelector onSelectMode={setGameMode} />;
+  }
+
+  // Local game flow
+  if (gameMode === 'local') {
+    if (!localGameState.gameStarted) {
+      return (
+        <LocalGameSetup
+          onStartGame={createLocalGame}
+          onLoadGame={loadLocalGame}
+          hasExistingGame={hasExistingLocalGame}
+        />
+      );
+    }
+
+    return (
+      <LocalGameBoard
+        gameState={localGameState}
+        currentPlayerPrivate={currentPlayerPrivate}
+        onRollDice={localRollDice}
+        onEndTurn={localEndTurn}
+        onResetGame={resetGame}
+        onShowCurrentPlayer={showCurrentPlayer}
+        onHideCurrentPlayer={hideCurrentPlayer}
+      />
+    );
+  }
+
+  // Online game flow
+  if (!onlineGameState.game || !onlineGameState.gameStarted) {
     return (
       <GameLobby
-        gameState={gameState}
+        gameState={onlineGameState}
         loading={loading}
         onCreateGame={createGame}
         onJoinGame={joinGame}
@@ -39,22 +92,22 @@ const Index = () => {
     );
   }
 
-  const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-  const currentTile = gameState.tiles[currentPlayer?.position] || null;
+  const currentPlayer = onlineGameState.players[onlineGameState.currentPlayerIndex];
+  const currentTile = onlineGameState.tiles[currentPlayer?.position] || null;
   
   // Convert database player to game player format for compatibility
-  const gamePlayersForDisplay = gameState.players.map(player => ({
+  const gamePlayersForDisplay = onlineGameState.players.map(player => ({
     id: player.id,
     name: player.name,
     character: BIBLICAL_CHARACTERS.find(c => c.name === player.character_name) || BIBLICAL_CHARACTERS[0],
     position: player.position,
     money: player.coins,
     properties: [], // TODO: Load from tiles ownership
-    color: `hsl(var(--player-${(gameState.players.indexOf(player) % 6) + 1}))`
+    color: `hsl(var(--player-${(onlineGameState.players.indexOf(player) % 6) + 1}))`
   }));
 
   // Convert tiles to locations format for compatibility
-  const gameLocationsForDisplay: GameLocation[] = gameState.tiles.map(tile => ({
+  const gameLocationsForDisplay: GameLocation[] = onlineGameState.tiles.map(tile => ({
     id: tile.id.toString(),
     name: tile.name,
     type: (tile.type as any) || 'city',
@@ -103,11 +156,11 @@ const Index = () => {
                 Paul's Missionary Journeys
               </h1>
               {currentPlayer && (
-                <p className="text-muted-foreground">
-                  Current Player: <span className="font-bold text-accent">{currentPlayer.name}</span> 
-                  ({currentPlayer.character_name})
-                  {gameState.isMyTurn && <span className="ml-2 text-green-600">(Your Turn)</span>}
-                </p>
+                 <p className="text-muted-foreground">
+                   Current Player: <span className="font-bold text-accent">{currentPlayer.name}</span> 
+                   ({currentPlayer.character_name})
+                   {onlineGameState.isMyTurn && <span className="ml-2 text-green-600">(Your Turn)</span>}
+                 </p>
               )}
             </div>
             <div className="flex items-center space-x-3">
@@ -139,9 +192,9 @@ const Index = () => {
             
             {/* Dice */}
             <Dice 
-              value={gameState.diceValue}
-              isRolling={gameState.isRolling}
-              onRoll={gameState.isMyTurn ? rollDice : () => {}}
+              value={onlineGameState.diceValue}
+              isRolling={onlineGameState.isRolling}
+              onRoll={onlineGameState.isMyTurn ? onlineRollDice : () => {}}
             />
 
             {/* Current Location Info */}
@@ -163,11 +216,11 @@ const Index = () => {
                   </div>
                 )}
                 
-                {currentTile?.owner_id && (
-                  <div className="text-xs text-muted-foreground">
-                    Owned by: {gameState.players.find(p => p.id === currentTile.owner_id)?.name}
-                  </div>
-                )}
+                 {currentTile?.owner_id && (
+                   <div className="text-xs text-muted-foreground">
+                     Owned by: {onlineGameState.players.find(p => p.id === currentTile.owner_id)?.name}
+                   </div>
+                 )}
                 
                 {/* Action Buttons */}
                 <div className="space-y-2">
@@ -206,15 +259,15 @@ const Index = () => {
                     </>
                   )}
                   
-                  {gameState.diceValue > 0 && gameState.isMyTurn && (
-                    <Button 
-                      onClick={endTurn}
-                      className="w-full"
-                      variant="secondary"
-                    >
-                      End Turn
-                    </Button>
-                  )}
+                   {onlineGameState.diceValue > 0 && onlineGameState.isMyTurn && (
+                     <Button 
+                       onClick={onlineEndTurn}
+                       className="w-full"
+                       variant="secondary"
+                     >
+                       End Turn
+                     </Button>
+                   )}
                 </div>
               </div>
             </Card>
@@ -223,13 +276,13 @@ const Index = () => {
             <Card className="p-4 bg-gradient-parchment border-2 border-muted/30">
               <h3 className="font-bold text-primary ancient-text mb-3">Journey Log</h3>
               <ScrollArea className="h-32">
-                <div className="space-y-1">
-                  {gameState.gameLog.map((entry, index) => (
-                    <p key={index} className="text-xs text-muted-foreground">
-                      {entry.description}
-                    </p>
-                  ))}
-                </div>
+                 <div className="space-y-1">
+                   {onlineGameState.gameLog.map((entry, index) => (
+                     <p key={index} className="text-xs text-muted-foreground">
+                       {entry.description}
+                     </p>
+                   ))}
+                 </div>
               </ScrollArea>
             </Card>
           </div>
@@ -241,10 +294,10 @@ const Index = () => {
             <PlayerCard
               key={player.id}
               player={player}
-              isCurrentPlayer={index === gameState.currentPlayerIndex}
+              isCurrentPlayer={index === onlineGameState.currentPlayerIndex}
               onBuildChurch={handleBuildChurch}
               onBuildSynagogue={handleBuildSynagogue}
-              canBuild={canBuildOnCurrentLocation && index === gameState.currentPlayerIndex}
+              canBuild={canBuildOnCurrentLocation && index === onlineGameState.currentPlayerIndex}
             />
           ))}
         </div>
