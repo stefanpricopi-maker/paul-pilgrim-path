@@ -43,6 +43,21 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'Community Chest - Draw a card',
     color: '#87CEEB' // Light blue
   },
+
+    {
+    id: 'pafos',
+    name: 'PAFOS',
+    type: 'city',
+    journey: 1,
+    price: 60,
+    rent: 4,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Capital of Cyprus, where Paul met the proconsul',
+    color: '#8B4513' // Brown
+  },
+  
   {
     id: 'iconia',
     name: 'ICONIA',
@@ -127,19 +142,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#DC143C' // Crimson
   },
   
-  {
-    id: 'pafos',
-    name: 'PAFOS',
-    type: 'city',
-    journey: 1,
-    price: 60,
-    rent: 4,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Capital of Cyprus, where Paul met the proconsul',
-    color: '#8B4513' // Brown
-  },
+
   
  
 
