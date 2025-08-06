@@ -156,7 +156,9 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'Just visiting or in prison',
     color: '#808080' // Gray
   },
-   // LEFT COLUMN: positions 11-19 (moving up from PRISON)
+    
+  // LEFT COLUMN: positions 11-19 (moving up from PRISON)
+  
 {
     id: 'antiochia-pisidia',
     name: 'ANTIOCHIA PISIDIEI',
@@ -211,32 +213,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#ea2b8a' // black pink
   },
   
-   {
-    id: 'port2',
-    name: 'PORT',
-    type: 'port',
-    journey: 2,
-    price: 200,
-    rent: 25,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Mediterranean Port',
-    color: '#ffffff' // white
-  },
-
-  
- 
-
-  
-  
- 
-  
-  
-
-  
- 
-   {
+  {
     id: 'jertfa1',
     name: 'JERTFA',
     type: 'sacrifice',
@@ -249,6 +226,30 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'Pay sacrifice tax',
     color: '#DC143C' // Crimson
   },
+  
+
+  
+ 
+
+  
+
+  
+  
+  {
+    id: 'port2',
+    name: 'PORT',
+    type: 'port',
+    journey: 2,
+    price: 200,
+    rent: 25,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Mediterranean Port',
+    color: '#000000' // Black
+  },
+  
+ 
   
 
   
