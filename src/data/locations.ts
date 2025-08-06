@@ -13,7 +13,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Starting point of Paul\'s missionary journeys',
-    color: '#FFD700' // Gold color for start
+    color: '#ffffff' // white
   },
   
   // BOTTOM ROW: positions 1-9 (moving left from ANTIOCHIA)
