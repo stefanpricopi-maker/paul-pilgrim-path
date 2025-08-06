@@ -43,37 +43,30 @@ const GameBoard = ({
     }
   };
 
-  // Create the board layout based on standard Monopoly layout
+  // Create the board layout for clockwise movement starting from bottom-right
   const createBoardLayout = () => {
-    // Bottom row (left to right): positions 0-10
-    const bottomRow = locations.slice(0, 11);
-    // Right column (bottom to top): positions 11-19 + GO TO PRISON at 20  
-    const rightColumn = [...locations.slice(11, 20), locations[40]]; // Include GO TO PRISON from end
-    // Top row (right to left): positions 20-30 (SABAT at 20, others follow)
-    const topRow = locations.slice(20, 31);
-    // Left column (top to bottom): positions 31-39
-    const leftColumn = locations.slice(31, 40);
     const board: (GameLocation | null)[][] = Array(11).fill(null).map(() => Array(11).fill(null));
 
-    // Bottom row
-    bottomRow.forEach((location, index) => {
-      board[10][index] = location;
-    });
+    // Bottom row (right to left on screen, positions 10,9,8,7,6,5,4,3,2,1,0)
+    for (let i = 0; i <= 10; i++) {
+      board[10][10 - i] = locations[i];
+    }
 
-    // Right column
-    rightColumn.forEach((location, index) => {
-      board[9 - index][10] = location;
-    });
+    // Left column (bottom to top on screen, positions 11,12,13,14,15,16,17,18,19)
+    for (let i = 11; i <= 19; i++) {
+      board[10 - (i - 10)][0] = locations[i];
+    }
 
-    // Top row
-    topRow.forEach((location, index) => {
-      board[0][9 - index] = location;
-    });
+    // Top row (left to right on screen, positions 20,21,22,23,24,25,26,27,28,29,30)
+    for (let i = 20; i <= 30; i++) {
+      board[0][i - 20] = locations[i];
+    }
 
-    // Left column
-    leftColumn.forEach((location, index) => {
-      board[index + 1][0] = location;
-    });
+    // Right column (top to bottom on screen, positions 31,32,33,34,35,36,37,38,39)
+    for (let i = 31; i <= 39; i++) {
+      board[i - 30][10] = locations[i];
+    }
+
     return board;
   };
   const boardLayout = createBoardLayout();

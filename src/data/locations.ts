@@ -1,7 +1,7 @@
 import { GameLocation } from '@/types/game';
 
 export const GAME_LOCATIONS: GameLocation[] = [
-  // Starting position - ANTIOCHIA (GO equivalent)
+  // CORNER: Starting position - ANTIOCHIA (bottom-right corner)
   {
     id: 'antiochia',
     name: 'ANTIOCHIA',
@@ -16,80 +16,24 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#FFD700' // Gold color for start
   },
   
-  // Bottom row (left to right after GO)
+  // BOTTOM ROW: positions 1-9 (moving left from ANTIOCHIA)
   {
-    id: 'salamina',
-    name: 'SALAMINA',
+    id: 'iconia',
+    name: 'ICONIA',
     type: 'city',
     journey: 1,
-    price: 60,
-    rent: 2,
+    price: 120,
+    rent: 8,
     churchCost: 50,
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'First port in Cyprus where Paul preached',
-    color: '#8B4513' // Brown
+    description: 'City where Paul and Barnabas preached boldly',
+    color: '#FF4500' // Orange red
   },
   
   {
-    id: 'comunitate1',
-    name: 'COMUNITATE',
-    type: 'community-chest',
-    journey: 1,
-    price: 0,
-    rent: 0,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Community Chest - Draw a card',
-    color: '#87CEEB' // Light blue
-  },
-  
-  {
-    id: 'pafos',
-    name: 'PAFOS',
-    type: 'city',
-    journey: 1,
-    price: 60,
-    rent: 4,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Capital of Cyprus, where Paul met the proconsul',
-    color: '#8B4513' // Brown
-  },
-  
-  {
-    id: 'jertfa1',
-    name: 'JERTFA',
-    type: 'sacrifice',
-    journey: 1,
-    price: 0,
-    rent: 0,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Pay sacrifice tax',
-    color: '#DC143C' // Crimson
-  },
-  
-  {
-    id: 'port1',
-    name: 'PORT',
-    type: 'port',
-    journey: 1,
-    price: 200,
-    rent: 25,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Mediterranean Port',
-    color: '#000000' // Black
-  },
-  
-  {
-    id: 'perga',
-    name: 'PERGA',
+    id: 'antiochia-pisidia',
+    name: 'ANTIOCHIA PISIDIEI',
     type: 'city',
     journey: 1,
     price: 100,
@@ -97,7 +41,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     churchCost: 50,
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'City in Pamphylia where John Mark left them',
+    description: 'Paul\'s famous sermon in the synagogue',
     color: '#FF4500' // Orange red
   },
   
@@ -116,8 +60,8 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   
   {
-    id: 'antiochia-pisidia',
-    name: 'ANTIOCHIA PISIDIEI',
+    id: 'perga',
+    name: 'PERGA',
     type: 'city',
     journey: 1,
     price: 100,
@@ -125,25 +69,81 @@ export const GAME_LOCATIONS: GameLocation[] = [
     churchCost: 50,
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'Paul\'s famous sermon in the synagogue',
+    description: 'City in Pamphylia where John Mark left them',
     color: '#FF4500' // Orange red
   },
   
   {
-    id: 'iconia',
-    name: 'ICONIA',
+    id: 'port1',
+    name: 'PORT',
+    type: 'port',
+    journey: 1,
+    price: 200,
+    rent: 25,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Mediterranean Port',
+    color: '#000000' // Black
+  },
+  
+  {
+    id: 'jertfa1',
+    name: 'JERTFA',
+    type: 'sacrifice',
+    journey: 1,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Pay sacrifice tax',
+    color: '#DC143C' // Crimson
+  },
+  
+  {
+    id: 'pafos',
+    name: 'PAFOS',
     type: 'city',
     journey: 1,
-    price: 120,
-    rent: 8,
+    price: 60,
+    rent: 4,
     churchCost: 50,
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'City where Paul and Barnabas preached boldly',
-    color: '#FF4500' // Orange red
+    description: 'Capital of Cyprus, where Paul met the proconsul',
+    color: '#8B4513' // Brown
+  },
+  
+  {
+    id: 'comunitate1',
+    name: 'COMUNITATE',
+    type: 'community-chest',
+    journey: 1,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Community Chest - Draw a card',
+    color: '#87CEEB' // Light blue
+  },
+  
+  {
+    id: 'salamina',
+    name: 'SALAMINA',
+    type: 'city',
+    journey: 1,
+    price: 60,
+    rent: 2,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'First port in Cyprus where Paul preached',
+    color: '#8B4513' // Brown
   },
 
-  // Right side (bottom to top)
+  // CORNER: PRISON (bottom-left corner) - position 10
   {
     id: 'prison',
     name: 'PRISON',
@@ -158,6 +158,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#808080' // Gray
   },
   
+  // LEFT COLUMN: positions 11-19 (moving up from PRISON)
   {
     id: 'listra',
     name: 'LISTRA',
@@ -270,7 +271,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#FFFF00' // Yellow
   },
 
-  // Top row (right to left)
+  // CORNER: SABAT (top-left corner) - position 20
   {
     id: 'sabat',
     name: 'SABAT',
@@ -285,6 +286,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#4B0082' // Indigo
   },
   
+  // TOP ROW: positions 21-29 (moving right from SABAT)
   {
     id: 'atena',
     name: 'ATENA',
@@ -411,7 +413,22 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#00FF00' // Green
   },
 
-  // Left side (top to bottom)
+  // CORNER: GO TO PRISON (top-right corner) - position 30
+  {
+    id: 'go-to-prison',
+    name: 'GO TO PRISON',
+    type: 'go-to-prison',
+    journey: 4,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Go directly to prison',
+    color: '#8B0000' // Dark red
+  },
+  
+  // RIGHT COLUMN: positions 31-39 (moving down from GO TO PRISON)
   {
     id: 'cort',
     name: 'CORT',
@@ -523,23 +540,8 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'The eternal city, Paul\'s final destination',
     color: '#800080' // Purple
   },
-  
-  // Special corner (top-right)
-  {
-    id: 'go-to-prison',
-    name: 'GO TO PRISON',
-    type: 'go-to-prison',
-    journey: 4,
-    price: 0,
-    rent: 0,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Go directly to prison',
-    color: '#8B0000' // Dark red
-  },
 
-  // Special location in center
+  // Special location (not part of board movement)
   {
     id: 'ierusalem',
     name: 'IERUSALEM',
