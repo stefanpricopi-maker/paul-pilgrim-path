@@ -272,17 +272,17 @@ export const GAME_LOCATIONS: GameLocation[] = [
 
   // Top row (right to left)
   {
-    id: 'cort',
-    name: 'CORT',
-    type: 'court',
+    id: 'sabat',
+    name: 'SABAT',
+    type: 'special',
     journey: 2,
     price: 0,
     rent: 0,
     churchCost: 0,
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'Free Parking - Court',
-    color: '#FF0000' // Red
+    description: 'Sabbath - Skip next turn',
+    color: '#4B0082' // Indigo
   },
   
   {
@@ -413,17 +413,17 @@ export const GAME_LOCATIONS: GameLocation[] = [
 
   // Left side (top to bottom)
   {
-    id: 'go-to-prison',
-    name: 'GO TO PRISON',
-    type: 'go-to-prison',
+    id: 'cort',
+    name: 'CORT',
+    type: 'court',
     journey: 4,
     price: 0,
     rent: 0,
     churchCost: 0,
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'Go directly to prison',
-    color: '#8B0000' // Dark red
+    description: 'Free Parking - Court',
+    color: '#FF0000' // Red
   },
   
   {
@@ -524,6 +524,21 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#800080' // Purple
   },
   
+  // Special corner (top-right)
+  {
+    id: 'go-to-prison',
+    name: 'GO TO PRISON',
+    type: 'go-to-prison',
+    journey: 4,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Go directly to prison',
+    color: '#8B0000' // Dark red
+  },
+
   // Special location in center
   {
     id: 'ierusalem',

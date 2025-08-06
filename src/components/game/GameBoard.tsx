@@ -22,6 +22,9 @@ const GameBoard = ({
       case 'city':
         return <Building2 className="w-4 h-4 text-white" />;
       case 'special':
+        if (location.id === 'sabat') {
+          return <Crown className="w-4 h-4 text-white" />;
+        }
         return <Crown className="w-4 h-4 text-white" />;
       case 'prison':
         return <Lock className="w-4 h-4 text-white" />;
@@ -44,10 +47,10 @@ const GameBoard = ({
   const createBoardLayout = () => {
     // Bottom row (left to right): positions 0-10
     const bottomRow = locations.slice(0, 11);
-    // Right column (bottom to top): positions 11-20  
-    const rightColumn = locations.slice(11, 21);
-    // Top row (right to left): positions 21-30
-    const topRow = locations.slice(21, 31);
+    // Right column (bottom to top): positions 11-19 + GO TO PRISON at 20  
+    const rightColumn = [...locations.slice(11, 20), locations[40]]; // Include GO TO PRISON from end
+    // Top row (right to left): positions 20-30 (SABAT at 20, others follow)
+    const topRow = locations.slice(20, 31);
     // Left column (top to bottom): positions 31-39
     const leftColumn = locations.slice(31, 40);
     const board: (GameLocation | null)[][] = Array(11).fill(null).map(() => Array(11).fill(null));
@@ -118,8 +121,9 @@ const GameBoard = ({
             return <div key={`${rowIndex}-${colIndex}`} className="h-12" />;
           }
           return <div key={`${rowIndex}-${colIndex}`} className="relative">
-                  {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[80px] min-w-[80px]' : 'min-h-[60px] min-w-[50px]'} p-1 cursor-pointer hover:scale-105 transition-all border-2 border-gray-800`} style={{
-              backgroundColor: location.color || '#f0f0f0'
+                  {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[90px] min-w-[90px]' : 'min-h-[70px] min-w-[60px]'} p-2 cursor-pointer hover:scale-105 transition-all border-2 border-primary/20 shadow-md`} style={{
+              backgroundColor: location.color || '#f8f9fa',
+              borderColor: location.type === 'special' || location.type === 'prison' || location.type === 'go-to-prison' ? '#4a5568' : '#e2e8f0'
             }} onClick={() => onLocationClick(location)}>
                       <div className="h-full flex flex-col justify-between text-xs">
                         {/* Location Header */}
@@ -143,10 +147,6 @@ const GameBoard = ({
                   }).map((_, i) => <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-yellow-600" />)}
                           </div>}
 
-                        {/* Price - only for purchasable properties */}
-                        {(location.type === 'city' || location.type === 'port') && location.price > 0 && <div className="text-center">
-                            <span className="text-white font-bold bg-black/50 px-1 rounded text-xs">${location.price}</span>
-                          </div>}
 
                         {/* Players */}
                         {playersHere.length > 0 && <div className="flex justify-center flex-wrap gap-1">
