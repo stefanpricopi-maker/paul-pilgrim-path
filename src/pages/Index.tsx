@@ -2,58 +2,93 @@ import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import GameSetup from '@/components/game/GameSetup';
+import GameLobby from '@/components/game/GameLobby';
 import GameBoard from '@/components/game/GameBoard';
 import PlayerCard from '@/components/game/PlayerCard';
 import Dice from '@/components/game/Dice';
-import { useGame } from '@/hooks/useGame';
+import { useGameDatabase } from '@/hooks/useGameDatabase';
 import { useAuth } from '@/hooks/useAuth';
 import { GameLocation } from '@/types/game';
+import { BIBLICAL_CHARACTERS } from '@/types/game';
 import { Church, Building2, Coins, MapPin, LogOut, User } from 'lucide-react';
 
 const Index = () => {
   const { 
-    gameState, 
-    startGame, 
-    rollDice, 
-    endTurn, 
-    buyProperty, 
-    buildChurch, 
-    buildSynagogue 
-  } = useGame();
+    gameState,
+    loading,
+    createGame,
+    joinGame,
+    startGame,
+    rollDice,
+    endTurn
+  } = useGameDatabase();
   
   const { user, signOut } = useAuth();
   const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
 
-  if (!gameState.gameStarted) {
-    return <GameSetup onStartGame={startGame} />;
+  // Show lobby if no game or game not started
+  if (!gameState.game || !gameState.gameStarted) {
+    return (
+      <GameLobby
+        gameState={gameState}
+        loading={loading}
+        onCreateGame={createGame}
+        onJoinGame={joinGame}
+        onStartGame={startGame}
+      />
+    );
   }
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-  const currentLocation = gameState.locations[currentPlayer.position];
-  const canBuyProperty = currentLocation && !currentLocation.owner && currentLocation.price > 0 && currentPlayer.money >= currentLocation.price;
-  const canBuildOnCurrentLocation = currentLocation && currentLocation.owner === currentPlayer.id;
+  const currentTile = gameState.tiles[currentPlayer?.position] || null;
+  
+  // Convert database player to game player format for compatibility
+  const gamePlayersForDisplay = gameState.players.map(player => ({
+    id: player.id,
+    name: player.name,
+    character: BIBLICAL_CHARACTERS.find(c => c.name === player.character_name) || BIBLICAL_CHARACTERS[0],
+    position: player.position,
+    money: player.coins,
+    properties: [], // TODO: Load from tiles ownership
+    color: `hsl(var(--player-${(gameState.players.indexOf(player) % 6) + 1}))`
+  }));
+
+  // Convert tiles to locations format for compatibility
+  const gameLocationsForDisplay: GameLocation[] = gameState.tiles.map(tile => ({
+    id: tile.id.toString(),
+    name: tile.name,
+    type: (tile.type as any) || 'city',
+    journey: 1,
+    price: 100, // TODO: Load from buildings table
+    rent: 50,
+    churchCost: 200,
+    synagogueCost: 300,
+    owner: tile.owner_id || undefined,
+    buildings: {
+      churches: 0, // TODO: Load from separate buildings relationship
+      synagogues: 0
+    },
+    description: `Visit ${tile.name}`,
+    color: tile.type === 'city' ? '#8B4513' : '#4A90E2'
+  }));
+
+  const canBuyProperty = false; // TODO: Implement property buying logic
+  const canBuildOnCurrentLocation = false; // TODO: Implement building logic
 
   const handleLocationClick = (location: GameLocation) => {
     setSelectedLocation(location);
   };
 
   const handleBuyProperty = () => {
-    if (currentLocation) {
-      buyProperty(currentLocation.id);
-    }
+    // TODO: Implement Supabase property buying
   };
 
   const handleBuildChurch = () => {
-    if (currentLocation) {
-      buildChurch(currentLocation.id);
-    }
+    // TODO: Implement Supabase church building
   };
 
   const handleBuildSynagogue = () => {
-    if (currentLocation) {
-      buildSynagogue(currentLocation.id);
-    }
+    // TODO: Implement Supabase synagogue building
   };
 
   return (
@@ -67,10 +102,11 @@ const Index = () => {
               <h1 className="text-3xl font-bold text-primary ancient-text mb-2">
                 Paul's Missionary Journeys
               </h1>
-              {gameState.gameStarted && (
+              {currentPlayer && (
                 <p className="text-muted-foreground">
                   Current Player: <span className="font-bold text-accent">{currentPlayer.name}</span> 
-                  ({currentPlayer.character.name})
+                  ({currentPlayer.character_name})
+                  {gameState.isMyTurn && <span className="ml-2 text-green-600">(Your Turn)</span>}
                 </p>
               )}
             </div>
@@ -92,8 +128,8 @@ const Index = () => {
           {/* Game Board - Large Center Area */}
           <div className="lg:col-span-3">
             <GameBoard 
-              locations={gameState.locations}
-              players={gameState.players}
+              locations={gameLocationsForDisplay}
+              players={gamePlayersForDisplay}
               onLocationClick={handleLocationClick}
             />
           </div>
@@ -105,7 +141,7 @@ const Index = () => {
             <Dice 
               value={gameState.diceValue}
               isRolling={gameState.isRolling}
-              onRoll={rollDice}
+              onRoll={gameState.isMyTurn ? rollDice : () => {}}
             />
 
             {/* Current Location Info */}
@@ -115,21 +151,21 @@ const Index = () => {
                 Current Location
               </h3>
               <div className="space-y-3">
-                <div>
-                  <h4 className="font-bold text-accent">{currentLocation.name}</h4>
-                  <p className="text-xs text-muted-foreground">{currentLocation.description}</p>
-                </div>
-                
-                {currentLocation.price > 0 && (
-                  <div className="flex items-center justify-between text-sm">
-                    <span>Price:</span>
-                    <span className="font-bold text-accent">{currentLocation.price} denarii</span>
+                {currentTile ? (
+                  <div>
+                    <h4 className="font-bold text-accent">{currentTile.name}</h4>
+                    <p className="text-xs text-muted-foreground">Current location on the board</p>
+                  </div>
+                ) : (
+                  <div>
+                    <h4 className="font-bold text-accent">Unknown Location</h4>
+                    <p className="text-xs text-muted-foreground">Position data not available</p>
                   </div>
                 )}
                 
-                {currentLocation.owner && (
+                {currentTile?.owner_id && (
                   <div className="text-xs text-muted-foreground">
-                    Owned by: {gameState.players.find(p => p.id === currentLocation.owner)?.name}
+                    Owned by: {gameState.players.find(p => p.id === currentTile.owner_id)?.name}
                   </div>
                 )}
                 
@@ -140,9 +176,10 @@ const Index = () => {
                       onClick={handleBuyProperty}
                       className="w-full text-sm"
                       variant="default"
+                      disabled
                     >
                       <Coins className="w-3 h-3 mr-1" />
-                      Buy Property ({currentLocation.price}d)
+                      Buy Property (Coming Soon)
                     </Button>
                   )}
                   
@@ -152,24 +189,24 @@ const Index = () => {
                         onClick={handleBuildChurch}
                         className="w-full text-sm"
                         variant="outline"
-                        disabled={currentPlayer.money < currentLocation.churchCost}
+                        disabled
                       >
                         <Church className="w-3 h-3 mr-1" />
-                        Build Church ({currentLocation.churchCost}d)
+                        Build Church (Coming Soon)
                       </Button>
                       <Button 
                         onClick={handleBuildSynagogue}
                         className="w-full text-sm"
                         variant="outline"
-                        disabled={currentPlayer.money < currentLocation.synagogueCost}
+                        disabled
                       >
                         <Building2 className="w-3 h-3 mr-1" />
-                        Build Synagogue ({currentLocation.synagogueCost}d)
+                        Build Synagogue (Coming Soon)
                       </Button>
                     </>
                   )}
                   
-                  {gameState.diceValue > 0 && (
+                  {gameState.diceValue > 0 && gameState.isMyTurn && (
                     <Button 
                       onClick={endTurn}
                       className="w-full"
@@ -189,7 +226,7 @@ const Index = () => {
                 <div className="space-y-1">
                   {gameState.gameLog.map((entry, index) => (
                     <p key={index} className="text-xs text-muted-foreground">
-                      {entry}
+                      {entry.description}
                     </p>
                   ))}
                 </div>
@@ -200,7 +237,7 @@ const Index = () => {
 
         {/* Players Panel - Bottom */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-          {gameState.players.map((player, index) => (
+          {gamePlayersForDisplay.map((player, index) => (
             <PlayerCard
               key={player.id}
               player={player}
