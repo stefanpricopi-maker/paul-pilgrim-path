@@ -14,13 +14,349 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      buildings: {
+        Row: {
+          cost: number
+          created_at: string | null
+          icon_url: string | null
+          id: number
+          income: number | null
+          type: string
+        }
+        Insert: {
+          cost: number
+          created_at?: string | null
+          icon_url?: string | null
+          id?: number
+          income?: number | null
+          type: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string | null
+          icon_url?: string | null
+          id?: number
+          income?: number | null
+          type?: string
+        }
+        Relationships: []
+      }
+      cards_chance: {
+        Row: {
+          action_type: string | null
+          action_value: string | null
+          category: string | null
+          created_at: string | null
+          id: number
+          text_en: string
+          text_ro: string
+        }
+        Insert: {
+          action_type?: string | null
+          action_value?: string | null
+          category?: string | null
+          created_at?: string | null
+          id?: number
+          text_en: string
+          text_ro: string
+        }
+        Update: {
+          action_type?: string | null
+          action_value?: string | null
+          category?: string | null
+          created_at?: string | null
+          id?: number
+          text_en?: string
+          text_ro?: string
+        }
+        Relationships: []
+      }
+      cards_community: {
+        Row: {
+          action_type: string | null
+          action_value: string | null
+          category: string | null
+          created_at: string | null
+          id: number
+          text_en: string
+          text_ro: string
+        }
+        Insert: {
+          action_type?: string | null
+          action_value?: string | null
+          category?: string | null
+          created_at?: string | null
+          id?: number
+          text_en: string
+          text_ro: string
+        }
+        Update: {
+          action_type?: string | null
+          action_value?: string | null
+          category?: string | null
+          created_at?: string | null
+          id?: number
+          text_en?: string
+          text_ro?: string
+        }
+        Relationships: []
+      }
+      characters: {
+        Row: {
+          ability_key: string | null
+          ability_type: string | null
+          description_en: string | null
+          description_ro: string | null
+          icon_url: string | null
+          id: number
+          name: string
+        }
+        Insert: {
+          ability_key?: string | null
+          ability_type?: string | null
+          description_en?: string | null
+          description_ro?: string | null
+          icon_url?: string | null
+          id?: number
+          name: string
+        }
+        Update: {
+          ability_key?: string | null
+          ability_type?: string | null
+          description_en?: string | null
+          description_ro?: string | null
+          icon_url?: string | null
+          id?: number
+          name?: string
+        }
+        Relationships: []
+      }
+      game_log: {
+        Row: {
+          action: string | null
+          created_at: string | null
+          description: string | null
+          game_id: string | null
+          id: number
+          player_id: string | null
+          round: number | null
+        }
+        Insert: {
+          action?: string | null
+          created_at?: string | null
+          description?: string | null
+          game_id?: string | null
+          id?: number
+          player_id?: string | null
+          round?: number | null
+        }
+        Update: {
+          action?: string | null
+          created_at?: string | null
+          description?: string | null
+          game_id?: string | null
+          id?: number
+          player_id?: string | null
+          round?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_log_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_log_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      game_members: {
+        Row: {
+          game_id: string
+          id: string
+          joined_at: string | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          game_id: string
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          game_id?: string
+          id?: string
+          joined_at?: string | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_members_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      games: {
+        Row: {
+          church_goal: number | null
+          created_at: string | null
+          current_turn: number | null
+          host_id: string | null
+          id: string
+          initial_balance: number | null
+          language: string | null
+          round_limit: number | null
+          status: string | null
+          win_condition: string | null
+        }
+        Insert: {
+          church_goal?: number | null
+          created_at?: string | null
+          current_turn?: number | null
+          host_id?: string | null
+          id?: string
+          initial_balance?: number | null
+          language?: string | null
+          round_limit?: number | null
+          status?: string | null
+          win_condition?: string | null
+        }
+        Update: {
+          church_goal?: number | null
+          created_at?: string | null
+          current_turn?: number | null
+          host_id?: string | null
+          id?: string
+          initial_balance?: number | null
+          language?: string | null
+          round_limit?: number | null
+          status?: string | null
+          win_condition?: string | null
+        }
+        Relationships: []
+      }
+      players: {
+        Row: {
+          avatar_url: string | null
+          character_name: string | null
+          coins: number | null
+          created_at: string | null
+          game_id: string | null
+          has_get_out_of_jail_card: boolean | null
+          id: string
+          immunity_until: number | null
+          in_jail: boolean | null
+          jail_turns: number | null
+          name: string
+          position: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          character_name?: string | null
+          coins?: number | null
+          created_at?: string | null
+          game_id?: string | null
+          has_get_out_of_jail_card?: boolean | null
+          id?: string
+          immunity_until?: number | null
+          in_jail?: boolean | null
+          jail_turns?: number | null
+          name: string
+          position?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          character_name?: string | null
+          coins?: number | null
+          created_at?: string | null
+          game_id?: string | null
+          has_get_out_of_jail_card?: boolean | null
+          id?: string
+          immunity_until?: number | null
+          in_jail?: boolean | null
+          jail_turns?: number | null
+          name?: string
+          position?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tiles: {
+        Row: {
+          building_type: string | null
+          created_at: string | null
+          game_id: string | null
+          id: number
+          name: string
+          owner_id: string | null
+          tile_index: number
+          type: string | null
+        }
+        Insert: {
+          building_type?: string | null
+          created_at?: string | null
+          game_id?: string | null
+          id?: number
+          name: string
+          owner_id?: string | null
+          tile_index: number
+          type?: string | null
+        }
+        Update: {
+          building_type?: string | null
+          created_at?: string | null
+          game_id?: string | null
+          id?: number
+          name?: string
+          owner_id?: string | null
+          tile_index?: number
+          type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tiles_game_id_fkey"
+            columns: ["game_id"]
+            isOneToOne: false
+            referencedRelation: "games"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tiles_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      copy_template_tiles: {
+        Args: { target_game_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
