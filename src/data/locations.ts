@@ -13,7 +13,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Starting point of Paul\'s missionary journeys',
-    color: '#FFD700' // Gold color for start
+    color: '#ffffff' // white
   },
   
   // BOTTOM ROW: positions 1-9 (moving left from ANTIOCHIA)
@@ -156,8 +156,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'Just visiting or in prison',
     color: '#808080' // Gray
   },
-
-// LEFT COLUMN: positions 11-19 (moving up from PRISON)
+  
 {
     id: 'antiochia-pisidia',
     name: 'ANTIOCHIA PISIDIEI',
@@ -211,7 +210,31 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'Port where Paul had his Macedonian vision',
     color: '#ea2b8a' // black pink
   },
-    {
+  
+  {
+    id: 'jertfa1',
+    name: 'JERTFA',
+    type: 'sacrifice',
+    journey: 1,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Pay sacrifice tax',
+    color: '#DC143C' // Crimson
+  },
+  
+
+  
+ 
+
+  
+  
+  // LEFT COLUMN: positions 11-19 (moving up from PRISON)
+  
+  
+  {
     id: 'port2',
     name: 'PORT',
     type: 'port',
@@ -222,10 +245,14 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#ffffff' // white
-  }, 
+    color: '#000000' // Black
+  },
   
-    {
+ 
+  
+
+  
+  {
     id: 'filipi',
     name: 'FILIPI',
     type: 'city',
@@ -236,24 +263,24 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'First European city where Paul preached',
-    color: '#cb5719' // Purple
+    color: '#FFFF00' // Yellow
   },
-
+  
   {
-    id: 'comunitate2',
-    name: 'COMUNITATE',
-    type: 'community-chest',
+    id: 'har2',
+    name: 'HAR',
+    type: 'chance',
     journey: 2,
     price: 0,
     rent: 0,
     churchCost: 0,
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'Community Chest - Draw a card',
-    color: '#87CEEB' // Light blue
+    description: 'Chance - Draw a card',
+    color: '#FFA500' // Orange
   },
   
-    {
+  {
     id: 'tesalonic',
     name: 'TESALONIC',
     type: 'city',
@@ -264,7 +291,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Important port city in Macedonia',
-    color: '#cb5719' // Purple
+    color: '#FFFF00' // Yellow
   },
   
   {
@@ -278,10 +305,10 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Noble Bereans who searched the Scriptures',
-    color: '#cb5719' // Purple
+    color: '#FFFF00' // Yellow
   },
-  
-   // CORNER: SABAT (top-left corner) - position 20
+
+  // CORNER: SABAT (top-left corner) - position 20
   {
     id: 'sabat',
     name: 'SABAT',
@@ -297,34 +324,6 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   
   // TOP ROW: positions 21-29 (moving right from SABAT)
-    {
-    id: 'efes',
-    name: 'EFES',
-    type: 'city',
-    journey: 3,
-    price: 240,
-    rent: 20,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Great commercial center, Paul stayed 3 years',
-    color: '#FF0000' // Red
-  },
-
-    {
-    id: 'har2',
-    name: 'HAR',
-    type: 'chance',
-    journey: 2,
-    price: 0,
-    rent: 0,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Chance - Draw a card',
-    color: '#FFA500' // Orange
-  },
-  
   {
     id: 'atena',
     name: 'ATENA',
@@ -338,7 +337,21 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'Paul\'s speech at the Areopagus',
     color: '#FF0000' // Red
   },
-
+  
+  {
+    id: 'comunitate2',
+    name: 'COMUNITATE',
+    type: 'community-chest',
+    journey: 2,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Community Chest - Draw a card',
+    color: '#87CEEB' // Light blue
+  },
+  
   {
     id: 'corint',
     name: 'CORINT',
@@ -364,10 +377,22 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#ffffff' // white
+    color: '#000000' // Black
   },
   
-
+  {
+    id: 'efes',
+    name: 'EFES',
+    type: 'city',
+    journey: 3,
+    price: 240,
+    rent: 20,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Great commercial center, Paul stayed 3 years',
+    color: '#FF0000' // Red
+  },
   
   {
     id: 'milet',
