@@ -69,7 +69,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'City in Pamphylia where John Mark left them',
-    color: '#693d11' // Orange red
+    color: '#693d11' // Brown
   },
 
     {
@@ -97,7 +97,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'City where Paul and Barnabas preached boldly',
-    color: '#FF4500' // Orange red
+    color: '#385562' // Dark blue
   },
   
   {
@@ -125,7 +125,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Where Paul healed a lame man',
-    color: '#FF1493' // Deep pink
+    color: '#385562' // Dark blue
   },
 
  {
@@ -139,7 +139,22 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Eastern end of first journey',
-    color: '#FF1493' // Deep pink
+    color: '#385562' // Dark blue
+  },
+
+// CORNER: PRISON (bottom-left corner) - position 10
+  {
+    id: 'prison',
+    name: 'PRISON',
+    type: 'prison',
+    journey: 2,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Just visiting or in prison',
+    color: '#808080' // Gray
   },
   
 {
@@ -176,20 +191,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
   
  
 
-  // CORNER: PRISON (bottom-left corner) - position 10
-  {
-    id: 'prison',
-    name: 'PRISON',
-    type: 'prison',
-    journey: 2,
-    price: 0,
-    rent: 0,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Just visiting or in prison',
-    color: '#808080' // Gray
-  },
+  
   
   // LEFT COLUMN: positions 11-19 (moving up from PRISON)
   
