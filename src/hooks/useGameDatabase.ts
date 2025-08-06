@@ -153,6 +153,7 @@ export const useGameDatabase = () => {
         .from('players')
         .insert({
           game_id: game!.id,
+          user_id: user.id,
           name: playerName,
           character_name: characterName,
           coins: 1000,
@@ -275,6 +276,7 @@ export const useGameDatabase = () => {
         .from('players')
         .insert({
           game_id: gameId,
+          user_id: user.id,
           name: playerName,
           character_name: characterName,
           coins: game!.initial_balance || 1000,

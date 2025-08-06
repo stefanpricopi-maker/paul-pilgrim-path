@@ -261,6 +261,7 @@ export type Database = {
           jail_turns: number | null
           name: string
           position: number | null
+          user_id: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -275,6 +276,7 @@ export type Database = {
           jail_turns?: number | null
           name: string
           position?: number | null
+          user_id?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -289,6 +291,7 @@ export type Database = {
           jail_turns?: number | null
           name?: string
           position?: number | null
+          user_id?: string | null
         }
         Relationships: [
           {
