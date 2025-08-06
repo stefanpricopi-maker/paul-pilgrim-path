@@ -450,7 +450,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Island stop on return journey',
-    color: '#00FF00' // Green
+    color: '#0000FF' // Green
   },
   
   {
@@ -506,7 +506,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#000000' // Black
+    color: '#ffffff' // white
   },
   
   {
@@ -534,7 +534,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Roman capital of Judea',
-    color: '#0000FF' // Blue
+    color: '#800080' // Purple
   },
   {
     id: 'jertfa2',
