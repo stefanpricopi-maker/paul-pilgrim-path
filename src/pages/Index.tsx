@@ -7,8 +7,9 @@ import GameBoard from '@/components/game/GameBoard';
 import PlayerCard from '@/components/game/PlayerCard';
 import Dice from '@/components/game/Dice';
 import { useGame } from '@/hooks/useGame';
+import { useAuth } from '@/hooks/useAuth';
 import { GameLocation } from '@/types/game';
-import { Church, Building2, Coins, MapPin } from 'lucide-react';
+import { Church, Building2, Coins, MapPin, LogOut, User } from 'lucide-react';
 
 const Index = () => {
   const { 
@@ -21,6 +22,7 @@ const Index = () => {
     buildSynagogue 
   } = useGame();
   
+  const { user, signOut } = useAuth();
   const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
 
   if (!gameState.gameStarted) {
@@ -60,14 +62,28 @@ const Index = () => {
         
         {/* Game Header */}
         <Card className="p-6 bg-gradient-parchment border-2 border-accent/30">
-          <div className="text-center">
-            <h1 className="text-3xl font-bold text-primary ancient-text mb-2">
-              Paul's Missionary Journeys
-            </h1>
-            <p className="text-muted-foreground">
-              Current Player: <span className="font-bold text-accent">{currentPlayer.name}</span> 
-              ({currentPlayer.character.name})
-            </p>
+          <div className="flex items-center justify-between">
+            <div className="text-center flex-1">
+              <h1 className="text-3xl font-bold text-primary ancient-text mb-2">
+                Paul's Missionary Journeys
+              </h1>
+              {gameState.gameStarted && (
+                <p className="text-muted-foreground">
+                  Current Player: <span className="font-bold text-accent">{currentPlayer.name}</span> 
+                  ({currentPlayer.character.name})
+                </p>
+              )}
+            </div>
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center text-sm text-muted-foreground">
+                <User className="w-4 h-4 mr-1" />
+                {user?.email}
+              </div>
+              <Button onClick={signOut} variant="outline" size="sm">
+                <LogOut className="w-4 h-4 mr-1" />
+                Sign Out
+              </Button>
+            </div>
           </div>
         </Card>
 
