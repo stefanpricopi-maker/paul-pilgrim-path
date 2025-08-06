@@ -30,6 +30,19 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'First port in Cyprus where Paul preached',
     color: '#8B4513' // Brown
   },
+   {
+    id: 'comunitate1',
+    name: 'COMUNITATE',
+    type: 'community-chest',
+    journey: 1,
+    price: 0,
+    rent: 0,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Community Chest - Draw a card',
+    color: '#87CEEB' // Light blue
+  },
   {
     id: 'iconia',
     name: 'ICONIA',
@@ -128,19 +141,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#8B4513' // Brown
   },
   
-  {
-    id: 'comunitate1',
-    name: 'COMUNITATE',
-    type: 'community-chest',
-    journey: 1,
-    price: 0,
-    rent: 0,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Community Chest - Draw a card',
-    color: '#87CEEB' // Light blue
-  },
+ 
 
   // CORNER: PRISON (bottom-left corner) - position 10
   {
