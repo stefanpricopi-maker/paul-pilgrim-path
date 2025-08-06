@@ -57,6 +57,34 @@ export const GAME_LOCATIONS: GameLocation[] = [
     description: 'Capital of Cyprus, where Paul met the proconsul',
     color: '#8B4513' // Brown
   },
+
+  {
+    id: 'perga',
+    name: 'PERGA',
+    type: 'city',
+    journey: 1,
+    price: 100,
+    rent: 6,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'City in Pamphylia where John Mark left them',
+    color: '#FF4500' // Orange red
+  },
+
+    {
+    id: 'port1',
+    name: 'PORT',
+    type: 'port',
+    journey: 1,
+    price: 200,
+    rent: 25,
+    churchCost: 0,
+    synagogueCost: 0,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'Mediterranean Port',
+    color: '#ffffff' // White
+  },
   
   {
     id: 'iconia',
@@ -100,33 +128,9 @@ export const GAME_LOCATIONS: GameLocation[] = [
     color: '#FFA500' // Orange
   },
   
-  {
-    id: 'perga',
-    name: 'PERGA',
-    type: 'city',
-    journey: 1,
-    price: 100,
-    rent: 6,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'City in Pamphylia where John Mark left them',
-    color: '#FF4500' // Orange red
-  },
+
   
-  {
-    id: 'port1',
-    name: 'PORT',
-    type: 'port',
-    journey: 1,
-    price: 200,
-    rent: 25,
-    churchCost: 0,
-    synagogueCost: 0,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'Mediterranean Port',
-    color: '#000000' // Black
-  },
+
   
   {
     id: 'jertfa1',
