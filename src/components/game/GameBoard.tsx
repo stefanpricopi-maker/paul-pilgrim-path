@@ -113,12 +113,30 @@ const GameBoard = ({
           if (!isEdge) {
             return <div key={`${rowIndex}-${colIndex}`} className="h-12" />;
           }
+          // Determine rotation based on position
+          const isLeftColumn = colIndex === 0 && rowIndex > 0 && rowIndex < 10; // positions 11-19
+          const isRightColumn = colIndex === 10 && rowIndex > 0 && rowIndex < 10; // positions 31-39
+          
+          let rotationClass = '';
+          let stripClass = 'h-6 w-full'; // wider strip for all tiles
+          let contentLayout = 'flex-col';
+          
+          if (isLeftColumn) {
+            rotationClass = 'rotate-90';
+            stripClass = 'w-6 h-full'; // vertical strip on right side (inside)
+            contentLayout = 'flex-row-reverse';
+          } else if (isRightColumn) {
+            rotationClass = '-rotate-90';
+            stripClass = 'w-6 h-full'; // vertical strip on left side (inside)
+            contentLayout = 'flex-row';
+          }
+
           return <div key={`${rowIndex}-${colIndex}`} className="relative">
-                  {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[90px] min-w-[90px]' : 'min-h-[70px] min-w-[60px]'} p-0 cursor-pointer hover:scale-105 transition-all border-2 border-gray-300 shadow-md bg-white overflow-hidden`} onClick={() => onLocationClick(location)}>
-                      <div className="h-full flex flex-col">
-                        {/* Color strip at top */}
+                  {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[90px] min-w-[90px]' : 'min-h-[70px] min-w-[60px]'} p-0 cursor-pointer hover:scale-105 transition-all border-2 border-gray-300 shadow-md bg-white overflow-hidden ${rotationClass}`} onClick={() => onLocationClick(location)}>
+                      <div className={`h-full flex ${contentLayout}`}>
+                        {/* Color strip */}
                         <div 
-                          className="h-3 w-full"
+                          className={stripClass}
                           style={{ backgroundColor: location.color || '#4a5568' }}
                         />
                         
