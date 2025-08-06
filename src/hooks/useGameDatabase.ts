@@ -152,7 +152,6 @@ export const useGameDatabase = () => {
       const { error: playerError } = await (supabase as any)
         .from('players')
         .insert({
-          id: user.id,
           game_id: game!.id,
           name: playerName,
           character_name: characterName,
@@ -275,7 +274,6 @@ export const useGameDatabase = () => {
       const { error: playerError } = await (supabase as any)
         .from('players')
         .insert({
-          id: user.id,
           game_id: gameId,
           name: playerName,
           character_name: characterName,
