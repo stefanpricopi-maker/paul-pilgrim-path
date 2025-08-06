@@ -114,42 +114,43 @@ const GameBoard = ({
             return <div key={`${rowIndex}-${colIndex}`} className="h-12" />;
           }
           return <div key={`${rowIndex}-${colIndex}`} className="relative">
-                  {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[90px] min-w-[90px]' : 'min-h-[70px] min-w-[60px]'} p-2 cursor-pointer hover:scale-105 transition-all border-2 border-primary/20 shadow-md`} style={{
-              backgroundColor: location.color || '#f8f9fa',
-              borderColor: location.type === 'special' || location.type === 'prison' || location.type === 'go-to-prison' ? '#4a5568' : '#e2e8f0'
-            }} onClick={() => onLocationClick(location)}>
-                      <div className="h-full flex flex-col justify-between text-xs">
-                        {/* Location Header */}
-                        <div className="space-y-1">
-                          <div className="flex items-center justify-between">
-                            {getLocationIcon(location)}
-                            {!['special', 'prison', 'go-to-prison', 'chance', 'community-chest', 'court', 'sacrifice'].includes(location.type)}
+                  {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[90px] min-w-[90px]' : 'min-h-[70px] min-w-[60px]'} p-0 cursor-pointer hover:scale-105 transition-all border-2 border-gray-300 shadow-md bg-white overflow-hidden`} onClick={() => onLocationClick(location)}>
+                      <div className="h-full flex flex-col">
+                        {/* Color strip at top */}
+                        <div 
+                          className="h-3 w-full"
+                          style={{ backgroundColor: location.color || '#4a5568' }}
+                        />
+                        
+                        {/* Content area */}
+                        <div className="flex-1 p-2 flex flex-col justify-between">
+                          {/* City name */}
+                          <div className="text-center">
+                            <h4 className="font-bold text-xs leading-tight text-black">
+                              {location.name}
+                            </h4>
                           </div>
-                          <h4 className="font-bold text-xs leading-tight ancient-text drop-shadow-lg text-zinc-950">
-                            {location.name}
-                          </h4>
+
+                          {/* Buildings - only for cities */}
+                          {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && <div className="flex justify-center space-x-1">
+                              {Array.from({
+                      length: location.buildings.churches
+                    }).map((_, i) => <Church key={`church-${i}`} className="w-3 h-3 text-purple-600" />)}
+                              {Array.from({
+                      length: location.buildings.synagogues
+                    }).map((_, i) => <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-yellow-600" />)}
+                            </div>}
+
+                          {/* Players */}
+                          {playersHere.length > 0 && <div className="flex justify-center flex-wrap gap-1">
+                              {playersHere.map((player, index) => <div key={player.id} className="player-piece text-sm transform hover:scale-110 bg-white rounded-full w-5 h-5 flex items-center justify-center border-2" style={{
+                      borderColor: player.color,
+                      filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'
+                    }}>
+                                  {player.character.avatar}
+                                </div>)}
+                            </div>}
                         </div>
-
-                        {/* Buildings - only for cities */}
-                        {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && <div className="flex justify-center space-x-1">
-                            {Array.from({
-                    length: location.buildings.churches
-                  }).map((_, i) => <Church key={`church-${i}`} className="w-3 h-3 text-purple-600" />)}
-                            {Array.from({
-                    length: location.buildings.synagogues
-                  }).map((_, i) => <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-yellow-600" />)}
-                          </div>}
-
-
-                        {/* Players */}
-                        {playersHere.length > 0 && <div className="flex justify-center flex-wrap gap-1">
-                            {playersHere.map((player, index) => <div key={player.id} className="player-piece text-sm transform hover:scale-110 bg-white rounded-full w-5 h-5 flex items-center justify-center border-2" style={{
-                    borderColor: player.color,
-                    filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'
-                  }}>
-                                {player.character.avatar}
-                              </div>)}
-                          </div>}
                       </div>
                     </Card> : <div className="h-full min-h-[60px]" />}
                 </div>;
