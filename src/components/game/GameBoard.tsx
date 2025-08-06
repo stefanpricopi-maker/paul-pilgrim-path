@@ -124,11 +124,11 @@ const GameBoard = ({
           if (isLeftColumn) {
             //rotationClass = 'rotate-90';
             stripClass = 'w-6 h-full'; // vertical strip on right side (inside)
-            contentLayout = 'flex-row'; //'flex-row-reverse';
+            contentLayout = 'flex-col'; //'flex-row-reverse';
           } else if (isRightColumn) {
             //rotationClass = '-rotate-90';
             stripClass = 'w-6 h-full'; // vertical strip on left side (inside)
-            contentLayout = 'flex-row';
+            contentLayout = 'flex-col';
           }
 
           return <div key={`${rowIndex}-${colIndex}`} className="relative">
