@@ -49,6 +49,7 @@ export const useGameDatabase = () => {
       const { data: tiles, error: tilesError } = await (supabase as any)
         .from('tiles')
         .select('*')
+        .eq('game_id', gameId)
         .order('tile_index');
 
       if (tilesError) throw tilesError;
