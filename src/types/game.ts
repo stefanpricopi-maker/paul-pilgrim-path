@@ -18,7 +18,7 @@ export interface BiblicalCharacter {
 export interface GameLocation {
   id: string;
   name: string;
-  type: 'city' | 'port' | 'special';
+  type: 'city' | 'port' | 'special' | 'prison' | 'go-to-prison' | 'chance' | 'community-chest' | 'court' | 'sacrifice';
   journey: 1 | 2 | 3 | 4;
   price: number;
   rent: number;
@@ -30,6 +30,7 @@ export interface GameLocation {
     synagogues: number;
   };
   description: string;
+  color?: string; // For matching image colors
 }
 
 export interface GameState {

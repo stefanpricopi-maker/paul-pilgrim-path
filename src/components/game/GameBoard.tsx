@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { GameLocation, Player } from '@/types/game';
-import { Church, Building2, Anchor, Crown, MapPin } from 'lucide-react';
+import { Church, Building2, Anchor, Crown, MapPin, Lock, ArrowRight, Dice1, Gift, Scale, Flame } from 'lucide-react';
 
 interface GameBoardProps {
   locations: GameLocation[];
@@ -15,49 +15,61 @@ const GameBoard = ({ locations, players, onLocationClick }: GameBoardProps) => {
   };
 
   const getLocationIcon = (location: GameLocation) => {
-    if (location.type === 'port') return <Anchor className="w-4 h-4" />;
-    if (location.type === 'special') return <Crown className="w-4 h-4" />;
-    return <MapPin className="w-4 h-4" />;
+    switch (location.type) {
+      case 'port':
+        return <Anchor className="w-4 h-4 text-white" />;
+      case 'city':
+        return <Building2 className="w-4 h-4 text-white" />;
+      case 'special':
+        return <Crown className="w-4 h-4 text-white" />;
+      case 'prison':
+        return <Lock className="w-4 h-4 text-white" />;
+      case 'go-to-prison':
+        return <ArrowRight className="w-4 h-4 text-white" />;
+      case 'chance':
+        return <Dice1 className="w-4 h-4 text-white" />;
+      case 'community-chest':
+        return <Gift className="w-4 h-4 text-white" />;
+      case 'court':
+        return <Scale className="w-4 h-4 text-white" />;
+      case 'sacrifice':
+        return <Flame className="w-4 h-4 text-white" />;
+      default:
+        return <MapPin className="w-4 h-4 text-white" />;
+    }
   };
 
-  const getJourneyColor = (journey: number) => {
-    const colors = {
-      1: 'border-red-400 bg-red-50',
-      2: 'border-blue-400 bg-blue-50',
-      3: 'border-green-400 bg-green-50',
-      4: 'border-purple-400 bg-purple-50'
-    };
-    return colors[journey as keyof typeof colors] || 'border-gray-400 bg-gray-50';
-  };
-
-  // Create a 3x8 grid layout for the board
+  // Create the board layout based on standard Monopoly layout
   const createBoardLayout = () => {
-    const boardSize = 24;
-    const topRow = locations.slice(0, 8);
-    const rightColumn = locations.slice(8, 11);
-    const bottomRow = locations.slice(11, 19).reverse();
-    const leftColumn = locations.slice(19, 22).reverse();
+    // Bottom row (left to right): positions 0-10
+    const bottomRow = locations.slice(0, 11);
+    // Right column (bottom to top): positions 11-20  
+    const rightColumn = locations.slice(11, 21);
+    // Top row (right to left): positions 21-30
+    const topRow = locations.slice(21, 31);
+    // Left column (top to bottom): positions 31-39
+    const leftColumn = locations.slice(31, 40);
     
-    const board: (GameLocation | null)[][] = Array(3).fill(null).map(() => Array(8).fill(null));
+    const board: (GameLocation | null)[][] = Array(11).fill(null).map(() => Array(11).fill(null));
     
-    // Top row
-    topRow.forEach((location, index) => {
-      if (index < 8) board[0][index] = location;
+    // Bottom row
+    bottomRow.forEach((location, index) => {
+      board[10][index] = location;
     });
     
     // Right column
     rightColumn.forEach((location, index) => {
-      if (index < 3) board[index][7] = location;
+      board[9 - index][10] = location;
     });
     
-    // Bottom row
-    bottomRow.forEach((location, index) => {
-      if (index < 8) board[2][7 - index] = location;
+    // Top row
+    topRow.forEach((location, index) => {
+      board[0][9 - index] = location;
     });
     
     // Left column
     leftColumn.forEach((location, index) => {
-      if (index < 3) board[2 - index][0] = location;
+      board[index + 1][0] = location;
     });
     
     return board;
@@ -98,17 +110,29 @@ const GameBoard = ({ locations, players, onLocationClick }: GameBoardProps) => {
         </div>
 
         {/* Board Grid */}
-        <div className="grid grid-cols-8 grid-rows-3 gap-2 min-h-[480px]">
+        <div className="grid grid-cols-11 grid-rows-11 gap-1 min-h-[600px]">
           {boardLayout.map((row, rowIndex) =>
             row.map((location, colIndex) => {
               const locationIndex = locations.findIndex(loc => loc?.id === location?.id);
               const playersHere = getPlayersAtLocation(locationIndex);
               
+              // Only render cells on the outer edge
+              const isCorner = (rowIndex === 0 && colIndex === 0) || 
+                              (rowIndex === 0 && colIndex === 10) || 
+                              (rowIndex === 10 && colIndex === 0) || 
+                              (rowIndex === 10 && colIndex === 10);
+              const isEdge = rowIndex === 0 || rowIndex === 10 || colIndex === 0 || colIndex === 10;
+              
+              if (!isEdge) {
+                return <div key={`${rowIndex}-${colIndex}`} className="h-12" />;
+              }
+              
               return (
                 <div key={`${rowIndex}-${colIndex}`} className="relative">
                   {location ? (
                     <Card
-                      className={`board-cell h-full min-h-[120px] p-2 cursor-pointer hover:scale-105 transition-all ${getJourneyColor(location.journey)} border-2`}
+                      className={`board-cell h-full ${isCorner ? 'min-h-[80px] min-w-[80px]' : 'min-h-[60px] min-w-[50px]'} p-1 cursor-pointer hover:scale-105 transition-all border-2 border-gray-800`}
+                      style={{ backgroundColor: location.color || '#f0f0f0' }}
                       onClick={() => onLocationClick(location)}
                     >
                       <div className="h-full flex flex-col justify-between text-xs">
@@ -116,31 +140,33 @@ const GameBoard = ({ locations, players, onLocationClick }: GameBoardProps) => {
                         <div className="space-y-1">
                           <div className="flex items-center justify-between">
                             {getLocationIcon(location)}
-                            <Badge variant="outline" className="text-xs">
-                              J{location.journey}
-                            </Badge>
+                            {!['special', 'prison', 'go-to-prison', 'chance', 'community-chest', 'court', 'sacrifice'].includes(location.type) && (
+                              <Badge variant="outline" className="text-xs bg-white/80">
+                                J{location.journey}
+                              </Badge>
+                            )}
                           </div>
-                          <h4 className="font-bold text-xs leading-tight ancient-text">
+                          <h4 className="font-bold text-xs leading-tight ancient-text text-white drop-shadow-lg">
                             {location.name}
                           </h4>
                         </div>
 
-                        {/* Buildings */}
-                        {(location.buildings.churches > 0 || location.buildings.synagogues > 0) && (
+                        {/* Buildings - only for cities */}
+                        {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && (
                           <div className="flex justify-center space-x-1">
                             {Array.from({ length: location.buildings.churches }).map((_, i) => (
-                              <Church key={`church-${i}`} className="w-3 h-3 text-game-church" />
+                              <Church key={`church-${i}`} className="w-3 h-3 text-purple-600" />
                             ))}
                             {Array.from({ length: location.buildings.synagogues }).map((_, i) => (
-                              <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-game-synagogue" />
+                              <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-yellow-600" />
                             ))}
                           </div>
                         )}
 
-                        {/* Price */}
-                        {location.price > 0 && (
+                        {/* Price - only for purchasable properties */}
+                        {(location.type === 'city' || location.type === 'port') && location.price > 0 && (
                           <div className="text-center">
-                            <span className="text-accent font-bold">{location.price}d</span>
+                            <span className="text-white font-bold bg-black/50 px-1 rounded text-xs">${location.price}</span>
                           </div>
                         )}
 
@@ -150,9 +176,9 @@ const GameBoard = ({ locations, players, onLocationClick }: GameBoardProps) => {
                             {playersHere.map((player, index) => (
                               <div
                                 key={player.id}
-                                className="player-piece text-lg transform hover:scale-110"
+                                className="player-piece text-sm transform hover:scale-110 bg-white rounded-full w-5 h-5 flex items-center justify-center border-2"
                                 style={{ 
-                                  color: player.color,
+                                  borderColor: player.color,
                                   filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'
                                 }}
                               >
@@ -164,7 +190,7 @@ const GameBoard = ({ locations, players, onLocationClick }: GameBoardProps) => {
                       </div>
                     </Card>
                   ) : (
-                    <div className="h-full min-h-[120px]" />
+                    <div className="h-full min-h-[60px]" />
                   )}
                 </div>
               );

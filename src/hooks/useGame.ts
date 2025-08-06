@@ -66,6 +66,35 @@ export const useGame = () => {
           });
         }
 
+        // Handle special tile actions
+        if (location.type === 'special' && location.id === 'antiochia') {
+          // Bonus for landing on starting point
+          newPlayers[prev.currentPlayerIndex].money += 200;
+          addToLog(`${currentPlayer.name} receives 200 denarii for landing on Antiochia!`);
+        } else if (location.type === 'prison') {
+          addToLog(`${currentPlayer.name} is just visiting the prison.`);
+        } else if (location.type === 'go-to-prison') {
+          // Move player to prison
+          const prisonIndex = prev.locations.findIndex(loc => loc.type === 'prison');
+          if (prisonIndex !== -1) {
+            newPlayers[prev.currentPlayerIndex].position = prisonIndex;
+            addToLog(`${currentPlayer.name} goes directly to prison!`);
+          }
+        } else if (location.type === 'chance') {
+          addToLog(`${currentPlayer.name} draws a chance card!`);
+          // TODO: Implement chance card logic
+        } else if (location.type === 'community-chest') {
+          addToLog(`${currentPlayer.name} draws a community chest card!`);
+          // TODO: Implement community chest logic
+        } else if (location.type === 'court') {
+          addToLog(`${currentPlayer.name} rests at the court - free parking!`);
+        } else if (location.type === 'sacrifice') {
+          // Pay sacrifice tax
+          const tax = 100;
+          newPlayers[prev.currentPlayerIndex].money = Math.max(0, newPlayers[prev.currentPlayerIndex].money - tax);
+          addToLog(`${currentPlayer.name} pays ${tax} denarii in sacrifice tax.`);
+        }
+
         return {
           ...prev,
           players: newPlayers,

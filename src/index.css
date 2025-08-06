@@ -56,6 +56,14 @@
     --player-4: 280 60% 55%;
     --player-5: 35 70% 55%;
     --player-6: 180 60% 50%;
+    
+    /* Special tile colors from the image */
+    --special-gold: 45 80% 55%;
+    --prison-gray: 0 0% 50%;
+    --court-red: 0 80% 50%;
+    --chance-orange: 30 100% 50%;
+    --community-blue: 210 80% 60%;
+    --sacrifice-crimson: 348 83% 47%;
 
     /* Gradients */
     --gradient-board: linear-gradient(135deg, hsl(var(--board-bg)), hsl(35 25% 70%));
