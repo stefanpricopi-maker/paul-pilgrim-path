@@ -126,9 +126,7 @@ const GameBoard = ({
                         <div className="space-y-1">
                           <div className="flex items-center justify-between">
                             {getLocationIcon(location)}
-                            {!['special', 'prison', 'go-to-prison', 'chance', 'community-chest', 'court', 'sacrifice'].includes(location.type) && <Badge variant="outline" className="text-xs bg-white/80">
-                                J{location.journey}
-                              </Badge>}
+                            {!['special', 'prison', 'go-to-prison', 'chance', 'community-chest', 'court', 'sacrifice'].includes(location.type)}
                           </div>
                           <h4 className="font-bold text-xs leading-tight ancient-text drop-shadow-lg text-zinc-950">
                             {location.name}
