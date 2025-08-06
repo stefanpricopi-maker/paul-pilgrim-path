@@ -17,6 +17,19 @@ export const GAME_LOCATIONS: GameLocation[] = [
   },
   
   // BOTTOM ROW: positions 1-9 (moving left from ANTIOCHIA)
+{
+    id: 'salamina',
+    name: 'SALAMINA',
+    type: 'city',
+    journey: 1,
+    price: 60,
+    rent: 2,
+    churchCost: 50,
+    synagogueCost: 50,
+    buildings: { churches: 0, synagogues: 0 },
+    description: 'First port in Cyprus where Paul preached',
+    color: '#8B4513' // Brown
+  },
   {
     id: 'iconia',
     name: 'ICONIA',
@@ -127,20 +140,6 @@ export const GAME_LOCATIONS: GameLocation[] = [
     buildings: { churches: 0, synagogues: 0 },
     description: 'Community Chest - Draw a card',
     color: '#87CEEB' // Light blue
-  },
-  
-  {
-    id: 'salamina',
-    name: 'SALAMINA',
-    type: 'city',
-    journey: 1,
-    price: 60,
-    rent: 2,
-    churchCost: 50,
-    synagogueCost: 50,
-    buildings: { churches: 0, synagogues: 0 },
-    description: 'First port in Cyprus where Paul preached',
-    color: '#8B4513' // Brown
   },
 
   // CORNER: PRISON (bottom-left corner) - position 10
