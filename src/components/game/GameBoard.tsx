@@ -157,7 +157,7 @@ const GameBoard = ({
                           {/* City name */}
                           <div className="text-center">
                             {/*<h4 className="font-bold text-xs leading-tight text-black"> */}
-                            <h4 className="flex items-center justify-center rotate-90">
+                            <h4 className="flex items-center justify-center">
                               {location.name}
                             </h4>
                           </div>
