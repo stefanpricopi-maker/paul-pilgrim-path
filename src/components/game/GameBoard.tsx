@@ -156,7 +156,8 @@ const GameBoard = ({
                         <div className="flex-1 p-2 flex flex-col justify-between">
                           {/* City name */}
                           <div className="text-center">
-                            <h4 className="font-bold text-xs leading-tight text-black">
+                            {/*<h4 className="font-bold text-xs leading-tight text-black"> */}
+                            <h4 className="flex items-center justify-center rotate-90">
                               {location.name}
                             </h4>
                           </div>
