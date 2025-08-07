@@ -122,7 +122,7 @@ const GameBoard = ({
           let contentLayout = 'flex-col';
           
           if (isLeftColumn) {
-            rotationClass = 'rotate-90';
+            rotationClass = '';
             stripClass = 'w-6 h-full'; // vertical strip on right side (inside)
             contentLayout = 'flex-row-reverse';
           } else if (isRightColumn) {
