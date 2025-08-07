@@ -43,6 +43,7 @@ const Index = () => {
     showCurrentPlayer,
     hideCurrentPlayer,
     buyLand,
+    handleCardAction,
   } = useLocalGame();
   
   const { user, signOut } = useAuth();
@@ -77,6 +78,7 @@ const Index = () => {
         onShowCurrentPlayer={showCurrentPlayer}
         onHideCurrentPlayer={hideCurrentPlayer}
         onBuyLand={buyLand}
+        onCardAction={handleCardAction}
       />
     );
   }

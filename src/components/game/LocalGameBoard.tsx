@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { Card } from '@/components/ui/card';
+import { Card as UICard } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import GameBoard from '@/components/game/GameBoard';
 import PlayerCard from '@/components/game/PlayerCard';
 import Dice from '@/components/game/Dice';
 import { Player, GameLocation } from '@/types/game';
+import { Card } from '@/types/cards';
+import CardModal from './CardModal';
 import { Church, Building2, Coins, MapPin, RotateCcw, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 interface LocalGameBoardProps {
@@ -17,6 +19,8 @@ interface LocalGameBoardProps {
     isRolling: boolean;
     gameLog: string[];
     round: number;
+    drawnCard: Card | null;
+    cardType: 'community' | 'chance' | null;
   };
   currentPlayerPrivate: boolean;
   onRollDice: () => void;
@@ -25,6 +29,7 @@ interface LocalGameBoardProps {
   onShowCurrentPlayer: () => void;
   onHideCurrentPlayer: () => void;
   onBuyLand?: (playerId: string, locationId: string) => void;
+  onCardAction?: (card: Card) => void;
 }
 
 export default function LocalGameBoard({
@@ -36,6 +41,7 @@ export default function LocalGameBoard({
   onShowCurrentPlayer,
   onHideCurrentPlayer,
   onBuyLand,
+  onCardAction,
 }: LocalGameBoardProps) {
   const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
 
@@ -68,7 +74,7 @@ export default function LocalGameBoard({
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Game Header */}
-        <Card className="p-6 bg-gradient-parchment border-2 border-accent/30">
+        <UICard className="p-6 bg-gradient-parchment border-2 border-accent/30">
           <div className="flex items-center justify-between">
             <div className="text-center flex-1">
               <h1 className="text-3xl font-bold text-primary ancient-text mb-2">
@@ -85,11 +91,11 @@ export default function LocalGameBoard({
               </Button>
             </div>
           </div>
-        </Card>
+        </UICard>
 
         {/* Current Player Turn Banner */}
         {currentPlayerPrivate ? (
-          <Card className="p-4 bg-accent/10 border-2 border-accent">
+          <UICard className="p-4 bg-accent/10 border-2 border-accent">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div 
@@ -110,9 +116,9 @@ export default function LocalGameBoard({
                 Show My Turn
               </Button>
             </div>
-          </Card>
+          </UICard>
         ) : (
-          <Card className="p-4 bg-primary/10 border-2 border-primary">
+          <UICard className="p-4 bg-primary/10 border-2 border-primary">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div 
@@ -133,7 +139,7 @@ export default function LocalGameBoard({
                 Hide
               </Button>
             </div>
-          </Card>
+          </UICard>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -160,7 +166,7 @@ export default function LocalGameBoard({
             )}
 
             {/* Current Location Info */}
-            <Card className="p-4 bg-gradient-parchment border-2 border-primary/30">
+            <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
               <h3 className="font-bold text-primary ancient-text mb-3 flex items-center">
                 <MapPin className="w-4 h-4 mr-2" />
                 Current Location
@@ -234,10 +240,10 @@ export default function LocalGameBoard({
                   </div>
                 )}
               </div>
-            </Card>
+            </UICard>
 
             {/* Game Log */}
-            <Card className="p-4 bg-gradient-parchment border-2 border-muted/30">
+            <UICard className="p-4 bg-gradient-parchment border-2 border-muted/30">
               <h3 className="font-bold text-primary ancient-text mb-3">Journey Log</h3>
               <ScrollArea className="h-32">
                 <div className="space-y-1">
@@ -248,7 +254,7 @@ export default function LocalGameBoard({
                   ))}
                 </div>
               </ScrollArea>
-            </Card>
+            </UICard>
           </div>
         </div>
 
@@ -268,6 +274,15 @@ export default function LocalGameBoard({
           </div>
         )}
       </div>
+
+      {/* Card Modal */}
+      <CardModal
+        isOpen={!!gameState.drawnCard}
+        onClose={() => onCardAction && gameState.drawnCard && onCardAction(gameState.drawnCard)}
+        card={gameState.drawnCard}
+        cardType={gameState.cardType || 'community'}
+        language="en"
+      />
     </div>
   );
 }

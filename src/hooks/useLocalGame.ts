@@ -1,7 +1,10 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Player, GameLocation } from '@/types/game';
+import { Card } from '@/types/cards';
 import { BIBLICAL_CHARACTERS } from '@/types/game';
 import { GAME_LOCATIONS } from '@/data/locations';
+import { useCards } from './useCards';
+import { useEconomy } from './useEconomy';
 
 interface LocalGameState {
   players: Player[];
@@ -12,9 +15,14 @@ interface LocalGameState {
   isRolling: boolean;
   gameLog: string[];
   round: number;
+  drawnCard: Card | null;
+  cardType: 'community' | 'chance' | null;
 }
 
 export const useLocalGame = () => {
+  const { loadCards, drawCommunityCard, drawChanceCard, processCardAction } = useCards();
+  const { handlePassStart, handleCardAction: processEconomyAction, applyTransactions } = useEconomy();
+  
   const [gameState, setGameState] = useState<LocalGameState>({
     players: [],
     currentPlayerIndex: 0,
@@ -24,9 +32,16 @@ export const useLocalGame = () => {
     isRolling: false,
     gameLog: [],
     round: 1,
+    drawnCard: null,
+    cardType: null,
   });
 
   const [currentPlayerPrivate, setCurrentPlayerPrivate] = useState(true);
+
+  // Load cards when component mounts
+  useEffect(() => {
+    loadCards();
+  }, [loadCards]);
 
   // Create local game with players
   const createLocalGame = useCallback((playerNames: string[], playerColors: string[]) => {
@@ -96,25 +111,63 @@ export const useLocalGame = () => {
       setGameState(prev => {
         const currentPlayer = prev.players[prev.currentPlayerIndex];
         const newPosition = (currentPlayer.position + finalValue) % prev.locations.length;
+        const passedStart = newPosition < currentPlayer.position;
         
-        const updatedPlayers = prev.players.map((player, index) => 
+        let updatedPlayers = prev.players.map((player, index) => 
           index === prev.currentPlayerIndex 
             ? { ...player, position: newPosition }
             : player
         );
 
-        const logEntry = `${currentPlayer.name} rolled ${finalValue} and moved to ${prev.locations[newPosition].name}`;
+        let logEntries = [`${currentPlayer.name} rolled ${finalValue} and moved to ${prev.locations[newPosition].name}`];
+        
+        // Handle passing start bonus
+        if (passedStart) {
+          const startTransaction = handlePassStart(currentPlayer);
+          updatedPlayers = applyTransactions(updatedPlayers, [startTransaction]);
+          logEntries.push(`${currentPlayer.name} passed Antiohia and received 200 denarii`);
+        }
+
+        // Handle landing on special tiles
+        const currentLocation = prev.locations[newPosition];
+        if (currentLocation.type === 'community-chest') {
+          const card = drawCommunityCard();
+          if (card) {
+            return {
+              ...prev,
+              diceValue: finalValue,
+              isRolling: false,
+              players: updatedPlayers,
+              gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Community Chest card`].slice(-10),
+              drawnCard: card,
+              cardType: 'community'
+            };
+          }
+        } else if (currentLocation.type === 'chance') {
+          const card = drawChanceCard();
+          if (card) {
+            return {
+              ...prev,
+              diceValue: finalValue,
+              isRolling: false,
+              players: updatedPlayers,
+              gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Chance card`].slice(-10),
+              drawnCard: card,
+              cardType: 'chance'
+            };
+          }
+        }
         
         return {
           ...prev,
           diceValue: finalValue,
           isRolling: false,
           players: updatedPlayers,
-          gameLog: [...prev.gameLog, logEntry].slice(-10), // Keep only last 10 entries
+          gameLog: [...prev.gameLog, ...logEntries].slice(-10),
         };
       });
     }, 1500);
-  }, [gameState.isRolling]);
+  }, [gameState.isRolling, handlePassStart, applyTransactions, drawCommunityCard, drawChanceCard]);
 
   // End turn
   const endTurn = useCallback(() => {
@@ -156,6 +209,8 @@ export const useLocalGame = () => {
       isRolling: false,
       gameLog: [],
       round: 1,
+      drawnCard: null,
+      cardType: null,
     });
     localStorage.removeItem('localGameState');
     setCurrentPlayerPrivate(true);
@@ -212,6 +267,47 @@ export const useLocalGame = () => {
     });
   }, []);
 
+  // Handle card action after player confirms
+  const handleCardAction = useCallback((card: Card) => {
+    setGameState(prevState => {
+      const currentPlayer = prevState.players[prevState.currentPlayerIndex];
+      const cardResult = processCardAction(card, currentPlayer.position, prevState.locations.length);
+      
+      // For money cards, use the processed result amount
+      let transactions = [];
+      if (card.action_type === 'add_money' && cardResult.moneyChange > 0) {
+        transactions = [{
+          playerId: currentPlayer.id,
+          amount: cardResult.moneyChange,
+          reason: 'Community/Chance card reward',
+          type: 'income' as const
+        }];
+      } else {
+        transactions = processEconomyAction(currentPlayer, card.action_type, card.action_value);
+      }
+      const updatedPlayers = applyTransactions(prevState.players, transactions);
+      
+      const newState = {
+        ...prevState,
+        players: updatedPlayers,
+        gameLog: [...prevState.gameLog, `${currentPlayer.name}: ${cardResult.description}`].slice(-10),
+        drawnCard: null,
+        cardType: null
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('localGameState', JSON.stringify({
+        players: newState.players,
+        currentPlayerIndex: newState.currentPlayerIndex,
+        gameStarted: newState.gameStarted,
+        round: newState.round,
+        gameLog: newState.gameLog,
+      }));
+      
+      return newState;
+    });
+  }, [processCardAction, processEconomyAction, applyTransactions]);
+
   return {
     gameState,
     currentPlayerPrivate,
@@ -223,5 +319,6 @@ export const useLocalGame = () => {
     showCurrentPlayer,
     hideCurrentPlayer,
     buyLand,
+    handleCardAction,
   };
 };
