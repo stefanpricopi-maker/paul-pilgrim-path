@@ -121,20 +121,10 @@ const GameBoard = ({
           let stripClass = 'h-6 w-full'; // wider strip for all tiles
           let contentLayout = 'flex-col';
           
-    {/* if (isLeftColumn) {
-            rotationClass = '';
-            stripClass = 'w-6 h-full'; // vertical strip on right side (inside)
-            contentLayout = 'flex-row-reverse';
-          } else if (isRightColumn) {
-            rotationClass = '-rotate-90';
-            stripClass = 'w-6 h-full'; // vertical strip on left side (inside)
-            contentLayout = 'flex-row';
-          }
-  */}
         if (isLeftColumn) {
           rotationClass = 'rotate-90'; // rotate text 90 degrees clockwise
-          stripClass = 'w-6 h-full order-last';   // vertical strip on right side (inside)
-          contentLayout = 'flex-row'; // content flows from right to left
+          stripClass = 'w-full h-full flex flex-row';   // vertical strip on right side (inside)
+          contentLayout = 'h-6 flex flex-row'; // content flows from right to left
               } else if (isRightColumn) {
                   rotationClass = '-rotate-90'; // rotate text 90 degrees counter-clockwise
                   stripClass = 'w-6 h-full';    // vertical strip on left side (inside)
