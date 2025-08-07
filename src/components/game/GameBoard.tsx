@@ -102,7 +102,7 @@ const GameBoard = ({
         </div>
 
         {/* Board Grid */}
-        <div className="grid grid-cols-11 grid-rows-11 gap-1 min-h-[600px]">
+        <div className="grid grid-cols-11 grid-rows-11 gap-0 min-h-[600px]">
           {boardLayout.map((row, rowIndex) => row.map((location, colIndex) => {
           const locationIndex = locations.findIndex(loc => loc?.id === location?.id);
           const playersHere = getPlayersAtLocation(locationIndex);
@@ -111,7 +111,7 @@ const GameBoard = ({
           const isCorner = rowIndex === 0 && colIndex === 0 || rowIndex === 0 && colIndex === 10 || rowIndex === 10 && colIndex === 0 || rowIndex === 10 && colIndex === 10;
           const isEdge = rowIndex === 0 || rowIndex === 10 || colIndex === 0 || colIndex === 10;
           if (!isEdge) {
-            return <div key={`${rowIndex}-${colIndex}`} className="h-12" />;
+            return <div key={`${rowIndex}-${colIndex}`} className="h-2" />;
           }
           // Determine rotation based on position
           const isLeftColumn = colIndex === 0 && rowIndex > 0 && rowIndex < 10; // positions 11-19
