@@ -123,7 +123,7 @@ const GameBoard = ({
           
         if (isLeftColumn) {
           rotationClass = 'rotate-90'; // rotate text 90 degrees clockwise
-          stripClass = 'w-full h-full flex flex-row';   // vertical strip on right side (inside)
+          stripClass = 'w-full h-full flex flex-col';   // vertical strip on right side (inside)
           contentLayout = 'h-6 flex flex-row'; // content flows from right to left
               } else if (isRightColumn) {
                   rotationClass = '-rotate-90'; // rotate text 90 degrees counter-clockwise
