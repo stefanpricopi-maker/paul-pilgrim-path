@@ -120,17 +120,7 @@ const GameBoard = ({
           let rotationClass = '';
           let stripClass = 'h-6 w-full'; // wider strip for all tiles
           let contentLayout = 'flex-col';
-          
-    {/* if (isLeftColumn) {
-            rotationClass = '';
-            stripClass = 'w-6 h-full'; // vertical strip on right side (inside)
-            contentLayout = 'flex-row-reverse';
-          } else if (isRightColumn) {
-            rotationClass = '-rotate-90';
-            stripClass = 'w-6 h-full'; // vertical strip on left side (inside)
-            contentLayout = 'flex-row';
-          }
-  */}
+        
         if (isLeftColumn) {
           rotationClass = 'rotate-90'; // rotate text 90 degrees clockwise
           stripClass = 'w-6 h-full order-last';   // vertical strip on right side (inside)
@@ -145,7 +135,7 @@ const GameBoard = ({
     
           return <div key={`${rowIndex}-${colIndex}`} className="relative">
                   {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[90px] min-w-[90px]' : 'min-h-[70px] min-w-[60px]'} p-0 cursor-pointer hover:scale-105 transition-all border-2 border-gray-300 shadow-md bg-white overflow-hidden ${rotationClass}`} onClick={() => onLocationClick(location)}>
-                      <div className={`h-full flex ${contentLayout}`}>
+                      <div className={`h-6 flex flex-row${contentLayout}`}>
                         {/* Color strip */}
                         <div 
                           className={stripClass}
