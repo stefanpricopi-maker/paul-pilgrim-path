@@ -6,7 +6,7 @@ import GameBoard from '@/components/game/GameBoard';
 import PlayerCard from '@/components/game/PlayerCard';
 import Dice from '@/components/game/Dice';
 import { Player, GameLocation } from '@/types/game';
-import { Card } from '@/types/cards';
+import { Card as GameCard } from '@/types/cards';
 import CardModal from './CardModal';
 import { Church, Building2, Coins, MapPin, RotateCcw, Eye, EyeOff, ArrowRight } from 'lucide-react';
 
@@ -19,7 +19,7 @@ interface LocalGameBoardProps {
     isRolling: boolean;
     gameLog: string[];
     round: number;
-    drawnCard: Card | null;
+    drawnCard: GameCard | null;
     cardType: 'community' | 'chance' | null;
   };
   currentPlayerPrivate: boolean;
@@ -29,7 +29,7 @@ interface LocalGameBoardProps {
   onShowCurrentPlayer: () => void;
   onHideCurrentPlayer: () => void;
   onBuyLand?: (playerId: string, locationId: string) => void;
-  onCardAction?: (card: Card) => void;
+  onCardAction?: (card: GameCard) => void;
 }
 
 export default function LocalGameBoard({
