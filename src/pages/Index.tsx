@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { LanguageSelector } from '@/components/ui/language-selector';
 import GameLobby from '@/components/game/GameLobby';
 import GameBoard from '@/components/game/GameBoard';
 import PlayerCard from '@/components/game/PlayerCard';
@@ -17,6 +19,7 @@ import { BIBLICAL_CHARACTERS } from '@/types/game';
 import { Church, Building2, Coins, MapPin, LogOut, User } from 'lucide-react';
 
 const Index = () => {
+  const { t } = useTranslation();
   const [gameMode, setGameMode] = useState<'online' | 'local' | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
 
@@ -163,7 +166,7 @@ const Index = () => {
           <div className="flex items-center justify-between">
             <div className="text-center flex-1">
               <h1 className="text-3xl font-bold text-primary ancient-text mb-2">
-                Paul's Missionary Journeys
+                {t('game.title')}
               </h1>
               {currentPlayer && (
                  <p className="text-muted-foreground">
@@ -174,13 +177,14 @@ const Index = () => {
               )}
             </div>
             <div className="flex items-center space-x-3">
+              <LanguageSelector />
               <div className="flex items-center text-sm text-muted-foreground">
                 <User className="w-4 h-4 mr-1" />
                 {user?.email}
               </div>
               <Button onClick={signOut} variant="outline" size="sm">
                 <LogOut className="w-4 h-4 mr-1" />
-                Sign Out
+                {t('auth.signOut')}
               </Button>
             </div>
           </div>

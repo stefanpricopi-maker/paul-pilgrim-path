@@ -426,7 +426,7 @@ export const useGameDatabase = () => {
   useEffect(() => {
     if (!gameState.game) return;
 
-    const gameChannel = (supabase as any)
+    const gameChannel = supabase
       .channel(`game_${gameState.game.id}`)
       .on(
         'postgres_changes',
@@ -437,6 +437,7 @@ export const useGameDatabase = () => {
           filter: `game_id=eq.${gameState.game.id}`
         },
         () => {
+          console.log('Players changed, reloading game data');
           loadGame(gameState.game!.id);
         }
       )
@@ -449,25 +450,40 @@ export const useGameDatabase = () => {
           filter: `id=eq.${gameState.game.id}`
         },
         () => {
+          console.log('Game changed, reloading game data');
           loadGame(gameState.game!.id);
         }
       )
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*',
           schema: 'public',
           table: 'game_log',
           filter: `game_id=eq.${gameState.game.id}`
         },
         () => {
+          console.log('Game log changed, reloading game data');
+          loadGame(gameState.game!.id);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'tiles',
+          filter: `game_id=eq.${gameState.game.id}`
+        },
+        () => {
+          console.log('Tiles changed, reloading game data');
           loadGame(gameState.game!.id);
         }
       )
       .subscribe();
 
     return () => {
-      (supabase as any).removeChannel(gameChannel);
+      supabase.removeChannel(gameChannel);
     };
   }, [gameState.game, loadGame]);
 
