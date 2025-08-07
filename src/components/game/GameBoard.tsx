@@ -111,7 +111,7 @@ const GameBoard = ({
           const isCorner = rowIndex === 0 && colIndex === 0 || rowIndex === 0 && colIndex === 10 || rowIndex === 10 && colIndex === 0 || rowIndex === 10 && colIndex === 10;
           const isEdge = rowIndex === 0 || rowIndex === 10 || colIndex === 0 || colIndex === 10;
           if (!isEdge) {
-            return <div key={`${rowIndex}-${colIndex}`} className="h-2" />;
+            return <div key={`${rowIndex}-${colIndex}`} className="w-0 h-0" />;
           }
           // Determine rotation based on position
           const isLeftColumn = colIndex === 0 && rowIndex > 0 && rowIndex < 10; // positions 11-19
