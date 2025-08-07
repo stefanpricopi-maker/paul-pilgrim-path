@@ -171,6 +171,47 @@ export const useLocalGame = () => {
     setCurrentPlayerPrivate(true);
   }, []);
 
+  // Buy land functionality
+  const buyLand = useCallback((playerId: string, locationId: string) => {
+    setGameState(prevState => {
+      const location = prevState.locations.find(l => l.id === locationId);
+      if (!location) return prevState;
+
+      const newState = {
+        ...prevState,
+        locations: prevState.locations.map(loc =>
+          loc.id === locationId
+            ? { ...loc, owner: playerId }
+            : loc
+        ),
+        players: prevState.players.map(player =>
+          player.id === playerId
+            ? { 
+                ...player, 
+                money: player.money - location.price,
+                properties: [...player.properties, locationId]
+              }
+            : player
+        ),
+        gameLog: [
+          ...prevState.gameLog,
+          `${prevState.players.find(p => p.id === playerId)?.name} bought land in ${location.name}`
+        ].slice(-10)
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('localGameState', JSON.stringify({
+        players: newState.players,
+        currentPlayerIndex: newState.currentPlayerIndex,
+        gameStarted: newState.gameStarted,
+        round: newState.round,
+        gameLog: newState.gameLog,
+      }));
+      
+      return newState;
+    });
+  }, []);
+
   return {
     gameState,
     currentPlayerPrivate,
@@ -181,5 +222,6 @@ export const useLocalGame = () => {
     resetGame,
     showCurrentPlayer,
     hideCurrentPlayer,
+    buyLand,
   };
 };

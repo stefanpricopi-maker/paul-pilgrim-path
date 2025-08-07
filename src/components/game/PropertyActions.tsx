@@ -8,7 +8,7 @@ import { ShoppingCart, Church, Building2, Coins, Home } from 'lucide-react';
 interface PropertyActionsProps {
   location: GameLocation;
   currentPlayer: Player;
-  onBuyProperty: (locationId: string) => void;
+  onBuyLand: (locationId: string) => void;
   onBuildChurch: (locationId: string) => void;
   onBuildSynagogue: (locationId: string) => void;
   onPayRent: (locationId: string) => void;
@@ -19,7 +19,7 @@ interface PropertyActionsProps {
 const PropertyActions = ({
   location,
   currentPlayer,
-  onBuyProperty,
+  onBuyLand,
   onBuildChurch,
   onBuildSynagogue,
   onPayRent,
@@ -44,7 +44,7 @@ const PropertyActions = ({
 
     switch (pendingAction.type) {
       case 'buy':
-        onBuyProperty(location.id);
+        onBuyLand(location.id);
         break;
       case 'church':
         onBuildChurch(location.id);
@@ -85,7 +85,7 @@ const PropertyActions = ({
                 </span>
               </div>
             ) : (
-              <p className="text-muted-foreground">Available for purchase</p>
+              <p className="text-muted-foreground">Land available for purchase</p>
             )}
             
             <p className="text-xs">Price: {location.price} denarii</p>
@@ -133,7 +133,7 @@ const PropertyActions = ({
                 disabled={currentPlayer.money < location.price}
               >
                 <ShoppingCart className="w-4 h-4 mr-2" />
-                Buy Property ({location.price} denarii)
+                Buy Land ({location.price} denarii)
               </Button>
             )}
 

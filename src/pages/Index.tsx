@@ -42,6 +42,7 @@ const Index = () => {
     resetGame,
     showCurrentPlayer,
     hideCurrentPlayer,
+    buyLand,
   } = useLocalGame();
   
   const { user, signOut } = useAuth();
@@ -75,6 +76,7 @@ const Index = () => {
         onResetGame={resetGame}
         onShowCurrentPlayer={showCurrentPlayer}
         onHideCurrentPlayer={hideCurrentPlayer}
+        onBuyLand={buyLand}
       />
     );
   }
@@ -125,15 +127,15 @@ const Index = () => {
     color: tile.type === 'city' ? '#8B4513' : '#4A90E2'
   }));
 
-  const canBuyProperty = false; // TODO: Implement property buying logic
+  const canBuyLand = false; // TODO: Implement land buying logic
   const canBuildOnCurrentLocation = false; // TODO: Implement building logic
 
   const handleLocationClick = (location: GameLocation) => {
     setSelectedLocation(location);
   };
 
-  const handleBuyProperty = () => {
-    // TODO: Implement Supabase property buying
+  const handleBuyLand = () => {
+    // TODO: Implement Supabase land buying
   };
 
   const handleBuildChurch = () => {
@@ -222,17 +224,17 @@ const Index = () => {
                    </div>
                  )}
                 
-                {/* Action Buttons */}
+                 {/* Action Buttons */}
                 <div className="space-y-2">
-                  {canBuyProperty && (
+                  {canBuyLand && (
                     <Button 
-                      onClick={handleBuyProperty}
+                      onClick={handleBuyLand}
                       className="w-full text-sm"
                       variant="default"
                       disabled
                     >
                       <Coins className="w-3 h-3 mr-1" />
-                      Buy Property (Coming Soon)
+                      Buy Land (Coming Soon)
                     </Button>
                   )}
                   

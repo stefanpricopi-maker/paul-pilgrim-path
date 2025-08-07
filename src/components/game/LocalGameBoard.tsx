@@ -24,6 +24,7 @@ interface LocalGameBoardProps {
   onResetGame: () => void;
   onShowCurrentPlayer: () => void;
   onHideCurrentPlayer: () => void;
+  onBuyLand?: (playerId: string, locationId: string) => void;
 }
 
 export default function LocalGameBoard({
@@ -34,21 +35,24 @@ export default function LocalGameBoard({
   onResetGame,
   onShowCurrentPlayer,
   onHideCurrentPlayer,
+  onBuyLand,
 }: LocalGameBoardProps) {
   const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const currentLocation = gameState.locations[currentPlayer?.position] || null;
 
-  const canBuyProperty = false; // TODO: Implement property buying logic
+  const canBuyLand = currentLocation && !currentLocation.owner && currentLocation.type === 'city' && currentPlayer.money >= currentLocation.price;
   const canBuildOnCurrentLocation = false; // TODO: Implement building logic
 
   const handleLocationClick = (location: GameLocation) => {
     setSelectedLocation(location);
   };
 
-  const handleBuyProperty = () => {
-    // TODO: Implement local property buying
+  const handleBuyLand = () => {
+    if (currentLocation && onBuyLand) {
+      onBuyLand(currentPlayer.id, currentLocation.id);
+    }
   };
 
   const handleBuildChurch = () => {
@@ -180,18 +184,17 @@ export default function LocalGameBoard({
                   </div>
                 )}
                 
-                {/* Action Buttons */}
+                 {/* Action Buttons */}
                 {!currentPlayerPrivate && (
                   <div className="space-y-2">
-                    {canBuyProperty && (
+                    {canBuyLand && (
                       <Button 
-                        onClick={handleBuyProperty}
+                        onClick={handleBuyLand}
                         className="w-full text-sm"
                         variant="default"
-                        disabled
                       >
                         <Coins className="w-3 h-3 mr-1" />
-                        Buy Property (Coming Soon)
+                        Buy Land
                       </Button>
                     )}
                     

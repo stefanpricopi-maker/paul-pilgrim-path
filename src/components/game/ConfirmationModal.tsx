@@ -32,8 +32,8 @@ const ConfirmationModal = ({
     switch (action) {
       case 'buy':
         return {
-          title: 'Purchase Property',
-          description: `Do you want to purchase ${location.name} for ${location.price} denarii?`,
+          title: 'Purchase Land',
+          description: `Do you want to purchase land in ${location.name} for ${location.price} denarii?`,
           cost: location.price,
           icon: <ShoppingCart className="w-5 h-5" />,
           confirmText: 'Purchase'
