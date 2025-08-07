@@ -72,14 +72,14 @@ const GameBoard = ({
   const boardLayout = createBoardLayout();
   return <div className="w-full max-w-6xl mx-auto p-4">
       {/* Board Title */}
-      <div className="text-center mb-6">
+      {/* <div className="text-center mb-6"> 
         <h2 className="text-3xl font-bold text-primary ancient-text mb-2">
           Paul's Missionary Journeys
         </h2>
         <p className="text-muted-foreground">
           Follow in the footsteps of the great apostle
         </p>
-      </div>
+      </div>*/}
 
       {/* Game Board */}
       <div className="relative bg-gradient-board rounded-2xl p-6 shadow-ancient border-4 border-accent/30">
