@@ -107,7 +107,13 @@ const Index = () => {
     position: player.position,
     money: player.coins,
     properties: [], // TODO: Load from tiles ownership
-    color: `hsl(var(--player-${(onlineGameState.players.indexOf(player) % 6) + 1}))`
+    color: `hsl(var(--player-${(onlineGameState.players.indexOf(player) % 6) + 1}))`,
+    inJail: player.in_jail,
+    jailTurns: player.jail_turns,
+    hasGetOutOfJailCard: player.has_get_out_of_jail_card,
+    immunityUntil: player.immunity_until,
+    skipNextTurn: false, // TODO: Add to database
+    consecutiveDoubles: 0, // TODO: Add to database
   }));
 
   // Convert tiles to locations format for compatibility

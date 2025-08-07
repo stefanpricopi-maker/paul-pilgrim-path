@@ -70,6 +70,11 @@ export const useEconomy = () => {
           type: 'expense'
         });
         break;
+        
+      case 'get_out_of_jail':
+        // This doesn't create a transaction but sets a flag on the player
+        // This will be handled in the game logic
+        break;
     }
     
     return transactions;

@@ -6,6 +6,12 @@ export interface Player {
   money: number;
   properties: string[];
   color: string;
+  inJail: boolean;
+  jailTurns: number;
+  hasGetOutOfJailCard: boolean;
+  immunityUntil: number; // Round number until which player has immunity
+  skipNextTurn: boolean;
+  consecutiveDoubles: number;
 }
 
 export interface BiblicalCharacter {

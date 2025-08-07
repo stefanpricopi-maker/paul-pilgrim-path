@@ -42,9 +42,18 @@ const PlayerCard = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="text-3xl">{player.character.avatar}</div>
-            <div>
+            <div className="flex-1">
               <h3 className="font-bold text-primary ancient-text">{player.name}</h3>
               <p className="text-sm text-muted-foreground">{player.character.name}</p>
+              {player.inJail && (
+                <div className="text-xs text-orange-500 font-medium">🔒 In Prison ({player.jailTurns}/3)</div>
+              )}
+              {player.skipNextTurn && (
+                <div className="text-xs text-blue-500 font-medium">⏸️ Skip Next Turn</div>
+              )}
+              {player.immunityUntil > 0 && (
+                <div className="text-xs text-green-500 font-medium">🛡️ Immunity Active</div>
+              )}
             </div>
           </div>
           {isCurrentPlayer && (

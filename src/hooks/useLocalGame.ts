@@ -53,6 +53,12 @@ export const useLocalGame = () => {
       money: 1000,
       properties: [],
       color: playerColors[index] || `hsl(var(--game-player${(index % 6) + 1}))`,
+      inJail: false,
+      jailTurns: 0,
+      hasGetOutOfJailCard: false,
+      immunityUntil: 0,
+      skipNextTurn: false,
+      consecutiveDoubles: 0,
     }));
 
     setGameState(prev => ({
@@ -93,6 +99,95 @@ export const useLocalGame = () => {
     return false;
   }, []);
 
+  // Check for special tile effects
+  const handleSpecialTile = useCallback((player: Player, location: GameLocation, diceValue: number) => {
+    const transactions = [];
+    let specialEffects: Partial<Player> = {};
+    
+    switch (location.id) {
+      case 'prison':
+        // TEMNIȚA: If landing here directly, just visiting
+        break;
+        
+      case 'go-to-prison':
+        // GO TO PRISON: Send player to jail
+        specialEffects = {
+          position: 10, // Prison position
+          inJail: true,
+          jailTurns: 0,
+          consecutiveDoubles: 0
+        };
+        break;
+        
+      case 'sabat':
+        // SABAT: Skip next turn
+        specialEffects = { skipNextTurn: true };
+        break;
+        
+      case 'cort':
+        // CORT: Add temporary immunity (1 round)
+        specialEffects = { immunityUntil: gameState.round + 1 };
+        break;
+        
+      default:
+        // Check if it's a PORT for teleport ability
+        if (location.type === 'port') {
+          // Player can choose to teleport to another port
+          // For now, automatically teleport to next available port
+          const ports = gameState.locations.filter(loc => loc.type === 'port' && loc.id !== location.id);
+          if (ports.length > 0) {
+            const randomPort = ports[Math.floor(Math.random() * ports.length)];
+            const portIndex = gameState.locations.findIndex(loc => loc.id === randomPort.id);
+            if (portIndex !== -1) {
+              specialEffects = { position: portIndex };
+            }
+          }
+        }
+        break;
+    }
+    
+    return { transactions, specialEffects };
+  }, [gameState.round, gameState.locations]);
+
+  // Handle jail mechanics
+  const handleJailLogic = useCallback((player: Player, diceValue: number) => {
+    if (!player.inJail) return { canMove: true, effects: {} };
+    
+    // Check if player has been in jail for 3 turns
+    if (player.jailTurns >= 3) {
+      return {
+        canMove: true,
+        effects: {
+          inJail: false,
+          jailTurns: 0
+        }
+      };
+    }
+    
+    // Check for doubles to get out of jail
+    // For simplicity, we'll use a random chance here
+    const isDouble = Math.random() < 0.16; // ~1/6 chance like rolling doubles
+    
+    if (isDouble || player.hasGetOutOfJailCard) {
+      return {
+        canMove: true,
+        effects: {
+          inJail: false,
+          jailTurns: 0,
+          hasGetOutOfJailCard: player.hasGetOutOfJailCard ? false : player.hasGetOutOfJailCard
+        }
+      };
+    }
+    
+    // Remain in jail
+    return {
+      canMove: false,
+      effects: {
+        jailTurns: player.jailTurns + 1
+      }
+    };
+  }, []);
+
   // Roll dice
   const rollDice = useCallback(() => {
     if (gameState.isRolling) return;
@@ -110,16 +205,88 @@ export const useLocalGame = () => {
       
       setGameState(prev => {
         const currentPlayer = prev.players[prev.currentPlayerIndex];
-        const newPosition = (currentPlayer.position + finalValue) % prev.locations.length;
-        const passedStart = newPosition < currentPlayer.position;
+        
+        // Check if player should skip turn
+        if (currentPlayer.skipNextTurn) {
+          const updatedPlayers = prev.players.map((player, index) => 
+            index === prev.currentPlayerIndex 
+              ? { ...player, skipNextTurn: false }
+              : player
+          );
+          
+          return {
+            ...prev,
+            players: updatedPlayers,
+            diceValue: finalValue,
+            isRolling: false,
+            gameLog: [...prev.gameLog, `${currentPlayer.name} skipped their turn due to SABAT`].slice(-10)
+          };
+        }
+        
+        // Handle jail logic
+        const jailResult = handleJailLogic(currentPlayer, finalValue);
+        
+        if (!jailResult.canMove) {
+          const updatedPlayers = prev.players.map((player, index) => 
+            index === prev.currentPlayerIndex 
+              ? { ...player, ...jailResult.effects }
+              : player
+          );
+          
+          return {
+            ...prev,
+            players: updatedPlayers,
+            diceValue: finalValue,
+            isRolling: false,
+            gameLog: [...prev.gameLog, `${currentPlayer.name} rolled ${finalValue} but remains in jail (${currentPlayer.jailTurns + 1}/3 turns)`].slice(-10)
+          };
+        }
+        
+        // Player can move - calculate new position
+        let newPosition = (currentPlayer.position + finalValue) % prev.locations.length;
+        const passedStart = newPosition < currentPlayer.position && !currentPlayer.inJail;
+        
+        // Handle special tile effects
+        const newLocation = prev.locations[newPosition];
+        const { transactions: specialTransactions, specialEffects } = handleSpecialTile(currentPlayer, newLocation, finalValue);
+        
+        // Apply special effects (like teleporting or going to jail)
+        if (specialEffects.position !== undefined) {
+          newPosition = specialEffects.position;
+        }
         
         let updatedPlayers = prev.players.map((player, index) => 
           index === prev.currentPlayerIndex 
-            ? { ...player, position: newPosition }
+            ? { 
+                ...player, 
+                position: newPosition,
+                ...jailResult.effects,
+                ...specialEffects
+              }
             : player
         );
 
-        let logEntries = [`${currentPlayer.name} rolled ${finalValue} and moved to ${prev.locations[newPosition].name}`];
+        let logEntries = [`${currentPlayer.name} rolled ${finalValue}`];
+        
+        if (currentPlayer.inJail && jailResult.canMove) {
+          logEntries.push(`${currentPlayer.name} got out of jail!`);
+        }
+        
+        logEntries.push(`${currentPlayer.name} moved to ${prev.locations[newPosition].name}`);
+        
+        // Add special effect messages
+        if (specialEffects.position !== undefined && prev.locations[newPosition].type === 'port') {
+          logEntries.push(`${currentPlayer.name} teleported via PORT!`);
+        }
+        if (specialEffects.inJail) {
+          logEntries.push(`${currentPlayer.name} was sent to prison!`);
+        }
+        if (specialEffects.skipNextTurn) {
+          logEntries.push(`${currentPlayer.name} will skip next turn (SABAT)`);
+        }
+        if (specialEffects.immunityUntil) {
+          logEntries.push(`${currentPlayer.name} gained immunity for 1 round (CORT)`);
+        }
         
         // Handle passing start bonus
         if (passedStart) {
@@ -128,9 +295,9 @@ export const useLocalGame = () => {
           logEntries.push(`${currentPlayer.name} passed Antiohia and received 200 denarii`);
         }
 
-        // Handle landing on special tiles
-        const currentLocation = prev.locations[newPosition];
-        if (currentLocation.type === 'community-chest') {
+        // Handle landing on special tiles for card drawing
+        const finalLocation = prev.locations[newPosition];
+        if (finalLocation.type === 'community-chest') {
           const card = drawCommunityCard();
           if (card) {
             return {
@@ -143,7 +310,7 @@ export const useLocalGame = () => {
               cardType: 'community'
             };
           }
-        } else if (currentLocation.type === 'chance') {
+        } else if (finalLocation.type === 'chance') {
           const card = drawChanceCard();
           if (card) {
             return {

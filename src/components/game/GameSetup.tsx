@@ -77,7 +77,13 @@ const GameSetup = ({ onStartGame }: GameSetupProps) => {
         position: 0,
         money: 500,
         properties: [],
-        color: playerColors[index]
+        color: playerColors[index],
+        inJail: false,
+        jailTurns: 0,
+        hasGetOutOfJailCard: false,
+        immunityUntil: 0,
+        skipNextTurn: false,
+        consecutiveDoubles: 0,
       }));
       
       onStartGame(completePlayers);
