@@ -21,12 +21,12 @@ const PlayerCard = ({
 }: PlayerCardProps) => {
   const getPlayerColorClass = (color: string) => {
     const colorMap: Record<string, string> = {
-      'hsl(var(--player-1))': 'border-game-player1 bg-game-player1/10',
-      'hsl(var(--player-2))': 'border-game-player2 bg-game-player2/10',
-      'hsl(var(--player-3))': 'border-game-player3 bg-game-player3/10',
-      'hsl(var(--player-4))': 'border-game-player4 bg-game-player4/10',
-      'hsl(var(--player-5))': 'border-game-player5 bg-game-player5/10',
-      'hsl(var(--player-6))': 'border-game-player6 bg-game-player6/10',
+      'hsl(var(--game-player1))': 'border-game-player1 bg-game-player1/10',
+      'hsl(var(--game-player2))': 'border-game-player2 bg-game-player2/10',
+      'hsl(var(--game-player3))': 'border-game-player3 bg-game-player3/10',
+      'hsl(var(--game-player4))': 'border-game-player4 bg-game-player4/10',
+      'hsl(var(--game-player5))': 'border-game-player5 bg-game-player5/10',
+      'hsl(var(--game-player6))': 'border-game-player6 bg-game-player6/10',
     };
     return colorMap[color] || 'border-primary bg-primary/10';
   };

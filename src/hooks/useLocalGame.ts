@@ -37,7 +37,7 @@ export const useLocalGame = () => {
       position: 0,
       money: 1000,
       properties: [],
-      color: playerColors[index] || `hsl(var(--player-${(index % 6) + 1}))`,
+      color: playerColors[index] || `hsl(var(--game-player${(index % 6) + 1}))`,
     }));
 
     setGameState(prev => ({

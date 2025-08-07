@@ -48,14 +48,14 @@
     --board-bg: 35 30% 75%;
     --water: 200 80% 60%;
     --land: 35 35% 70%;
-    --church: 260 50% 45%;
-    --synagogue: 30 60% 50%;
-    --player-1: 0 70% 60%;
-    --player-2: 120 60% 50%;
-    --player-3: 240 70% 60%;
-    --player-4: 280 60% 55%;
-    --player-5: 35 70% 55%;
-    --player-6: 180 60% 50%;
+    --game-church: 260 50% 45%;
+    --game-synagogue: 30 60% 50%;
+    --game-player1: 0 70% 60%;
+    --game-player2: 120 60% 50%;
+    --game-player3: 240 70% 60%;
+    --game-player4: 280 60% 55%;
+    --game-player5: 35 70% 55%;
+    --game-player6: 180 60% 50%;
     
     /* Special tile colors from the image */
     --special-gold: 45 80% 55%;

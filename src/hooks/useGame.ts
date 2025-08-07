@@ -113,16 +113,25 @@ export const useGame = () => {
     }));
   }, []);
 
-  const buyProperty = useCallback((locationId: string) => {
+  const buyProperty = useCallback((locationId: string, skipConfirmation: boolean = false) => {
     const location = gameState.locations.find(loc => loc.id === locationId);
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     
     if (!location || !currentPlayer) return;
     
-    if (location.owner || currentPlayer.money < location.price) {
+    if (location.owner) {
       toast({
         title: "Cannot Purchase",
-        description: location.owner ? "Property already owned!" : "Insufficient funds!",
+        description: "Property already owned!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (currentPlayer.money < location.price) {
+      toast({
+        title: "Insufficient Funds",
+        description: `Need ${location.price} denarii to purchase this property`,
         variant: "destructive"
       });
       return;
@@ -160,7 +169,7 @@ export const useGame = () => {
     });
   }, [gameState.locations, gameState.players, gameState.currentPlayerIndex, addToLog]);
 
-  const buildChurch = useCallback((locationId: string) => {
+  const buildChurch = useCallback((locationId: string, skipConfirmation: boolean = false) => {
     const location = gameState.locations.find(loc => loc.id === locationId);
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     
@@ -168,6 +177,15 @@ export const useGame = () => {
       toast({
         title: "Cannot Build",
         description: "You don't own this property!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (location.type !== 'city') {
+      toast({
+        title: "Cannot Build",
+        description: "Churches can only be built in cities!",
         variant: "destructive"
       });
       return;
@@ -216,7 +234,7 @@ export const useGame = () => {
     });
   }, [gameState.locations, gameState.players, gameState.currentPlayerIndex, addToLog]);
 
-  const buildSynagogue = useCallback((locationId: string) => {
+  const buildSynagogue = useCallback((locationId: string, skipConfirmation: boolean = false) => {
     const location = gameState.locations.find(loc => loc.id === locationId);
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     
@@ -224,6 +242,15 @@ export const useGame = () => {
       toast({
         title: "Cannot Build",
         description: "You don't own this property!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (location.type !== 'city') {
+      toast({
+        title: "Cannot Build",
+        description: "Synagogues can only be built in cities!",
         variant: "destructive"
       });
       return;

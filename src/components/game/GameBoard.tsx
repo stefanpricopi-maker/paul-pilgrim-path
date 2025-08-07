@@ -1,7 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { GameLocation, Player } from '@/types/game';
-import { Church, Building2, Anchor, Crown, MapPin, Lock, ArrowRight, Dice1, Gift, Scale, Flame } from 'lucide-react';
+import { Church, Building2, Anchor, Crown, MapPin, Lock, ArrowRight, Dice1, Gift, Scale, Flame, User } from 'lucide-react';
 interface GameBoardProps {
   locations: GameLocation[];
   players: Player[];
@@ -144,33 +144,56 @@ const GameBoard = ({
                         
                         {/* Content area */}
                         <div className="flex-1 p-2 flex flex-col justify-between">
-                          {/* City name */}
-                          <div className="text-center">
-                            {/*<h4 className="font-bold text-xs leading-tight text-black"> */}
+                          {/* City name and ownership */}
+                          <div className="text-center space-y-1">
                             <h4 className="flex items-center justify-center text-xs leading-tight text-black">
                               {location.name}
                             </h4>
+                            
+                            {/* Ownership indicator */}
+                            {location.owner && (
+                              <div className="flex justify-center">
+                                <div 
+                                  className="w-3 h-3 rounded-full border border-white"
+                                  style={{ 
+                                    backgroundColor: players.find(p => p.id === location.owner)?.color || '#666',
+                                    boxShadow: '0 1px 2px rgba(0,0,0,0.3)'
+                                  }}
+                                  title={`Owned by ${players.find(p => p.id === location.owner)?.name}`}
+                                />
+                              </div>
+                            )}
                           </div>
 
                           {/* Buildings - only for cities */}
-                          {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && <div className="flex justify-center space-x-1">
-                              {Array.from({
-                      length: location.buildings.churches
-                    }).map((_, i) => <Church key={`church-${i}`} className="w-3 h-3 text-purple-600" />)}
-                              {Array.from({
-                      length: location.buildings.synagogues
-                    }).map((_, i) => <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-yellow-600" />)}
-                            </div>}
+                          {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && (
+                            <div className="flex justify-center space-x-1">
+                              {Array.from({ length: location.buildings.churches }).map((_, i) => (
+                                <Church key={`church-${i}`} className="w-3 h-3 text-game-church" />
+                              ))}
+                              {Array.from({ length: location.buildings.synagogues }).map((_, i) => (
+                                <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-game-synagogue" />
+                              ))}
+                            </div>
+                          )}
 
                           {/* Players */}
-                          {playersHere.length > 0 && <div className="flex justify-center flex-wrap gap-1">
-                              {playersHere.map((player, index) => <div key={player.id} className="player-piece text-sm transform hover:scale-110 bg-white rounded-full w-5 h-5 flex items-center justify-center border-2" style={{
-                      borderColor: player.color,
-                      filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'
-                    }}>
+                          {playersHere.length > 0 && (
+                            <div className="flex justify-center flex-wrap gap-1">
+                              {playersHere.map((player) => (
+                                <div 
+                                  key={player.id} 
+                                  className="player-piece text-sm transform hover:scale-110 bg-white rounded-full w-5 h-5 flex items-center justify-center border-2" 
+                                  style={{
+                                    borderColor: player.color,
+                                    filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'
+                                  }}
+                                >
                                   {player.character.avatar}
-                                </div>)}
-                            </div>}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
                       </div>
                     </Card> : <div className="h-full min-h-[60px]" />}

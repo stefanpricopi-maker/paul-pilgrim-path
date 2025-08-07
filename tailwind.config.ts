@@ -66,14 +66,14 @@ export default {
 					board: 'hsl(var(--board-bg))',
 					water: 'hsl(var(--water))',
 					land: 'hsl(var(--land))',
-					church: 'hsl(var(--church))',
-					synagogue: 'hsl(var(--synagogue))',
-					player1: 'hsl(var(--player-1))',
-					player2: 'hsl(var(--player-2))',
-					player3: 'hsl(var(--player-3))',
-					player4: 'hsl(var(--player-4))',
-					player5: 'hsl(var(--player-5))',
-					player6: 'hsl(var(--player-6))'
+					church: 'hsl(var(--game-church))',
+					synagogue: 'hsl(var(--game-synagogue))',
+					player1: 'hsl(var(--game-player1))',
+					player2: 'hsl(var(--game-player2))',
+					player3: 'hsl(var(--game-player3))',
+					player4: 'hsl(var(--game-player4))',
+					player5: 'hsl(var(--game-player5))',
+					player6: 'hsl(var(--game-player6))'
 				}
 			},
 			backgroundImage: {
