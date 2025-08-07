@@ -43,14 +43,16 @@ export const useLocalGame = () => {
     loadCards();
   }, [loadCards]);
 
-  // Create local game with players
-  const createLocalGame = useCallback((playerNames: string[], playerColors: string[]) => {
+  // Create local game with players and settings
+  const createLocalGame = useCallback((playerNames: string[], playerColors: string[], settings?: any) => {
+    const initialMoney = settings?.initialBalance || 1000;
+    
     const players: Player[] = playerNames.map((name, index) => ({
       id: `local-${index}`,
       name,
       character: BIBLICAL_CHARACTERS[index % BIBLICAL_CHARACTERS.length],
       position: 0,
-      money: 1000,
+      money: initialMoney,
       properties: [],
       color: playerColors[index] || `hsl(var(--game-player${(index % 6) + 1}))`,
       inJail: false,
@@ -65,7 +67,7 @@ export const useLocalGame = () => {
       ...prev,
       players,
       gameStarted: true,
-      gameLog: [`Game started with ${players.length} players!`],
+      gameLog: [`Game started with ${players.length} players!${settings?.debugMode ? ' (Debug Mode)' : ''}`],
     }));
 
     // Save to localStorage
