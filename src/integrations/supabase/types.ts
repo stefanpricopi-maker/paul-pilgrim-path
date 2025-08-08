@@ -131,6 +131,63 @@ export type Database = {
         }
         Relationships: []
       }
+      cleanup_config: {
+        Row: {
+          description: string | null
+          id: number
+          setting_name: string
+          setting_value: string
+          updated_at: string | null
+        }
+        Insert: {
+          description?: string | null
+          id?: number
+          setting_name: string
+          setting_value: string
+          updated_at?: string | null
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          setting_name?: string
+          setting_value?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      cleanup_log: {
+        Row: {
+          cleanup_completed_at: string | null
+          cleanup_started_at: string | null
+          cleanup_type: string
+          error_message: string | null
+          games_deleted: number | null
+          id: number
+          related_records_deleted: number | null
+          success: boolean | null
+        }
+        Insert: {
+          cleanup_completed_at?: string | null
+          cleanup_started_at?: string | null
+          cleanup_type: string
+          error_message?: string | null
+          games_deleted?: number | null
+          id?: number
+          related_records_deleted?: number | null
+          success?: boolean | null
+        }
+        Update: {
+          cleanup_completed_at?: string | null
+          cleanup_started_at?: string | null
+          cleanup_type?: string
+          error_message?: string | null
+          games_deleted?: number | null
+          id?: number
+          related_records_deleted?: number | null
+          success?: boolean | null
+        }
+        Relationships: []
+      }
       game_log: {
         Row: {
           action: string | null
@@ -356,6 +413,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_old_games: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          games_deleted: number
+          tiles_deleted: number
+          players_deleted: number
+          members_deleted: number
+          logs_deleted: number
+        }[]
+      }
       copy_template_tiles: {
         Args: { target_game_id: string }
         Returns: undefined
