@@ -235,10 +235,18 @@ export const useLocalGame = () => {
 
   // Roll dice
   const rollDice = useCallback(() => {
-    if (gameState.isRolling) return;
+    console.log("Roll dice called");
+    if (gameState.isRolling) {
+      console.log("Already rolling, returning");
+      return;
+    }
     
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    if (currentPlayer.hasRolled) return; // Player can only roll once per turn
+    console.log("Current player:", currentPlayer?.name, "hasRolled:", currentPlayer?.hasRolled);
+    if (currentPlayer?.hasRolled) {
+      console.log("Player has already rolled this turn");
+      return; // Player can only roll once per turn
+    }
 
     setGameState(prev => ({ ...prev, isRolling: true }));
 
