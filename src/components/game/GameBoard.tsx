@@ -96,12 +96,12 @@ const GameBoard = ({
       {/* Game Board */}
       <div className="relative bg-gradient-board rounded-2xl p-6 shadow-ancient border-4 border-accent/30">
         {/* Center area with journey descriptions */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="absolute inset-0 flex items-center justify-start pointer-events-none">
           
           
           
           
-          <Card className="w-80 h-60 p-6 bg-gradient-parchment     border-2 border-primary/30">
+          <Card className="w-80 h-60 p-6 bg-gradient-parchment border-2 border-primary/30">
             <div className="text-center space-y-3 ancient-text">
               <h3 className="text-xl font-bold text-primary">Journey Log</h3>
               <div className="grid grid-cols-2 gap-2 text-sm">
