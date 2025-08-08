@@ -121,38 +121,29 @@ const GameBoard = ({
             return <div key={`${rowIndex}-${colIndex}`} className="w-0 h-0" />;
           }
           
-          // Determine orientation and sizing
+          // Determine orientation and sizing - make all tiles similar to corners
           const isLeftColumn = colIndex === 0 && rowIndex > 0 && rowIndex < 10;
           const isRightColumn = colIndex === 10 && rowIndex > 0 && rowIndex < 10;
           const isTopRow = rowIndex === 0 && colIndex > 0 && colIndex < 10;
           const isBottomRow = rowIndex === 10 && colIndex > 0 && colIndex < 10;
           
-          // Set consistent tile dimensions
+          // Set consistent tile dimensions - all tiles similar to corners
           let tileClasses = '';
-          let contentClasses = '';
-          let stripOrientation = '';
+          let contentClasses = 'flex-col';
+          let stripOrientation = 'h-6 w-full';
           
           if (isCorner) {
             tileClasses = 'w-[90px] h-[90px]';
-            contentClasses = 'flex-col';
-            stripOrientation = 'h-6 w-full';
           } else if (isLeftColumn || isRightColumn) {
-            tileClasses = 'w-[60px] h-[70px]';
-            contentClasses = 'flex-col';
-            stripOrientation = 'h-6 w-full';
+            // Make left/right tiles wider like corners, no rotation
+            tileClasses = 'w-[90px] h-[70px]';
           } else {
-            tileClasses = 'w-[70px] h-[60px]';
-            contentClasses = 'flex-col';
-            stripOrientation = 'h-6 w-full';
+            // Make top/bottom tiles higher like corners  
+            tileClasses = 'w-[70px] h-[90px]';
           }
 
-          // Text rotation for side tiles
-          let textRotation = '';
-          if (isLeftColumn) {
-            textRotation = 'rotate-90';
-          } else if (isRightColumn) {
-            textRotation = '-rotate-90';
-          }
+          // Remove all text rotation
+          const textRotation = '';
     
           return (
             <div key={`${rowIndex}-${colIndex}`} className="relative flex items-center justify-center">
@@ -170,11 +161,9 @@ const GameBoard = ({
                     <div className="flex-1 p-1 flex flex-col justify-between min-h-0">
                       {/* City name and ownership */}
                       <div className="text-center space-y-1 flex-shrink-0">
-                        <div className={`${textRotation} transform-gpu origin-center`}>
-                          <h4 className="text-xs font-semibold leading-tight text-black truncate">
-                            {location.name}
-                          </h4>
-                        </div>
+                        <h4 className="text-xs font-semibold leading-tight text-black truncate">
+                          {location.name}
+                        </h4>
                         
                         {/* Enhanced ownership indicator */}
                         {location.owner && (
@@ -191,7 +180,7 @@ const GameBoard = ({
                         
                         {/* Price indicator for unowned properties */}
                         {!location.owner && location.type === 'city' && location.price && (
-                          <div className={`text-xs font-bold text-green-700 ${textRotation} transform-gpu origin-center`}>
+                          <div className="text-xs font-bold text-green-700">
                             {location.price}
                           </div>
                         )}
