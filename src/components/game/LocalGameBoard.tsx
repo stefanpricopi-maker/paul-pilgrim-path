@@ -164,13 +164,27 @@ export default function LocalGameBoard({
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           
-          {/* Game Board - Large Center Area */}
-          <div className="lg:col-span-3">
+          {/* Game Board and Journey Log - Large Center Area */}
+          <div className="lg:col-span-3 space-y-6">
             <GameBoard 
               locations={gameState.locations}
               players={gameState.players}
               onLocationClick={handleLocationClick}
             />
+            
+            {/* Journey Log - Center Position */}
+            <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
+              <h3 className="font-bold text-primary ancient-text mb-3 text-center">Journey Log</h3>
+              <ScrollArea className="h-32">
+                <div className="space-y-1">
+                  {gameState.gameLog.slice().reverse().map((entry, index) => (
+                    <p key={index} className="text-sm text-muted-foreground text-center">
+                      {entry}
+                    </p>
+                  ))}
+                </div>
+              </ScrollArea>
+            </UICard>
           </div>
 
           {/* Right Sidebar */}
@@ -285,19 +299,6 @@ export default function LocalGameBoard({
               </div>
             </UICard>
 
-            {/* Game Log */}
-            <UICard className="p-4 bg-gradient-parchment border-2 border-muted/30">
-              <h3 className="font-bold text-primary ancient-text mb-3">Journey Log</h3>
-              <ScrollArea className="h-32">
-                <div className="space-y-1">
-                  {gameState.gameLog.map((entry, index) => (
-                    <p key={index} className="text-xs text-muted-foreground">
-                      {entry}
-                    </p>
-                  ))}
-                </div>
-              </ScrollArea>
-            </UICard>
           </div>
         </div>
 

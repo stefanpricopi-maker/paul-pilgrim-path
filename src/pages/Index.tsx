@@ -240,13 +240,27 @@ const Index = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           
-          {/* Game Board - Large Center Area */}
-          <div className="lg:col-span-3">
+          {/* Game Board and Journey Log - Large Center Area */}
+          <div className="lg:col-span-3 space-y-6">
             <GameBoard 
               locations={gameLocationsForDisplay}
               players={gamePlayersForDisplay}
               onLocationClick={handleLocationClick}
             />
+            
+            {/* Journey Log - Center Position */}
+            <Card className="p-4 bg-gradient-parchment border-2 border-primary/30">
+              <h3 className="font-bold text-primary ancient-text mb-3 text-center">Journey Log</h3>
+              <ScrollArea className="h-32">
+                 <div className="space-y-1">
+                   {onlineGameState.gameLog.slice().reverse().map((entry, index) => (
+                     <p key={index} className="text-sm text-muted-foreground text-center">
+                       {entry.description}
+                     </p>
+                   ))}
+                 </div>
+              </ScrollArea>
+            </Card>
           </div>
 
           {/* Right Sidebar */}
@@ -335,19 +349,6 @@ const Index = () => {
               </div>
             </Card>
 
-            {/* Game Log */}
-            <Card className="p-4 bg-gradient-parchment border-2 border-muted/30">
-              <h3 className="font-bold text-primary ancient-text mb-3">Journey Log</h3>
-              <ScrollArea className="h-32">
-                 <div className="space-y-1">
-                   {onlineGameState.gameLog.map((entry, index) => (
-                     <p key={index} className="text-xs text-muted-foreground">
-                       {entry.description}
-                     </p>
-                   ))}
-                 </div>
-              </ScrollArea>
-            </Card>
           </div>
         </div>
 
