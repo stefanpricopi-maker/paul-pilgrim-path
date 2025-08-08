@@ -62,6 +62,7 @@ export const useCards = () => {
         break;
 
       case 'lose_money':
+      case 'pay_money':
         const lossMatch = card.text_en.match(/(\d+)/);
         result.moneyChange = -(lossMatch ? parseInt(lossMatch[1]) : 50);
         result.description = `Lost ${Math.abs(result.moneyChange)} denarii`;

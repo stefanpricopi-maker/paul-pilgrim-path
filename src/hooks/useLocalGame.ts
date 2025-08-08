@@ -554,7 +554,7 @@ export const useLocalGame = () => {
           reason: 'Community/Chance card reward',
           type: 'income' as const
         }];
-      } else if (card.action_type === 'lose_money' && cardResult.moneyChange < 0) {
+      } else if ((card.action_type === 'lose_money' || card.action_type === 'pay_money') && cardResult.moneyChange < 0) {
         transactions = [{
           playerId: currentPlayer.id,
           amount: cardResult.moneyChange,
