@@ -5,9 +5,12 @@ import { BIBLICAL_CHARACTERS } from '@/types/game';
 import { GAME_LOCATIONS } from '@/data/locations';
 import { useCards } from './useCards';
 import { useEconomy } from './useEconomy';
+import { useAI } from './useAI';
+import { useAchievements } from './useAchievements';
+import { AIPlayer } from '@/types/ai';
 
 interface LocalGameState {
-  players: Player[];
+  players: (Player | AIPlayer)[];
   currentPlayerIndex: number;
   locations: GameLocation[];
   gameStarted: boolean;
@@ -18,11 +21,22 @@ interface LocalGameState {
   round: number;
   drawnCard: Card | null;
   cardType: 'community' | 'chance' | null;
+  aiDecision?: string;
+  isAIThinking: boolean;
 }
 
 export const useLocalGame = () => {
   const { loadCards, drawCommunityCard, drawChanceCard, processCardAction } = useCards();
   const { handlePassStart, handleCardAction: processEconomyAction, applyTransactions } = useEconomy();
+  const { createAIPlayer, shouldAIBuyProperty, shouldAIBuildChurch, shouldAIBuildSynagogue } = useAI();
+  const { 
+    initializePlayerAchievements, 
+    updateCurrentGameStat, 
+    incrementCurrentGameStat,
+    checkAchievement,
+    recordGameEnd,
+    getPlayerAchievements
+  } = useAchievements();
   
   const [gameState, setGameState] = useState<LocalGameState>({
     players: [],
@@ -36,6 +50,8 @@ export const useLocalGame = () => {
     round: 1,
     drawnCard: null,
     cardType: null,
+    aiDecision: undefined,
+    isAIThinking: false,
   });
 
   const [currentPlayerPrivate, setCurrentPlayerPrivate] = useState(true);
@@ -49,21 +65,41 @@ export const useLocalGame = () => {
   const createLocalGame = useCallback((playerNames: string[], playerColors: string[], settings?: any) => {
     const initialMoney = settings?.initialBalance || 1000;
     
-    const players: Player[] = playerNames.map((name, index) => ({
-      id: `local-${index}`,
-      name,
-      character: BIBLICAL_CHARACTERS[index % BIBLICAL_CHARACTERS.length],
-      position: 0,
-      money: initialMoney,
-      properties: [],
-      color: playerColors[index] || `hsl(var(--game-player${(index % 6) + 1}))`,
-      inJail: false,
-      jailTurns: 0,
-      hasGetOutOfJailCard: false,
-      immunityUntil: 0,
-      skipNextTurn: false,
-      consecutiveDoubles: 0,
-    }));
+    const players: (Player | AIPlayer)[] = playerNames.map((name, index) => {
+      const playerSetup = settings?.players?.[index];
+      const character = BIBLICAL_CHARACTERS[index % BIBLICAL_CHARACTERS.length];
+      
+      if (playerSetup?.isAI) {
+        return createAIPlayer(
+          `local-${index}`,
+          name,
+          character,
+          playerColors[index] || `hsl(var(--game-player${(index % 6) + 1}))`,
+          playerSetup.aiPersonality || 0
+        );
+      }
+      
+      return {
+        id: `local-${index}`,
+        name,
+        character,
+        position: 0,
+        money: initialMoney,
+        properties: [],
+        color: playerColors[index] || `hsl(var(--game-player${(index % 6) + 1}))`,
+        inJail: false,
+        jailTurns: 0,
+        hasGetOutOfJailCard: false,
+        immunityUntil: 0,
+        skipNextTurn: false,
+        consecutiveDoubles: 0,
+      };
+    });
+
+    // Initialize achievements for all players
+    players.forEach(player => {
+      initializePlayerAchievements(player.id, player.name);
+    });
 
     setGameState(prev => ({
       ...prev,
@@ -341,6 +377,38 @@ export const useLocalGame = () => {
           }
         }
         
+        // Track achievements
+        incrementCurrentGameStat(currentPlayer.id, 'passedStart');
+        if (isDoubles) {
+          incrementCurrentGameStat(currentPlayer.id, 'doublesRolled');
+        }
+
+        // Handle AI decision making if current player is AI
+        const isAI = 'isAI' in currentPlayer && currentPlayer.isAI;
+        if (isAI) {
+          const aiPlayer = currentPlayer as AIPlayer;
+          const currentLocation = prev.locations[newPosition];
+          
+          // AI decision for buying property
+          if (currentLocation.type === 'city' && !currentLocation.owner && aiPlayer.money >= currentLocation.price) {
+            if (shouldAIBuyProperty(aiPlayer, currentLocation)) {
+              setTimeout(() => buyLand(aiPlayer.id, currentLocation.id), 2000);
+              logEntries.push(`${aiPlayer.name} (AI) is considering buying ${currentLocation.name}...`);
+            }
+          }
+          
+          // AI decision for building
+          if (currentLocation.owner === aiPlayer.id) {
+            if (shouldAIBuildChurch(aiPlayer, currentLocation)) {
+              setTimeout(() => buildChurch(aiPlayer.id, currentLocation.id), 2500);
+              logEntries.push(`${aiPlayer.name} (AI) is planning to build...`);
+            } else if (shouldAIBuildSynagogue(aiPlayer, currentLocation)) {
+              setTimeout(() => buildSynagogue(aiPlayer.id, currentLocation.id), 2500);
+              logEntries.push(`${aiPlayer.name} (AI) is planning to build...`);
+            }
+          }
+        }
+
         // Auto-end turn after rolling (new behavior)
         const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
         const newRound = nextPlayerIndex === 0 ? prev.round + 1 : prev.round;
@@ -414,6 +482,8 @@ export const useLocalGame = () => {
       round: 1,
       drawnCard: null,
       cardType: null,
+      aiDecision: undefined,
+      isAIThinking: false,
     });
     localStorage.removeItem('localGameState');
     setCurrentPlayerPrivate(true);
@@ -456,6 +526,9 @@ export const useLocalGame = () => {
           `${prevState.players.find(p => p.id === playerId)?.name} bought land in ${location.name}`
         ].slice(-10)
       };
+      
+      // Track achievements
+      incrementCurrentGameStat(playerId, 'propertiesBought');
       
       // Save to localStorage
       localStorage.setItem('localGameState', JSON.stringify({

@@ -4,12 +4,22 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Trash2, Plus, Users, Play } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Trash2, Plus, Users, Play, Bot } from 'lucide-react';
+import { AI_PERSONALITIES, AI_NAMES } from '@/types/ai';
 
 interface LocalGameSetupProps {
   onStartGame: (playerNames: string[], playerColors: string[], settings?: any) => void;
   onLoadGame?: () => boolean;
   hasExistingGame?: boolean;
+}
+
+interface PlayerSetup {
+  name: string;
+  color: string;
+  isAI: boolean;
+  aiPersonality?: number;
 }
 
 const PLAYER_COLORS = [
@@ -22,16 +32,17 @@ const PLAYER_COLORS = [
 ];
 
 export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGame }: LocalGameSetupProps) {
-  const [players, setPlayers] = useState([
-    { name: '', color: PLAYER_COLORS[0].value },
-    { name: '', color: PLAYER_COLORS[1].value },
+  const [players, setPlayers] = useState<PlayerSetup[]>([
+    { name: '', color: PLAYER_COLORS[0].value, isAI: false },
+    { name: '', color: PLAYER_COLORS[1].value, isAI: false },
   ]);
 
   const addPlayer = () => {
     if (players.length < 6) {
       setPlayers([...players, { 
         name: '', 
-        color: PLAYER_COLORS[players.length].value 
+        color: PLAYER_COLORS[players.length].value,
+        isAI: false
       }]);
     }
   };
@@ -54,6 +65,26 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
     setPlayers(updatedPlayers);
   };
 
+  const togglePlayerAI = (index: number) => {
+    const updatedPlayers = [...players];
+    updatedPlayers[index].isAI = !updatedPlayers[index].isAI;
+    
+    // Set default AI name if turning into AI
+    if (updatedPlayers[index].isAI && !updatedPlayers[index].name) {
+      const aiIndex = players.filter((p, i) => i < index && p.isAI).length;
+      updatedPlayers[index].name = AI_NAMES[aiIndex % AI_NAMES.length];
+      updatedPlayers[index].aiPersonality = 0; // Default to first personality
+    }
+    
+    setPlayers(updatedPlayers);
+  };
+
+  const updateAIPersonality = (index: number, personalityIndex: number) => {
+    const updatedPlayers = [...players];
+    updatedPlayers[index].aiPersonality = personalityIndex;
+    setPlayers(updatedPlayers);
+  };
+
   const canStartGame = players.length >= 2 && players.every(p => p.name.trim().length > 0);
   const hasUniqueNames = new Set(players.map(p => p.name.trim().toLowerCase())).size === players.length;
 
@@ -63,7 +94,13 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
         winCondition: 'bankruptcy', // Default win condition
         initialBalance: 1000,
         churchGoal: 5,
-        roundLimit: null
+        roundLimit: null,
+        players: players.map(p => ({
+          name: p.name.trim(),
+          color: p.color,
+          isAI: p.isAI,
+          aiPersonality: p.aiPersonality
+        }))
       };
       
       onStartGame(
@@ -126,47 +163,83 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
 
             <div className="space-y-3">
               {players.map((player, index) => (
-                <Card key={index} className="p-4 bg-card/50">
-                  <div className="flex items-center space-x-3">
-                    <div className="flex-1">
-                      <Label htmlFor={`player-${index}`} className="text-sm font-medium">
-                        Player {index + 1}
+                <Card key={index} className={`p-4 ${player.isAI ? 'bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800' : 'bg-card/50'}`}>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-sm font-medium flex items-center gap-2">
+                        {player.isAI && <Bot className="w-4 h-4" />}
+                        Player {index + 1} {player.isAI && '(AI)'}
                       </Label>
-                      <Input
-                        id={`player-${index}`}
-                        placeholder="Enter player name"
-                        value={player.name}
-                        onChange={(e) => updatePlayerName(index, e.target.value)}
-                        className="mt-1"
-                      />
-                    </div>
-                    
-                    <div className="space-y-1">
-                      <Label className="text-sm font-medium">Color</Label>
-                      <div className="flex flex-wrap gap-1">
-                        {PLAYER_COLORS.map((color) => (
-                          <button
-                            key={color.name}
-                            onClick={() => updatePlayerColor(index, color.value)}
-                            className={`w-6 h-6 rounded-full border-2 ${
-                              player.color === color.value ? 'border-primary' : 'border-muted'
-                            }`}
-                            style={{ backgroundColor: color.value }}
-                            title={color.name}
-                          />
-                        ))}
+                      <div className="flex items-center space-x-2">
+                        <Label htmlFor={`ai-toggle-${index}`} className="text-xs">AI</Label>
+                        <Switch
+                          id={`ai-toggle-${index}`}
+                          checked={player.isAI}
+                          onCheckedChange={() => togglePlayerAI(index)}
+                        />
                       </div>
                     </div>
 
-                    {players.length > 2 && (
-                      <Button
-                        onClick={() => removePlayer(index)}
-                        variant="outline"
-                        size="sm"
-                        className="text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
+                    <div className="flex items-center space-x-3">
+                      <div className="flex-1">
+                        <Input
+                          placeholder={player.isAI ? "AI Player Name" : "Enter player name"}
+                          value={player.name}
+                          onChange={(e) => updatePlayerName(index, e.target.value)}
+                        />
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <Label className="text-sm font-medium">Color</Label>
+                        <div className="flex flex-wrap gap-1">
+                          {PLAYER_COLORS.map((color) => (
+                            <button
+                              key={color.name}
+                              onClick={() => updatePlayerColor(index, color.value)}
+                              className={`w-6 h-6 rounded-full border-2 ${
+                                player.color === color.value ? 'border-primary' : 'border-muted'
+                              }`}
+                              style={{ backgroundColor: color.value }}
+                              title={color.name}
+                            />
+                          ))}
+                        </div>
+                      </div>
+
+                      {players.length > 2 && (
+                        <Button
+                          onClick={() => removePlayer(index)}
+                          variant="outline"
+                          size="sm"
+                          className="text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      )}
+                    </div>
+
+                    {player.isAI && (
+                      <div>
+                        <Label className="text-sm font-medium">AI Personality</Label>
+                        <Select 
+                          value={player.aiPersonality?.toString() || "0"} 
+                          onValueChange={(value) => updateAIPersonality(index, parseInt(value))}
+                        >
+                          <SelectTrigger className="mt-1">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {AI_PERSONALITIES.map((personality, pIndex) => (
+                              <SelectItem key={pIndex} value={pIndex.toString()}>
+                                <div>
+                                  <div className="font-medium">{personality.name}</div>
+                                  <div className="text-xs text-muted-foreground">{personality.description}</div>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
                     )}
                   </div>
                 </Card>
