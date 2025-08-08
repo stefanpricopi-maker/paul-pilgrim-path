@@ -161,7 +161,7 @@ const GameBoard = ({
                     <div className="flex-1 p-2 flex flex-col justify-between min-h-0">
                       {/* City name and ownership */}
                       <div className="text-center space-y-1 flex-shrink-0">
-                        <h4 className="text-[10px] font-semibold leading-tight text-black truncate">
+                        <h4 className="text-[15px] font-semibold leading-tight text-black truncate">
                           {location.name}
                         </h4>
                         
