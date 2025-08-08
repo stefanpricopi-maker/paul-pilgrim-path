@@ -131,6 +131,8 @@ export const useLocalGame = () => {
           dice2: 0,
           isRolling: false,
           gameLog: savedState.gameLog || [],
+          aiDecision: undefined,
+          isAIThinking: false,
         }));
         return true;
       } catch (error) {
@@ -772,5 +774,6 @@ export const useLocalGame = () => {
     payRent,
     handleCardAction,
     checkWinCondition,
+    playerAchievements: getPlayerAchievements
   };
 };
