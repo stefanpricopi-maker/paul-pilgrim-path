@@ -22,6 +22,8 @@ export const useAI = () => {
       position: 0,
       money: 1000,
       properties: [],
+      propertyVisits: {},
+      hasRolled: false,
       color,
       inJail: false,
       jailTurns: 0,

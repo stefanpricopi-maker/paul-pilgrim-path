@@ -86,6 +86,8 @@ export const useLocalGame = () => {
         position: 0,
         money: initialMoney,
         properties: [],
+        propertyVisits: {},
+        hasRolled: false,
         color: playerColors[index] || `hsl(var(--game-player${(index % 6) + 1}))`,
         inJail: false,
         jailTurns: 0,
@@ -234,6 +236,9 @@ export const useLocalGame = () => {
   // Roll dice
   const rollDice = useCallback(() => {
     if (gameState.isRolling) return;
+    
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (currentPlayer.hasRolled) return; // Player can only roll once per turn
 
     setGameState(prev => ({ ...prev, isRolling: true }));
 
@@ -307,13 +312,28 @@ export const useLocalGame = () => {
           newPosition = specialEffects.position;
         }
         
+        // Track property visits for owned properties
+        const finalLocation = prev.locations[newPosition];
+        let propertyVisitUpdate = {};
+        if (finalLocation.type === 'city' && finalLocation.owner === currentPlayer.id) {
+          const currentVisits = currentPlayer.propertyVisits[finalLocation.id] || 0;
+          propertyVisitUpdate = {
+            propertyVisits: {
+              ...currentPlayer.propertyVisits,
+              [finalLocation.id]: currentVisits + 1
+            }
+          };
+        }
+
         let updatedPlayers = prev.players.map((player, index) => 
           index === prev.currentPlayerIndex 
             ? { 
                 ...player, 
                 position: newPosition,
+                hasRolled: true, // Mark that player has rolled
                 ...jailResult.effects,
-                ...specialEffects
+                ...specialEffects,
+                ...propertyVisitUpdate
               }
             : player
         );
@@ -348,8 +368,8 @@ export const useLocalGame = () => {
         }
 
         // Handle landing on special tiles for card drawing
-        const finalLocation = prev.locations[newPosition];
-        if (finalLocation.type === 'community-chest') {
+        const currentLocation = prev.locations[newPosition];
+        if (currentLocation.type === 'community-chest') {
           const card = drawCommunityCard();
           if (card) {
             return {
@@ -363,7 +383,7 @@ export const useLocalGame = () => {
               cardType: 'community'
             };
           }
-        } else if (finalLocation.type === 'chance') {
+        } else if (currentLocation.type === 'chance') {
           const card = drawChanceCard();
           if (card) {
             return {
@@ -440,8 +460,16 @@ export const useLocalGame = () => {
       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
       const newRound = nextPlayerIndex === 0 ? prev.round + 1 : prev.round;
       
+      // Reset hasRolled for all players when starting new round
+      const playersWithResetRolls = nextPlayerIndex === 0 
+        ? prev.players.map(player => ({ ...player, hasRolled: false }))
+        : prev.players.map((player, index) => 
+            index === nextPlayerIndex ? { ...player, hasRolled: false } : player
+          );
+      
       const newState = {
         ...prev,
+        players: playersWithResetRolls,
         currentPlayerIndex: nextPlayerIndex,
         dice1: 0,
         dice2: 0,
@@ -597,6 +625,12 @@ export const useLocalGame = () => {
         return prevState;
       }
 
+      // Check if player has visited this property at least 3 times
+      const visits = player.propertyVisits[locationId] || 0;
+      if (visits < 3) {
+        return prevState; // Cannot build church until third visit
+      }
+
       const newState = {
         ...prevState,
         locations: prevState.locations.map(loc =>
@@ -636,6 +670,12 @@ export const useLocalGame = () => {
       
       if (!location || !player || location.owner !== playerId || player.money < location.synagogueCost) {
         return prevState;
+      }
+
+      // Check if player has visited this property at least 1 time (first visit building allowed)
+      const visits = player.propertyVisits[locationId] || 0;
+      if (visits < 1) {
+        return prevState; // Cannot build synagogue on first landing, only after visiting
       }
 
       const newState = {

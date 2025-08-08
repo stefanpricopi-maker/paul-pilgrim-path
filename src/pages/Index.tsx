@@ -156,6 +156,8 @@ const Index = () => {
     position: player.position,
     money: player.coins,
     properties: [], // TODO: Load from tiles ownership
+    propertyVisits: {},
+    hasRolled: false,
     color: `hsl(var(--player-${(onlineGameState.players.indexOf(player) % 6) + 1}))`,
     inJail: player.in_jail,
     jailTurns: player.jail_turns,

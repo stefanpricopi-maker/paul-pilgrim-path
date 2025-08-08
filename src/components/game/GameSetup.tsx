@@ -77,6 +77,8 @@ const GameSetup = ({ onStartGame }: GameSetupProps) => {
         position: 0,
         money: 500,
         properties: [],
+        propertyVisits: {},
+        hasRolled: false,
         color: playerColors[index],
         inJail: false,
         jailTurns: 0,

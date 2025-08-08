@@ -37,6 +37,11 @@ const PropertyActions = ({
   const canBuild = isOwnedByCurrentPlayer && location.type === 'city' && isCurrentPlayerLocation;
   const needsToPayRent = isOwned && !isOwnedByCurrentPlayer && isCurrentPlayerLocation && location.rent > 0;
 
+  // Visit tracking for building restrictions
+  const visitCount = currentPlayer.propertyVisits[location.id] || 0;
+  const canBuildSynagogue = canBuild && visitCount >= 1;
+  const canBuildChurch = canBuild && visitCount >= 3;
+
   const ownerPlayer = allPlayers.find(p => p.id === location.owner);
 
   const handleConfirmAction = () => {
@@ -75,14 +80,24 @@ const PropertyActions = ({
           {/* Property Status */}
           <div className="text-sm space-y-1">
             {isOwned ? (
-              <div className="flex items-center gap-2">
-                <div 
-                  className="w-3 h-3 rounded-full border border-white"
-                  style={{ backgroundColor: ownerPlayer?.color || '#666' }}
-                />
-                <span className="text-muted-foreground">
-                  Owned by {ownerPlayer?.name || 'Unknown'}
-                </span>
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="w-3 h-3 rounded-full border border-white"
+                    style={{ backgroundColor: ownerPlayer?.color || '#666' }}
+                  />
+                  <span className="text-muted-foreground">
+                    Owned by {ownerPlayer?.name || 'Unknown'}
+                  </span>
+                </div>
+                {isOwnedByCurrentPlayer && (
+                  <p className="text-xs text-accent">
+                    Visits: {visitCount} 
+                    {visitCount < 1 && " (Need 1+ for synagogue)"}
+                    {visitCount >= 1 && visitCount < 3 && " (Need 3+ for church)"}
+                    {visitCount >= 3 && " (Can build both)"}
+                  </p>
+                )}
               </div>
             ) : (
               <p className="text-muted-foreground">Land available for purchase</p>
@@ -144,20 +159,24 @@ const PropertyActions = ({
                   variant="outline"
                   size="sm"
                   className="w-full hover:bg-game-church/20"
-                  disabled={currentPlayer.money < location.churchCost}
+                  disabled={currentPlayer.money < location.churchCost || !canBuildChurch}
+                  title={!canBuildChurch ? "Need 3+ visits to build church" : ""}
                 >
                   <Church className="w-4 h-4 mr-2" />
                   Build Church ({location.churchCost} denarii)
+                  {!canBuildChurch && " - Need more visits"}
                 </Button>
                 <Button
                   onClick={() => setPendingAction({ type: 'synagogue', location })}
                   variant="outline"
                   size="sm"
                   className="w-full hover:bg-game-synagogue/20"
-                  disabled={currentPlayer.money < location.synagogueCost}
+                  disabled={currentPlayer.money < location.synagogueCost || !canBuildSynagogue}
+                  title={!canBuildSynagogue ? "Need 1+ visits to build synagogue" : ""}
                 >
                   <Building2 className="w-4 h-4 mr-2" />
                   Build Synagogue ({location.synagogueCost} denarii)
+                  {!canBuildSynagogue && " - Need more visits"}
                 </Button>
               </>
             )}

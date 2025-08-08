@@ -5,6 +5,7 @@ export interface Player {
   position: number;
   money: number;
   properties: string[];
+  propertyVisits: Record<string, number>; // Track visits to owned properties
   color: string;
   inJail: boolean;
   jailTurns: number;
@@ -12,6 +13,7 @@ export interface Player {
   immunityUntil: number; // Round number until which player has immunity
   skipNextTurn: boolean;
   consecutiveDoubles: number;
+  hasRolled: boolean; // Track if player has rolled this turn
 }
 
 export interface BiblicalCharacter {
