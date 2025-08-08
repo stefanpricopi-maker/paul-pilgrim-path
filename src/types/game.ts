@@ -50,7 +50,8 @@ export interface GameState {
 }
 
 export interface DiceProps {
-  value: number;
+  dice1: number;
+  dice2: number;
   isRolling: boolean;
   onRoll: () => void;
 }

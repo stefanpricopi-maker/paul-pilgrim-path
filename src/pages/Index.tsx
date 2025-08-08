@@ -252,7 +252,8 @@ const Index = () => {
             
             {/* Dice */}
             <Dice 
-              value={onlineGameState.diceValue}
+              dice1={onlineGameState.diceValue}
+              dice2={0}
               isRolling={onlineGameState.isRolling}
               onRoll={onlineGameState.isMyTurn ? onlineRollDice : () => {}}
             />

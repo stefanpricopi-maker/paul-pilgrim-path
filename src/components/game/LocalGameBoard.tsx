@@ -15,7 +15,8 @@ interface LocalGameBoardProps {
     players: Player[];
     currentPlayerIndex: number;
     locations: GameLocation[];
-    diceValue: number;
+    dice1: number;
+    dice2: number;
     isRolling: boolean;
     gameLog: string[];
     round: number;
@@ -176,7 +177,8 @@ export default function LocalGameBoard({
             {/* Dice */}
             {!currentPlayerPrivate && (
               <Dice 
-                value={gameState.diceValue}
+                dice1={gameState.dice1}
+                dice2={gameState.dice2}
                 isRolling={gameState.isRolling}
                 onRoll={onRollDice}
               />
@@ -255,16 +257,7 @@ export default function LocalGameBoard({
                       </>
                     )}
                     
-                    {gameState.diceValue > 0 && (
-                      <Button 
-                        onClick={onEndTurn}
-                        className="w-full"
-                        variant="secondary"
-                      >
-                        <ArrowRight className="w-4 h-4 mr-2" />
-                        End Turn
-                      </Button>
-                    )}
+                    {/* Turn ends automatically after rolling */}
                   </div>
                 )}
               </div>

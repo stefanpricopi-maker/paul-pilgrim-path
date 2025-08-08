@@ -11,7 +11,8 @@ interface LocalGameState {
   currentPlayerIndex: number;
   locations: GameLocation[];
   gameStarted: boolean;
-  diceValue: number;
+  dice1: number;
+  dice2: number;
   isRolling: boolean;
   gameLog: string[];
   round: number;
@@ -28,7 +29,8 @@ export const useLocalGame = () => {
     currentPlayerIndex: 0,
     locations: GAME_LOCATIONS,
     gameStarted: false,
-    diceValue: 0,
+    dice1: 0,
+    dice2: 0,
     isRolling: false,
     gameLog: [],
     round: 1,
@@ -89,7 +91,8 @@ export const useLocalGame = () => {
           ...prev,
           ...savedState,
           locations: GAME_LOCATIONS,
-          diceValue: 0,
+          dice1: 0,
+          dice2: 0,
           isRolling: false,
           gameLog: savedState.gameLog || [],
         }));
@@ -198,12 +201,19 @@ export const useLocalGame = () => {
 
     // Simulate dice animation
     const rollAnimation = setInterval(() => {
-      setGameState(prev => ({ ...prev, diceValue: Math.floor(Math.random() * 6) + 1 }));
+      setGameState(prev => ({ 
+        ...prev, 
+        dice1: Math.floor(Math.random() * 6) + 1,
+        dice2: Math.floor(Math.random() * 6) + 1
+      }));
     }, 100);
 
     setTimeout(() => {
       clearInterval(rollAnimation);
-      const finalValue = Math.floor(Math.random() * 6) + 1;
+      const dice1Value = Math.floor(Math.random() * 6) + 1;
+      const dice2Value = Math.floor(Math.random() * 6) + 1;
+      const totalValue = dice1Value + dice2Value;
+      const isDoubles = dice1Value === dice2Value;
       
       setGameState(prev => {
         const currentPlayer = prev.players[prev.currentPlayerIndex];
@@ -219,16 +229,17 @@ export const useLocalGame = () => {
           return {
             ...prev,
             players: updatedPlayers,
-            diceValue: finalValue,
+            dice1: dice1Value,
+            dice2: dice2Value,
             isRolling: false,
             gameLog: [...prev.gameLog, `${currentPlayer.name} skipped their turn due to SABAT`].slice(-10)
           };
         }
         
         // Handle jail logic
-        const jailResult = handleJailLogic(currentPlayer, finalValue);
+        const jailResult = handleJailLogic(currentPlayer, totalValue);
         
-        if (!jailResult.canMove) {
+        if (!jailResult.canMove && !isDoubles) {
           const updatedPlayers = prev.players.map((player, index) => 
             index === prev.currentPlayerIndex 
               ? { ...player, ...jailResult.effects }
@@ -238,19 +249,20 @@ export const useLocalGame = () => {
           return {
             ...prev,
             players: updatedPlayers,
-            diceValue: finalValue,
+            dice1: dice1Value,
+            dice2: dice2Value,
             isRolling: false,
-            gameLog: [...prev.gameLog, `${currentPlayer.name} rolled ${finalValue} but remains in jail (${currentPlayer.jailTurns + 1}/3 turns)`].slice(-10)
+            gameLog: [...prev.gameLog, `${currentPlayer.name} rolled ${dice1Value}+${dice2Value}=${totalValue} but remains in jail (${currentPlayer.jailTurns + 1}/3 turns)`].slice(-10)
           };
         }
         
         // Player can move - calculate new position
-        let newPosition = (currentPlayer.position + finalValue) % prev.locations.length;
+        let newPosition = (currentPlayer.position + totalValue) % prev.locations.length;
         const passedStart = newPosition < currentPlayer.position && !currentPlayer.inJail;
         
         // Handle special tile effects
         const newLocation = prev.locations[newPosition];
-        const { transactions: specialTransactions, specialEffects } = handleSpecialTile(currentPlayer, newLocation, finalValue);
+        const { transactions: specialTransactions, specialEffects } = handleSpecialTile(currentPlayer, newLocation, totalValue);
         
         // Apply special effects (like teleporting or going to jail)
         if (specialEffects.position !== undefined) {
@@ -268,7 +280,7 @@ export const useLocalGame = () => {
             : player
         );
 
-        let logEntries = [`${currentPlayer.name} rolled ${finalValue}`];
+        let logEntries = [`${currentPlayer.name} rolled ${dice1Value}+${dice2Value}=${totalValue}${isDoubles ? ' (doubles!)' : ''}`];
         
         if (currentPlayer.inJail && jailResult.canMove) {
           logEntries.push(`${currentPlayer.name} got out of jail!`);
@@ -304,7 +316,8 @@ export const useLocalGame = () => {
           if (card) {
             return {
               ...prev,
-              diceValue: finalValue,
+              dice1: dice1Value,
+              dice2: dice2Value,
               isRolling: false,
               players: updatedPlayers,
               gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Community Chest card`].slice(-10),
@@ -317,7 +330,8 @@ export const useLocalGame = () => {
           if (card) {
             return {
               ...prev,
-              diceValue: finalValue,
+              dice1: dice1Value,
+              dice2: dice2Value,
               isRolling: false,
               players: updatedPlayers,
               gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Chance card`].slice(-10),
@@ -327,13 +341,31 @@ export const useLocalGame = () => {
           }
         }
         
-        return {
+        // Auto-end turn after rolling (new behavior)
+        const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
+        const newRound = nextPlayerIndex === 0 ? prev.round + 1 : prev.round;
+        
+        const finalState = {
           ...prev,
-          diceValue: finalValue,
+          dice1: dice1Value,
+          dice2: dice2Value,
           isRolling: false,
           players: updatedPlayers,
-          gameLog: [...prev.gameLog, ...logEntries].slice(-10),
+          gameLog: [...prev.gameLog, ...logEntries, `Turn ended automatically`].slice(-10),
+          currentPlayerIndex: nextPlayerIndex,
+          round: newRound,
         };
+        
+        // Save to localStorage
+        localStorage.setItem('localGameState', JSON.stringify({
+          players: finalState.players,
+          currentPlayerIndex: finalState.currentPlayerIndex,
+          gameStarted: finalState.gameStarted,
+          round: finalState.round,
+          gameLog: finalState.gameLog,
+        }));
+        
+        return finalState;
       });
     }, 1500);
   }, [gameState.isRolling, handlePassStart, applyTransactions, drawCommunityCard, drawChanceCard]);
@@ -347,7 +379,8 @@ export const useLocalGame = () => {
       const newState = {
         ...prev,
         currentPlayerIndex: nextPlayerIndex,
-        diceValue: 0,
+        dice1: 0,
+        dice2: 0,
         round: newRound,
         gameLog: [...prev.gameLog, `${prev.players[nextPlayerIndex].name}'s turn (Round ${newRound})`].slice(-10),
       };
@@ -374,7 +407,8 @@ export const useLocalGame = () => {
       currentPlayerIndex: 0,
       locations: GAME_LOCATIONS,
       gameStarted: false,
-      diceValue: 0,
+      dice1: 0,
+      dice2: 0,
       isRolling: false,
       gameLog: [],
       round: 1,

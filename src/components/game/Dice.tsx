@@ -3,7 +3,8 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { DiceProps } from '@/types/game';
 const Dice = ({
-  value,
+  dice1,
+  dice2,
   isRolling,
   onRoll
 }: DiceProps) => {
@@ -66,15 +67,25 @@ const Dice = ({
       <div className="text-center space-y-4">
         <h3 className="text-lg font-bold ancient-text text-primary">Dice</h3>
         
-        <div className="flex justify-center">
-          <Card key={animationKey} className={`dice-container w-20 h-20 border-2 border-primary shadow-elevated ${isRolling ? 'dice-roll' : ''}`}>
-            {value > 0 && getDiceDisplay(value)}
+        <div className="flex justify-center gap-2">
+          <Card key={`${animationKey}-1`} className={`dice-container w-16 h-16 border-2 border-primary shadow-elevated ${isRolling ? 'dice-roll' : ''}`}>
+            {dice1 > 0 && getDiceDisplay(dice1)}
+          </Card>
+          <Card key={`${animationKey}-2`} className={`dice-container w-16 h-16 border-2 border-primary shadow-elevated ${isRolling ? 'dice-roll' : ''}`}>
+            {dice2 > 0 && getDiceDisplay(dice2)}
           </Card>
         </div>
         
-        {value > 0 && <p className="text-2xl font-bold text-accent ancient-text">
-            {value}
-          </p>}
+        {(dice1 > 0 && dice2 > 0) && (
+          <div className="text-center">
+            <p className="text-lg font-bold text-accent ancient-text">
+              {dice1} + {dice2} = {dice1 + dice2}
+            </p>
+            {dice1 === dice2 && (
+              <p className="text-sm text-primary font-bold">Doubles!</p>
+            )}
+          </div>
+        )}
         
         <Button onClick={handleRoll} disabled={isRolling} variant="default" className="w-full font-cinzel font-bold hover:shadow-glow transition-all duration-300">
           {isRolling ? 'Rolling...' : 'Roll Dice'}
