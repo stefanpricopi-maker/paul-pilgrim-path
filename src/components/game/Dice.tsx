@@ -62,12 +62,12 @@ const Dice = ({
           </> : dots}
       </div>;
   };
-  return <Card className="p-6 bg-gradient-parchment border-2 border-accent/30">
+  return <Card className="p-6 card-elevated border-2 border-accent/20 scale-in">
       <div className="text-center space-y-4">
         <h3 className="text-lg font-bold ancient-text text-primary">Dice</h3>
         
         <div className="flex justify-center">
-          <Card key={animationKey} className={`w-20 h-20 border-2 border-primary bg-card ${isRolling ? 'dice-roll' : ''}`}>
+          <Card key={animationKey} className={`dice-container w-20 h-20 border-2 border-primary shadow-elevated ${isRolling ? 'dice-roll' : ''}`}>
             {value > 0 && getDiceDisplay(value)}
           </Card>
         </div>
@@ -76,7 +76,7 @@ const Dice = ({
             {value}
           </p>}
         
-        <Button onClick={handleRoll} disabled={isRolling} variant="default" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold ancient-text">
+        <Button onClick={handleRoll} disabled={isRolling} variant="default" className="w-full font-cinzel font-bold hover:shadow-glow transition-all duration-300">
           {isRolling ? 'Rolling...' : 'Roll Dice'}
         </Button>
       </div>

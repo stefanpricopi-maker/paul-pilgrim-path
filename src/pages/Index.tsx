@@ -208,10 +208,10 @@ const Index = () => {
       <div className="max-w-7xl mx-auto space-y-6">
         
         {/* Game Header */}
-        <Card className="p-6 bg-gradient-parchment border-2 border-accent/30">
+        <Card className="p-6 card-elevated border-2 border-accent/20 fade-in-up">
           <div className="flex items-center justify-between">
             <div className="text-center flex-1">
-              <h1 className="text-3xl font-bold text-primary ancient-text mb-2">
+              <h1 className="text-3xl font-bold text-primary ancient-title mb-2">
                 {t('game.title')}
               </h1>
               {currentPlayer && (

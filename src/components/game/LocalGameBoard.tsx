@@ -94,7 +94,7 @@ export default function LocalGameBoard({
         <UICard className="p-6 bg-gradient-parchment border-2 border-accent/30">
           <div className="flex items-center justify-between">
             <div className="text-center flex-1">
-              <h1 className="text-3xl font-bold text-primary ancient-text mb-2">
+              <h1 className="text-3xl font-bold text-primary ancient-title mb-2">
                 Paul's Missionary Journeys - Local Game
               </h1>
               <p className="text-muted-foreground">

@@ -26,7 +26,7 @@ const WinModal = ({ isOpen, winner, reason, onPlayAgain, onClose }: WinModalProp
           <div className="mx-auto w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
             <Trophy className="w-8 h-8 text-accent" />
           </div>
-          <DialogTitle className="text-2xl font-bold text-primary ancient-text">
+          <DialogTitle className="text-2xl font-bold text-primary-foreground ancient-title">
             🎉 Victory! 🎉
           </DialogTitle>
           <DialogDescription className="text-center space-y-3">
@@ -38,7 +38,7 @@ const WinModal = ({ isOpen, winner, reason, onPlayAgain, onClose }: WinModalProp
                 {winner.character.avatar}
               </div>
               <div className="text-left">
-                <h3 className="font-bold text-primary">{winner.name}</h3>
+                <h3 className="font-bold text-primary-foreground">{winner.name}</h3>
                 <p className="text-sm text-muted-foreground">{winner.character.name}</p>
               </div>
             </div>

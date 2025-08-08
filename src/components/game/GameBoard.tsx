@@ -141,7 +141,7 @@ const GameBoard = ({
 
     
           return <div key={`${rowIndex}-${colIndex}`} className="relative">
-                  {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[90px] min-w-[90px]' : 'min-h-[70px] min-w-[60px]'} p-0 cursor-pointer hover:scale-105 transition-all border-2 border-gray-300 shadow-md bg-white overflow-hidden ${rotationClass}`} onClick={() => onLocationClick(location)}>
+                  {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[90px] min-w-[90px] corner' : 'min-h-[70px] min-w-[60px]'} p-0 cursor-pointer transition-all duration-300 hover:shadow-glow border-2 border-gray-300 overflow-hidden ${rotationClass}`} onClick={() => onLocationClick(location)}>
                       <div className={`h-full flex ${contentLayout}`}>
                         {/* Color strip */}
                         <div 
@@ -176,10 +176,10 @@ const GameBoard = ({
                           {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && (
                             <div className="flex justify-center space-x-1">
                               {Array.from({ length: location.buildings.churches }).map((_, i) => (
-                                <Church key={`church-${i}`} className="w-3 h-3 text-game-church" />
+                                <Church key={`church-${i}`} className="w-3 h-3 building-church" />
                               ))}
                               {Array.from({ length: location.buildings.synagogues }).map((_, i) => (
-                                <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-game-synagogue" />
+                                <Building2 key={`synagogue-${i}`} className="w-3 h-3 building-synagogue" />
                               ))}
                             </div>
                           )}

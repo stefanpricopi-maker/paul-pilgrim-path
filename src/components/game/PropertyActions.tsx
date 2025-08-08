@@ -65,11 +65,11 @@ const PropertyActions = ({
 
   return (
     <>
-      <Card className="p-4 bg-gradient-parchment border-primary/30">
+      <Card className="p-4 card-ancient border-primary/20">
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Home className="w-5 h-5 text-primary" />
-            <h3 className="font-bold text-primary ancient-text">{location.name}</h3>
+            <h3 className="font-bold text-primary ancient-title">{location.name}</h3>
           </div>
 
           {/* Property Status */}
