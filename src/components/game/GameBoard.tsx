@@ -12,22 +12,8 @@ interface GameBoardProps {
   animatingPlayer?: string;
   targetPosition?: number;
   onAnimationComplete?: () => void;
+  gameLog?: string[];
 }
-
-interface LocalGameBoardProps {
-  gameState: {
-    players: Player[];
-    currentPlayerIndex: number;
-    locations: GameLocation[];
-    dice1: number;
-    dice2: number;
-    isRolling: boolean;
-    gameLog: string[];
-    round: number;
-    drawnCard: GameCard | null;
-    cardType: 'community' | 'chance' | null;
-  };
-
 
 const GameBoard = ({
   locations,
@@ -35,7 +21,8 @@ const GameBoard = ({
   onLocationClick,
   animatingPlayer,
   targetPosition,
-  onAnimationComplete
+  onAnimationComplete,
+  gameLog
 }: GameBoardProps) => {
   const getPlayersAtLocation = (locationIndex: number) => {
     return players.filter(player => player.position === locationIndex);
@@ -131,18 +118,20 @@ const GameBoard = ({
 
 
             {/* Journey Log - Center Position */}
-            <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
-              <h3 className="font-bold text-primary ancient-text mb-3 text-center">Journey Log</h3>
-              <ScrollArea className="h-32">
-                <div className="space-y-1">
-                  {gameState.gameLog.slice().reverse().map((entry, index) => (
-                    <p key={index} className="text-sm text-muted-foreground text-center">
-                      {entry}
-                    </p>
-                  ))}
-                </div>
-              </ScrollArea>
-            </UICard>  
+            {gameLog && gameLog.length > 0 && (
+              <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
+                <h3 className="font-bold text-primary ancient-text mb-3 text-center">Journey Log</h3>
+                <ScrollArea className="h-32">
+                  <div className="space-y-1">
+                    {gameLog.slice().reverse().map((entry, index) => (
+                      <p key={index} className="text-sm text-muted-foreground text-center">
+                        {entry}
+                      </p>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </UICard>
+            )}
         
         
         </div>
