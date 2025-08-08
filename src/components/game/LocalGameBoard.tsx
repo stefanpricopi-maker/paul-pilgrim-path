@@ -271,7 +271,15 @@ export default function LocalGameBoard({
                       </>
                     )}
                     
-                    {/* Turn ends automatically after rolling */}
+                    {/* End Turn Button */}
+                    <Button 
+                      onClick={onEndTurn}
+                      className="w-full text-sm"
+                      variant="secondary"
+                    >
+                      <ArrowRight className="w-3 h-3 mr-1" />
+                      End Turn
+                    </Button>
                   </div>
                 )}
               </div>

@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { GameLocation, Player } from '@/types/game';
 import ConfirmationModal from './ConfirmationModal';
-import { ShoppingCart, Church, Building2, Coins, Home } from 'lucide-react';
+import { ShoppingCart, Church, Building2, Coins, Home, ArrowRight } from 'lucide-react';
 
 interface PropertyActionsProps {
   location: GameLocation;
@@ -12,6 +12,7 @@ interface PropertyActionsProps {
   onBuildChurch: (locationId: string) => void;
   onBuildSynagogue: (locationId: string) => void;
   onPayRent: (locationId: string) => void;
+  onEndTurn: () => void;
   isCurrentPlayerLocation: boolean;
   allPlayers: Player[];
 }
@@ -23,6 +24,7 @@ const PropertyActions = ({
   onBuildChurch,
   onBuildSynagogue,
   onPayRent,
+  onEndTurn,
   isCurrentPlayerLocation,
   allPlayers
 }: PropertyActionsProps) => {
@@ -181,6 +183,19 @@ const PropertyActions = ({
               </>
             )}
           </div>
+
+          {/* End Turn Button - Always visible for current player */}
+          {isCurrentPlayerLocation && (
+            <Button
+              onClick={onEndTurn}
+              variant="secondary"
+              size="sm"
+              className="w-full mt-2"
+            >
+              <ArrowRight className="w-4 h-4 mr-2" />
+              End Turn
+            </Button>
+          )}
         </div>
       </Card>
 
