@@ -411,19 +411,13 @@ export const useLocalGame = () => {
           }
         }
 
-        // Auto-end turn after rolling (new behavior)
-        const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
-        const newRound = nextPlayerIndex === 0 ? prev.round + 1 : prev.round;
-        
         const finalState = {
           ...prev,
           dice1: dice1Value,
           dice2: dice2Value,
           isRolling: false,
           players: updatedPlayers,
-          gameLog: [...prev.gameLog, ...logEntries, `Turn ended automatically`].slice(-10),
-          currentPlayerIndex: nextPlayerIndex,
-          round: newRound,
+          gameLog: [...prev.gameLog, ...logEntries].slice(-10)
         };
         
         // Save to localStorage
