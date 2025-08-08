@@ -9,6 +9,8 @@ import { Player, GameLocation } from '@/types/game';
 import { Card as GameCard } from '@/types/cards';
 import CardModal from './CardModal';
 import { Church, Building2, Coins, MapPin, RotateCcw, Eye, EyeOff, ArrowRight } from 'lucide-react';
+import PlayerOrderPanel from './PlayerOrderPanel';
+import PlayerStatsPanel from './PlayerStatsPanel';
 
 interface LocalGameBoardProps {
   gameState: {
@@ -183,6 +185,18 @@ export default function LocalGameBoard({
                 onRoll={onRollDice}
               />
             )}
+
+            {/* Player Order Panel */}
+            <PlayerOrderPanel 
+              players={gameState.players}
+              currentPlayerIndex={gameState.currentPlayerIndex}
+            />
+
+            {/* Player Statistics Panel */}
+            <PlayerStatsPanel 
+              players={gameState.players}
+              locations={gameState.locations}
+            />
 
             {/* Current Location Info */}
             <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">

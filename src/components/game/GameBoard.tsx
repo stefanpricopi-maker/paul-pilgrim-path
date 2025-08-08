@@ -157,17 +157,23 @@ const GameBoard = ({
                               {location.name}
                             </h4>
                             
-                            {/* Ownership indicator */}
+                            {/* Enhanced ownership indicator */}
                             {location.owner && (
                               <div className="flex justify-center">
                                 <div 
-                                  className="w-3 h-3 rounded-full border border-white"
+                                  className="w-4 h-4 rounded-full border-2 border-white shadow-lg ring-1 ring-black/20"
                                   style={{ 
-                                    backgroundColor: players.find(p => p.id === location.owner)?.color || '#666',
-                                    boxShadow: '0 1px 2px rgba(0,0,0,0.3)'
+                                    backgroundColor: players.find(p => p.id === location.owner)?.color || '#666'
                                   }}
                                   title={`Owned by ${players.find(p => p.id === location.owner)?.name}`}
                                 />
+                              </div>
+                            )}
+                            
+                            {/* Price indicator for unowned properties */}
+                            {!location.owner && location.type === 'city' && location.price && (
+                              <div className="text-xs text-center font-bold text-green-700">
+                                {location.price}
                               </div>
                             )}
                           </div>
