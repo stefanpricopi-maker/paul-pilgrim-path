@@ -109,119 +109,142 @@ const GameBoard = ({
         </div>
 
         {/* Board Grid */}
-        <div className="grid grid-cols-11 grid-rows-11 gap-0 min-h-[600px]">
+        <div className="grid grid-cols-11 grid-rows-11 gap-0 min-h-[600px] relative">
           {boardLayout.map((row, rowIndex) => row.map((location, colIndex) => {
           const locationIndex = locations.findIndex(loc => loc?.id === location?.id);
           const playersHere = getPlayersAtLocation(locationIndex);
 
           // Only render cells on the outer edge
-          const isCorner = rowIndex === 0 && colIndex === 0 || rowIndex === 0 && colIndex === 10 || rowIndex === 10 && colIndex === 0 || rowIndex === 10 && colIndex === 10;
+          const isCorner = (rowIndex === 0 && colIndex === 0) || (rowIndex === 0 && colIndex === 10) || (rowIndex === 10 && colIndex === 0) || (rowIndex === 10 && colIndex === 10);
           const isEdge = rowIndex === 0 || rowIndex === 10 || colIndex === 0 || colIndex === 10;
           if (!isEdge) {
             return <div key={`${rowIndex}-${colIndex}`} className="w-0 h-0" />;
           }
-          // Determine rotation based on position
-          const isLeftColumn = colIndex === 0 && rowIndex > 0 && rowIndex < 10; // positions 11-19
-          const isRightColumn = colIndex === 10 && rowIndex > 0 && rowIndex < 10; // positions 31-39
           
-          let rotationClass = '';
-          let stripClass = 'h-6 w-full'; // wider strip for all tiles
-          let contentLayout = 'flex-col';
+          // Determine orientation and sizing
+          const isLeftColumn = colIndex === 0 && rowIndex > 0 && rowIndex < 10;
+          const isRightColumn = colIndex === 10 && rowIndex > 0 && rowIndex < 10;
+          const isTopRow = rowIndex === 0 && colIndex > 0 && colIndex < 10;
+          const isBottomRow = rowIndex === 10 && colIndex > 0 && colIndex < 10;
           
-        if (isLeftColumn) {
-          rotationClass = 'rotate-90'; // rotate text 90 degrees clockwise
-          stripClass = 'w-full h-full flex flex-col';   // vertical strip on right side (inside)
-          contentLayout = 'h-6 flex flex-row'; // content flows from right to left
-              } else if (isRightColumn) {
-                  rotationClass = '-rotate-90'; // rotate text 90 degrees counter-clockwise
-                  stripClass = 'w-6 h-full';    // vertical strip on left side (inside)
-                  contentLayout = 'flex-row';   // content flows from left to right
+          // Set consistent tile dimensions
+          let tileClasses = '';
+          let contentClasses = '';
+          let stripOrientation = '';
+          
+          if (isCorner) {
+            tileClasses = 'w-[90px] h-[90px]';
+            contentClasses = 'flex-col';
+            stripOrientation = 'h-6 w-full';
+          } else if (isLeftColumn || isRightColumn) {
+            tileClasses = 'w-[60px] h-[70px]';
+            contentClasses = 'flex-col';
+            stripOrientation = 'h-6 w-full';
+          } else {
+            tileClasses = 'w-[70px] h-[60px]';
+            contentClasses = 'flex-col';
+            stripOrientation = 'h-6 w-full';
           }
 
-
+          // Text rotation for side tiles
+          let textRotation = '';
+          if (isLeftColumn) {
+            textRotation = 'rotate-90';
+          } else if (isRightColumn) {
+            textRotation = '-rotate-90';
+          }
     
-          return <div key={`${rowIndex}-${colIndex}`} className="relative">
-                  {location ? <Card className={`board-cell h-full ${isCorner ? 'min-h-[90px] min-w-[90px] corner' : 'min-h-[70px] min-w-[60px]'} p-0 cursor-pointer transition-all duration-300 hover:shadow-glow border-2 border-gray-300 overflow-hidden ${rotationClass}`} onClick={() => onLocationClick(location)}>
-                      <div className={`h-full flex ${contentLayout}`}>
-                        {/* Color strip */}
-                        <div 
-                          className={stripClass}
-                          style={{ backgroundColor: location.color || '#4a5568' }}
-                        />
-                        
-                        {/* Content area */}
-                        <div className="flex-1 p-2 flex flex-col justify-between">
-                          {/* City name and ownership */}
-                          <div className="text-center space-y-1">
-                            <h4 className="flex items-center justify-center text-xs leading-tight text-black">
-                              {location.name}
-                            </h4>
-                            
-                            {/* Enhanced ownership indicator */}
-                            {location.owner && (
-                              <div className="flex justify-center">
-                                <div 
-                                  className="w-4 h-4 rounded-full border-2 border-white shadow-lg ring-1 ring-black/20"
-                                  style={{ 
-                                    backgroundColor: players.find(p => p.id === location.owner)?.color || '#666'
-                                  }}
-                                  title={`Owned by ${players.find(p => p.id === location.owner)?.name}`}
-                                />
-                              </div>
-                            )}
-                            
-                            {/* Price indicator for unowned properties */}
-                            {!location.owner && location.type === 'city' && location.price && (
-                              <div className="text-xs text-center font-bold text-green-700">
-                                {location.price}
-                              </div>
-                            )}
-                          </div>
-
-                          {/* Buildings - only for cities */}
-                          {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && (
-                            <div className="flex justify-center space-x-1">
-                              {Array.from({ length: location.buildings.churches }).map((_, i) => (
-                                <Church key={`church-${i}`} className="w-3 h-3 building-church" />
-                              ))}
-                              {Array.from({ length: location.buildings.synagogues }).map((_, i) => (
-                                <Building2 key={`synagogue-${i}`} className="w-3 h-3 building-synagogue" />
-                              ))}
-                            </div>
-                          )}
-
-                           {/* Players */}
-                          {playersHere.length > 0 && (
-                            <div className="flex justify-center flex-wrap gap-1">
-                              {playersHere.map((player) => {
-                                const isAnimating = animatingPlayer === player.id && targetPosition !== undefined;
-                                return isAnimating ? (
-                                  <AnimatedPlayerPiece
-                                    key={player.id}
-                                    player={player}
-                                    isMoving={true}
-                                    targetPosition={targetPosition}
-                                    onAnimationComplete={onAnimationComplete}
-                                  />
-                                ) : (
-                                  <div 
-                                    key={player.id} 
-                                    className="player-piece text-sm transform hover:scale-110 bg-white rounded-full w-5 h-5 flex items-center justify-center border-2 transition-all duration-200" 
-                                    style={{
-                                      borderColor: player.color,
-                                      filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'
-                                    }}
-                                  >
-                                    {player.character.avatar}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
+          return (
+            <div key={`${rowIndex}-${colIndex}`} className="relative flex items-center justify-center">
+              {location ? (
+                <Card className={`board-cell ${tileClasses} p-0 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 border-gray-300 overflow-hidden bg-white`} 
+                      onClick={() => onLocationClick(location)}>
+                  <div className={`h-full flex ${contentClasses} relative`}>
+                    {/* Color strip */}
+                    <div 
+                      className={stripOrientation}
+                      style={{ backgroundColor: location.color || '#4a5568' }}
+                    />
+                    
+                    {/* Content area */}
+                    <div className="flex-1 p-1 flex flex-col justify-between min-h-0">
+                      {/* City name and ownership */}
+                      <div className="text-center space-y-1 flex-shrink-0">
+                        <div className={`${textRotation} transform-gpu origin-center`}>
+                          <h4 className="text-xs font-semibold leading-tight text-black truncate">
+                            {location.name}
+                          </h4>
                         </div>
+                        
+                        {/* Enhanced ownership indicator */}
+                        {location.owner && (
+                          <div className="flex justify-center">
+                            <div 
+                              className="w-3 h-3 rounded-full border border-white shadow-sm"
+                              style={{ 
+                                backgroundColor: players.find(p => p.id === location.owner)?.color || '#666'
+                              }}
+                              title={`Owned by ${players.find(p => p.id === location.owner)?.name}`}
+                            />
+                          </div>
+                        )}
+                        
+                        {/* Price indicator for unowned properties */}
+                        {!location.owner && location.type === 'city' && location.price && (
+                          <div className={`text-xs font-bold text-green-700 ${textRotation} transform-gpu origin-center`}>
+                            {location.price}
+                          </div>
+                        )}
                       </div>
-                    </Card> : <div className="h-full min-h-[60px]" />}
-                </div>;
+
+                      {/* Buildings - only for cities */}
+                      {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && (
+                        <div className="flex justify-center space-x-1 flex-shrink-0">
+                          {Array.from({ length: location.buildings.churches }).map((_, i) => (
+                            <Church key={`church-${i}`} className="w-2 h-2 text-yellow-600" />
+                          ))}
+                          {Array.from({ length: location.buildings.synagogues }).map((_, i) => (
+                            <Building2 key={`synagogue-${i}`} className="w-2 h-2 text-blue-600" />
+                          ))}
+                        </div>
+                      )}
+
+                       {/* Players */}
+                      {playersHere.length > 0 && (
+                        <div className="flex justify-center flex-wrap gap-1 flex-shrink-0">
+                          {playersHere.map((player) => {
+                            const isAnimating = animatingPlayer === player.id && targetPosition !== undefined;
+                            return isAnimating ? (
+                              <AnimatedPlayerPiece
+                                key={player.id}
+                                player={player}
+                                isMoving={true}
+                                targetPosition={targetPosition}
+                                onAnimationComplete={onAnimationComplete}
+                              />
+                            ) : (
+                              <div 
+                                key={player.id} 
+                                className="player-piece text-xs bg-white rounded-full w-4 h-4 flex items-center justify-center border transition-all duration-200 flex-shrink-0" 
+                                style={{
+                                  borderColor: player.color,
+                                  filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))'
+                                }}
+                              >
+                                {player.character.avatar}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              ) : (
+                <div className={`${tileClasses}`} />
+              )}
+            </div>
+          );
         }))}
         </div>
       </div>
