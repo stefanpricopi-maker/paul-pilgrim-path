@@ -109,7 +109,7 @@ const GameBoard = ({
         </div>
 
         {/* Board Grid */}
-        <div className="grid grid-cols-11 grid-rows-11 gap-0 min-h-[600px] relative">
+        <div className="grid grid-cols-11 grid-rows-11 gap-0 min-h-[700px] relative">
           {boardLayout.map((row, rowIndex) => row.map((location, colIndex) => {
           const locationIndex = locations.findIndex(loc => loc?.id === location?.id);
           const playersHere = getPlayersAtLocation(locationIndex);
@@ -121,34 +121,34 @@ const GameBoard = ({
             return <div key={`${rowIndex}-${colIndex}`} className="w-0 h-0" />;
           }
           
-          // Determine orientation and sizing - make all tiles similar to corners
+          // Determine orientation and sizing - make all tiles bigger and adjacent
           const isLeftColumn = colIndex === 0 && rowIndex > 0 && rowIndex < 10;
           const isRightColumn = colIndex === 10 && rowIndex > 0 && rowIndex < 10;
           const isTopRow = rowIndex === 0 && colIndex > 0 && colIndex < 10;
           const isBottomRow = rowIndex === 10 && colIndex > 0 && colIndex < 10;
           
-          // Set consistent tile dimensions - all tiles similar to corners
+          // Set bigger tile dimensions with no spacing
           let tileClasses = '';
           let contentClasses = 'flex-col';
-          let stripOrientation = 'h-6 w-full';
+          let stripOrientation = 'h-8 w-full';
           
           if (isCorner) {
-            tileClasses = 'w-[90px] h-[90px]';
+            tileClasses = 'w-[120px] h-[120px]';
           } else if (isLeftColumn || isRightColumn) {
-            // Make left/right tiles wider like corners, no rotation
-            tileClasses = 'w-[90px] h-[70px]';
+            // Make left/right tiles wider and taller
+            tileClasses = 'w-[120px] h-[90px]';
           } else {
-            // Make top/bottom tiles higher like corners  
-            tileClasses = 'w-[70px] h-[90px]';
+            // Make top/bottom tiles wider and taller  
+            tileClasses = 'w-[90px] h-[120px]';
           }
 
           // Remove all text rotation
           const textRotation = '';
     
           return (
-            <div key={`${rowIndex}-${colIndex}`} className="relative flex items-center justify-center">
+            <div key={`${rowIndex}-${colIndex}`} className="relative flex items-center justify-center -m-px">
               {location ? (
-                <Card className={`board-cell ${tileClasses} p-0 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 border-gray-300 overflow-hidden bg-white`} 
+                <Card className={`board-cell ${tileClasses} p-0 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 border-gray-400 overflow-hidden bg-white -m-px`} 
                       onClick={() => onLocationClick(location)}>
                   <div className={`h-full flex ${contentClasses} relative`}>
                     {/* Color strip */}
@@ -158,10 +158,10 @@ const GameBoard = ({
                     />
                     
                     {/* Content area */}
-                    <div className="flex-1 p-1 flex flex-col justify-between min-h-0">
+                    <div className="flex-1 p-2 flex flex-col justify-between min-h-0">
                       {/* City name and ownership */}
                       <div className="text-center space-y-1 flex-shrink-0">
-                        <h4 className="text-xs font-semibold leading-tight text-black truncate">
+                        <h4 className="text-sm font-semibold leading-tight text-black truncate">
                           {location.name}
                         </h4>
                         
@@ -169,7 +169,7 @@ const GameBoard = ({
                         {location.owner && (
                           <div className="flex justify-center">
                             <div 
-                              className="w-3 h-3 rounded-full border border-white shadow-sm"
+                              className="w-4 h-4 rounded-full border border-white shadow-sm"
                               style={{ 
                                 backgroundColor: players.find(p => p.id === location.owner)?.color || '#666'
                               }}
@@ -180,7 +180,7 @@ const GameBoard = ({
                         
                         {/* Price indicator for unowned properties */}
                         {!location.owner && location.type === 'city' && location.price && (
-                          <div className="text-xs font-bold text-green-700">
+                          <div className="text-sm font-bold text-green-700">
                             {location.price}
                           </div>
                         )}
@@ -190,10 +190,10 @@ const GameBoard = ({
                       {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && (
                         <div className="flex justify-center space-x-1 flex-shrink-0">
                           {Array.from({ length: location.buildings.churches }).map((_, i) => (
-                            <Church key={`church-${i}`} className="w-2 h-2 text-yellow-600" />
+                            <Church key={`church-${i}`} className="w-3 h-3 text-yellow-600" />
                           ))}
                           {Array.from({ length: location.buildings.synagogues }).map((_, i) => (
-                            <Building2 key={`synagogue-${i}`} className="w-2 h-2 text-blue-600" />
+                            <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-blue-600" />
                           ))}
                         </div>
                       )}
@@ -214,7 +214,7 @@ const GameBoard = ({
                             ) : (
                               <div 
                                 key={player.id} 
-                                className="player-piece text-xs bg-white rounded-full w-4 h-4 flex items-center justify-center border transition-all duration-200 flex-shrink-0" 
+                                className="player-piece text-sm bg-white rounded-full w-5 h-5 flex items-center justify-center border transition-all duration-200 flex-shrink-0"
                                 style={{
                                   borderColor: player.color,
                                   filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))'
