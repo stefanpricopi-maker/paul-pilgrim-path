@@ -94,11 +94,9 @@ const GameBoard = ({
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
           <Card className="w-80 h-60 p-6 bg-gradient-parchment/90 border-2 border-primary/30">
             <div className="text-center space-y-3 ancient-text">
-              <h3 className="text-xl font-bold text-primary">The Four Journeys</h3>
+              <h3 className="text-xl font-bold text-primary">Journey Log</h3>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <Badge className="bg-red-100 text-red-800 border-red-300">Journey 1</Badge>
-                <Badge className="bg-blue-100 text-blue-800 border-blue-300">Journey 2</Badge>
-                <Badge className="bg-green-100 text-green-800 border-green-300">Journey 3</Badge>
+                
                 <Badge className="bg-purple-100 text-purple-800 border-purple-300">Journey 4</Badge>
               </div>
               <p className="text-xs text-muted-foreground">
