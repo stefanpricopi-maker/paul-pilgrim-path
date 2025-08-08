@@ -1,6 +1,7 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Card as UICard } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { GameLocation, Player } from '@/types/game';
 import { Church, Building2, Anchor, Crown, MapPin, Lock, ArrowRight, Dice1, Gift, Scale, Flame, User } from 'lucide-react';
 import AnimatedPlayerPiece from './AnimatedPlayerPiece';
