@@ -117,6 +117,15 @@ export const useLocalGame = () => {
       gameStarted: true,
       round: 1,
     }));
+
+    // Auto-roll for AI if first player is AI
+    setTimeout(() => {
+      const firstPlayer = players[0];
+      const isAI = 'isAI' in firstPlayer && firstPlayer.isAI;
+      if (isAI) {
+        rollDice();
+      }
+    }, 2000); // 2 second delay for game to initialize
   }, []);
 
   // Load saved local game
@@ -468,12 +477,17 @@ export const useLocalGame = () => {
       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
       const newRound = nextPlayerIndex === 0 ? prev.round + 1 : prev.round;
       
-      // Reset hasRolled for all players when starting new round
-      const playersWithResetRolls = nextPlayerIndex === 0 
-        ? prev.players.map(player => ({ ...player, hasRolled: false }))
-        : prev.players.map((player, index) => 
-            index === nextPlayerIndex ? { ...player, hasRolled: false } : player
-          );
+      // Reset hasRolled for the next player (and all players if starting new round)
+      const playersWithResetRolls = prev.players.map((player, index) => {
+        if (nextPlayerIndex === 0) {
+          // New round - reset for everyone
+          return { ...player, hasRolled: false };
+        } else if (index === nextPlayerIndex) {
+          // Reset only for next player
+          return { ...player, hasRolled: false };
+        }
+        return player;
+      });
       
       const newState = {
         ...prev,
@@ -498,6 +512,18 @@ export const useLocalGame = () => {
     });
 
     setCurrentPlayerPrivate(true);
+    
+    // Auto-roll for AI players after a short delay
+    setTimeout(() => {
+      setGameState(current => {
+        const nextPlayer = current.players[current.currentPlayerIndex];
+        const isAI = 'isAI' in nextPlayer && nextPlayer.isAI;
+        if (isAI && !nextPlayer.hasRolled && !current.isRolling) {
+          rollDice();
+        }
+        return current;
+      });
+    }, 1500); // 1.5 second delay for AI to "think"
   }, []);
 
   // Reset game
