@@ -95,6 +95,25 @@ const GameBoard = ({
           <Card className="w-80 h-60 p-6 bg-gradient-parchment     border-2 border-primary/30">
             <div className="text-center space-y-3 ancient-text">
               <h3 className="text-xl font-bold text-primary">Journey Log</h3>
+
+
+              
+                {/* Journey Log - Center Position */}
+            <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
+              <h3 className="font-bold text-primary ancient-text mb-3 text-center">Journey Log</h3>
+              <ScrollArea className="h-32">
+                <div className="space-y-1">
+                  {gameState.gameLog.slice().reverse().map((entry, index) => (
+                    <p key={index} className="text-sm text-muted-foreground text-center">
+                      {entry}
+                    </p>
+                  ))}
+                </div>
+              </ScrollArea>
+            </UICard>
+
+
+              
               <div className="grid grid-cols-2 gap-2 text-sm">
                 
                 <Badge className="bg-purple-100 text-purple-800 border-purple-300">Journey 4</Badge>
