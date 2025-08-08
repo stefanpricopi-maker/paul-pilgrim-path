@@ -13,6 +13,22 @@ interface GameBoardProps {
   targetPosition?: number;
   onAnimationComplete?: () => void;
 }
+
+interface LocalGameBoardProps {
+  gameState: {
+    players: Player[];
+    currentPlayerIndex: number;
+    locations: GameLocation[];
+    dice1: number;
+    dice2: number;
+    isRolling: boolean;
+    gameLog: string[];
+    round: number;
+    drawnCard: GameCard | null;
+    cardType: 'community' | 'chance' | null;
+  };
+
+
 const GameBoard = ({
   locations,
   players,
