@@ -96,7 +96,7 @@ const GameBoard = ({
       {/* Game Board */}
       <div className="relative bg-gradient-board rounded-2xl p-6 shadow-ancient border-4 border-accent/30">
         {/* Center area with journey descriptions */}
-        <div className="absolute inset-0 flex items-start justify-center pointer-events-none pt-12">
+        <div className="absolute inset-0 flex items-start justify-center pointer-events-none pt-24">
           
           
           
