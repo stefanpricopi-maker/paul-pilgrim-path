@@ -107,9 +107,6 @@ const GameBoard = ({
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <Badge className="bg-purple-100 text-purple-800 border-purple-300">Journey 4</Badge>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Build churches and synagogues to spread the Gospel throughout the ancient world
-              </p>
             </div>  
           </Card>
         
