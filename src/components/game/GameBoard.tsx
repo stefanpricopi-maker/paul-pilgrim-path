@@ -100,7 +100,7 @@ const GameBoard = ({
           
           
           
-          {/*  
+          
           <Card className="w-80 h-60 p-6 bg-gradient-parchment     border-2 border-primary/30">
             <div className="text-center space-y-3 ancient-text">
               <h3 className="text-xl font-bold text-primary">Journey Log</h3>
@@ -113,7 +113,7 @@ const GameBoard = ({
             </div>  
           </Card>
         
-        */}
+      
 
 
 
