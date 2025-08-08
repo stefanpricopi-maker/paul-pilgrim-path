@@ -560,6 +560,13 @@ export const useLocalGame = () => {
           reason: 'Community/Chance card reward',
           type: 'income' as const
         }];
+      } else if (card.action_type === 'lose_money' && cardResult.moneyChange < 0) {
+        transactions = [{
+          playerId: currentPlayer.id,
+          amount: cardResult.moneyChange,
+          reason: 'Community/Chance card penalty',
+          type: 'expense' as const
+        }];
       } else {
         transactions = processEconomyAction(currentPlayer, card.action_type, card.action_value);
       }
