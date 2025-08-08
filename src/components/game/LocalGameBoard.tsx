@@ -29,6 +29,9 @@ interface LocalGameBoardProps {
   onShowCurrentPlayer: () => void;
   onHideCurrentPlayer: () => void;
   onBuyLand?: (playerId: string, locationId: string) => void;
+  onBuildChurch?: (playerId: string, locationId: string) => void;
+  onBuildSynagogue?: (playerId: string, locationId: string) => void;
+  onPayRent?: (playerId: string, locationId: string) => void;
   onCardAction?: (card: GameCard) => void;
 }
 
@@ -41,6 +44,9 @@ export default function LocalGameBoard({
   onShowCurrentPlayer,
   onHideCurrentPlayer,
   onBuyLand,
+  onBuildChurch,
+  onBuildSynagogue,
+  onPayRent,
   onCardAction,
 }: LocalGameBoardProps) {
   const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
@@ -49,7 +55,8 @@ export default function LocalGameBoard({
   const currentLocation = gameState.locations[currentPlayer?.position] || null;
 
   const canBuyLand = currentLocation && !currentLocation.owner && currentLocation.type === 'city' && currentPlayer.money >= currentLocation.price;
-  const canBuildOnCurrentLocation = false; // TODO: Implement building logic
+  const canBuildOnCurrentLocation = currentLocation && currentLocation.owner === currentPlayer.id && currentLocation.type === 'city';
+  const needsToPayRent = currentLocation && currentLocation.owner && currentLocation.owner !== currentPlayer.id && currentLocation.rent > 0;
 
   const handleLocationClick = (location: GameLocation) => {
     setSelectedLocation(location);
@@ -62,11 +69,21 @@ export default function LocalGameBoard({
   };
 
   const handleBuildChurch = () => {
-    // TODO: Implement local church building
+    if (currentLocation && onBuildChurch) {
+      onBuildChurch(currentPlayer.id, currentLocation.id);
+    }
   };
 
   const handleBuildSynagogue = () => {
-    // TODO: Implement local synagogue building
+    if (currentLocation && onBuildSynagogue) {
+      onBuildSynagogue(currentPlayer.id, currentLocation.id);
+    }
+  };
+
+  const handlePayRent = () => {
+    if (currentLocation && onPayRent) {
+      onPayRent(currentPlayer.id, currentLocation.id);
+    }
   };
 
   return (
@@ -193,6 +210,17 @@ export default function LocalGameBoard({
                  {/* Action Buttons */}
                 {!currentPlayerPrivate && (
                   <div className="space-y-2">
+                    {needsToPayRent && (
+                      <Button 
+                        onClick={handlePayRent}
+                        className="w-full text-sm"
+                        variant="destructive"
+                      >
+                        <Coins className="w-3 h-3 mr-1" />
+                        Pay Rent ({currentLocation.rent} denarii)
+                      </Button>
+                    )}
+
                     {canBuyLand && (
                       <Button 
                         onClick={handleBuyLand}
@@ -200,7 +228,7 @@ export default function LocalGameBoard({
                         variant="default"
                       >
                         <Coins className="w-3 h-3 mr-1" />
-                        Buy Land
+                        Buy Land ({currentLocation.price} denarii)
                       </Button>
                     )}
                     
@@ -210,19 +238,19 @@ export default function LocalGameBoard({
                           onClick={handleBuildChurch}
                           className="w-full text-sm"
                           variant="outline"
-                          disabled
+                          disabled={currentPlayer.money < currentLocation.churchCost}
                         >
                           <Church className="w-3 h-3 mr-1" />
-                          Build Church (Coming Soon)
+                          Build Church ({currentLocation.churchCost} denarii)
                         </Button>
                         <Button 
                           onClick={handleBuildSynagogue}
                           className="w-full text-sm"
                           variant="outline"
-                          disabled
+                          disabled={currentPlayer.money < currentLocation.synagogueCost}
                         >
                           <Building2 className="w-3 h-3 mr-1" />
-                          Build Synagogue (Coming Soon)
+                          Build Synagogue ({currentLocation.synagogueCost} denarii)
                         </Button>
                       </>
                     )}
@@ -266,9 +294,9 @@ export default function LocalGameBoard({
                 key={player.id}
                 player={player}
                 isCurrentPlayer={index === gameState.currentPlayerIndex}
-                onBuildChurch={handleBuildChurch}
-                onBuildSynagogue={handleBuildSynagogue}
-                canBuild={canBuildOnCurrentLocation && index === gameState.currentPlayerIndex}
+                onBuildChurch={() => {/* Handled via current location actions */}}
+                onBuildSynagogue={() => {/* Handled via current location actions */}}
+                canBuild={false}
               />
             ))}
           </div>

@@ -477,6 +477,178 @@ export const useLocalGame = () => {
     });
   }, [processCardAction, processEconomyAction, applyTransactions]);
 
+  // Build church on property
+  const buildChurch = useCallback((playerId: string, locationId: string) => {
+    setGameState(prevState => {
+      const location = prevState.locations.find(l => l.id === locationId);
+      const player = prevState.players.find(p => p.id === playerId);
+      
+      if (!location || !player || location.owner !== playerId || player.money < location.churchCost) {
+        return prevState;
+      }
+
+      const newState = {
+        ...prevState,
+        locations: prevState.locations.map(loc =>
+          loc.id === locationId
+            ? { ...loc, buildings: { ...loc.buildings, churches: loc.buildings.churches + 1 } }
+            : loc
+        ),
+        players: prevState.players.map(p =>
+          p.id === playerId
+            ? { ...p, money: p.money - location.churchCost }
+            : p
+        ),
+        gameLog: [
+          ...prevState.gameLog,
+          `${player.name} built a church in ${location.name}`
+        ].slice(-10)
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('localGameState', JSON.stringify({
+        players: newState.players,
+        currentPlayerIndex: newState.currentPlayerIndex,
+        gameStarted: newState.gameStarted,
+        round: newState.round,
+        gameLog: newState.gameLog,
+      }));
+      
+      return newState;
+    });
+  }, []);
+
+  // Build synagogue on property
+  const buildSynagogue = useCallback((playerId: string, locationId: string) => {
+    setGameState(prevState => {
+      const location = prevState.locations.find(l => l.id === locationId);
+      const player = prevState.players.find(p => p.id === playerId);
+      
+      if (!location || !player || location.owner !== playerId || player.money < location.synagogueCost) {
+        return prevState;
+      }
+
+      const newState = {
+        ...prevState,
+        locations: prevState.locations.map(loc =>
+          loc.id === locationId
+            ? { ...loc, buildings: { ...loc.buildings, synagogues: loc.buildings.synagogues + 1 } }
+            : loc
+        ),
+        players: prevState.players.map(p =>
+          p.id === playerId
+            ? { ...p, money: p.money - location.synagogueCost }
+            : p
+        ),
+        gameLog: [
+          ...prevState.gameLog,
+          `${player.name} built a synagogue in ${location.name}`
+        ].slice(-10)
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('localGameState', JSON.stringify({
+        players: newState.players,
+        currentPlayerIndex: newState.currentPlayerIndex,
+        gameStarted: newState.gameStarted,
+        round: newState.round,
+        gameLog: newState.gameLog,
+      }));
+      
+      return newState;
+    });
+  }, []);
+
+  // Pay rent to property owner
+  const payRent = useCallback((payerId: string, locationId: string) => {
+    setGameState(prevState => {
+      const location = prevState.locations.find(l => l.id === locationId);
+      const payer = prevState.players.find(p => p.id === payerId);
+      const owner = prevState.players.find(p => p.id === location?.owner);
+      
+      if (!location || !payer || !owner || location.owner === payerId) {
+        return prevState;
+      }
+
+      const rentAmount = Math.min(location.rent, payer.money);
+
+      const newState = {
+        ...prevState,
+        players: prevState.players.map(p => {
+          if (p.id === payerId) {
+            return { ...p, money: p.money - rentAmount };
+          }
+          if (p.id === location.owner) {
+            return { ...p, money: p.money + rentAmount };
+          }
+          return p;
+        }),
+        gameLog: [
+          ...prevState.gameLog,
+          `${payer.name} paid ${rentAmount} denarii rent to ${owner.name} for ${location.name}`
+        ].slice(-10)
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('localGameState', JSON.stringify({
+        players: newState.players,
+        currentPlayerIndex: newState.currentPlayerIndex,
+        gameStarted: newState.gameStarted,
+        round: newState.round,
+        gameLog: newState.gameLog,
+      }));
+      
+      return newState;
+    });
+  }, []);
+
+  // Check win conditions
+  const checkWinCondition = useCallback((state: LocalGameState, settings?: any): { hasWinner: boolean; winner?: Player; reason?: string } => {
+    const { players, round } = state;
+    
+    // Check if only one player has money (bankruptcy)
+    const playersWithMoney = players.filter(p => p.money > 0);
+    if (playersWithMoney.length === 1) {
+      return {
+        hasWinner: true,
+        winner: playersWithMoney[0],
+        reason: 'Last player standing'
+      };
+    }
+
+    // Check church goal (if set)
+    if (settings?.churchGoal) {
+      for (const player of players) {
+        const totalChurches = state.locations
+          .filter(loc => loc.owner === player.id)
+          .reduce((sum, loc) => sum + loc.buildings.churches, 0);
+        
+        if (totalChurches >= settings.churchGoal) {
+          return {
+            hasWinner: true,
+            winner: player,
+            reason: `Built ${totalChurches} churches`
+          };
+        }
+      }
+    }
+
+    // Check round limit (if set)
+    if (settings?.roundLimit && round >= settings.roundLimit) {
+      // Winner is player with most money
+      const winner = players.reduce((richest, player) => 
+        player.money > richest.money ? player : richest
+      );
+      return {
+        hasWinner: true,
+        winner,
+        reason: `Round limit reached - richest player`
+      };
+    }
+
+    return { hasWinner: false };
+  }, []);
+
   return {
     gameState,
     currentPlayerPrivate,
@@ -488,6 +660,10 @@ export const useLocalGame = () => {
     showCurrentPlayer,
     hideCurrentPlayer,
     buyLand,
+    buildChurch,
+    buildSynagogue,
+    payRent,
     handleCardAction,
+    checkWinCondition,
   };
 };

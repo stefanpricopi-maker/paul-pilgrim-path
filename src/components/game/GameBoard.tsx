@@ -2,15 +2,22 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { GameLocation, Player } from '@/types/game';
 import { Church, Building2, Anchor, Crown, MapPin, Lock, ArrowRight, Dice1, Gift, Scale, Flame, User } from 'lucide-react';
+import AnimatedPlayerPiece from './AnimatedPlayerPiece';
 interface GameBoardProps {
   locations: GameLocation[];
   players: Player[];
   onLocationClick: (location: GameLocation) => void;
+  animatingPlayer?: string;
+  targetPosition?: number;
+  onAnimationComplete?: () => void;
 }
 const GameBoard = ({
   locations,
   players,
-  onLocationClick
+  onLocationClick,
+  animatingPlayer,
+  targetPosition,
+  onAnimationComplete
 }: GameBoardProps) => {
   const getPlayersAtLocation = (locationIndex: number) => {
     return players.filter(player => player.position === locationIndex);
@@ -177,21 +184,32 @@ const GameBoard = ({
                             </div>
                           )}
 
-                          {/* Players */}
+                           {/* Players */}
                           {playersHere.length > 0 && (
                             <div className="flex justify-center flex-wrap gap-1">
-                              {playersHere.map((player) => (
-                                <div 
-                                  key={player.id} 
-                                  className="player-piece text-sm transform hover:scale-110 bg-white rounded-full w-5 h-5 flex items-center justify-center border-2" 
-                                  style={{
-                                    borderColor: player.color,
-                                    filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'
-                                  }}
-                                >
-                                  {player.character.avatar}
-                                </div>
-                              ))}
+                              {playersHere.map((player) => {
+                                const isAnimating = animatingPlayer === player.id && targetPosition !== undefined;
+                                return isAnimating ? (
+                                  <AnimatedPlayerPiece
+                                    key={player.id}
+                                    player={player}
+                                    isMoving={true}
+                                    targetPosition={targetPosition}
+                                    onAnimationComplete={onAnimationComplete}
+                                  />
+                                ) : (
+                                  <div 
+                                    key={player.id} 
+                                    className="player-piece text-sm transform hover:scale-110 bg-white rounded-full w-5 h-5 flex items-center justify-center border-2 transition-all duration-200" 
+                                    style={{
+                                      borderColor: player.color,
+                                      filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.5))'
+                                    }}
+                                  >
+                                    {player.character.avatar}
+                                  </div>
+                                );
+                              })}
                             </div>
                           )}
                         </div>

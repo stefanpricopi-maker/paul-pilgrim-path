@@ -48,14 +48,16 @@
     --board-bg: 35 30% 75%;
     --water: 200 80% 60%;
     --land: 35 35% 70%;
-    --game-church: 260 50% 45%;
-    --game-synagogue: 30 60% 50%;
-    --game-player1: 0 70% 60%;
-    --game-player2: 120 60% 50%;
-    --game-player3: 240 70% 60%;
-    --game-player4: 280 60% 55%;
-    --game-player5: 35 70% 55%;
-    --game-player6: 180 60% 50%;
+    --game-church: 210 40% 45%;
+    --game-synagogue: 280 50% 45%;
+    
+    /* Player colors for multiplayer */
+    --player-1: 0 70% 50%;     /* Red */
+    --player-2: 220 70% 50%;   /* Blue */
+    --player-3: 120 70% 40%;   /* Green */
+    --player-4: 45 70% 50%;    /* Yellow */
+    --player-5: 280 70% 50%;   /* Purple */
+    --player-6: 30 70% 50%;    /* Orange */
     
     /* Special tile colors from the image */
     --special-gold: 45 80% 55%;
@@ -158,6 +160,16 @@
   .player-piece {
     @apply transition-all duration-500 ease-in-out;
     filter: drop-shadow(0 2px 4px hsl(0 0% 0% / 0.3));
+  }
+
+  .player-piece-moving {
+    animation: playerMove 0.3s ease-in-out;
+  }
+
+  @keyframes playerMove {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2) translateY(-5px); }
+    100% { transform: scale(1); }
   }
 
   .dice-container {

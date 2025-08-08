@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Trash2, Plus, Users, Play } from 'lucide-react';
 
 interface LocalGameSetupProps {
-  onStartGame: (playerNames: string[], playerColors: string[]) => void;
+  onStartGame: (playerNames: string[], playerColors: string[], settings?: any) => void;
   onLoadGame?: () => boolean;
   hasExistingGame?: boolean;
 }
@@ -59,9 +59,17 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
 
   const handleStartGame = () => {
     if (canStartGame && hasUniqueNames) {
+      const settings = {
+        winCondition: 'bankruptcy', // Default win condition
+        initialBalance: 1000,
+        churchGoal: 5,
+        roundLimit: null
+      };
+      
       onStartGame(
         players.map(p => p.name.trim()),
-        players.map(p => p.color)
+        players.map(p => p.color),
+        settings
       );
     }
   };

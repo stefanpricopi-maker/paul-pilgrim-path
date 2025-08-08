@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,6 +11,7 @@ import Dice from '@/components/game/Dice';
 import GameModeSelector from '@/components/game/GameModeSelector';
 import LocalGameSetup from '@/components/game/LocalGameSetup';
 import LocalGameBoard from '@/components/game/LocalGameBoard';
+import WinModal from '@/components/game/WinModal';
 import { useGameDatabase } from '@/hooks/useGameDatabase';
 import { useLocalGame } from '@/hooks/useLocalGame';
 import { useAuth } from '@/hooks/useAuth';
@@ -22,6 +23,8 @@ const Index = () => {
   const { t } = useTranslation();
   const [gameMode, setGameMode] = useState<'online' | 'local' | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
+  const [gameSettings, setGameSettings] = useState<any>(null);
+  const [winner, setWinner] = useState<{ player: any; reason: string } | null>(null);
 
   // Online game state
   const { 
@@ -46,13 +49,27 @@ const Index = () => {
     showCurrentPlayer,
     hideCurrentPlayer,
     buyLand,
+    buildChurch,
+    buildSynagogue,
+    payRent,
     handleCardAction,
+    checkWinCondition,
   } = useLocalGame();
   
   const { user, signOut } = useAuth();
 
   // Check if we have a saved local game
   const hasExistingLocalGame = localStorage.getItem('localGameState') !== null;
+
+  // Check for win condition after each turn
+  useEffect(() => {
+    if (localGameState.gameStarted && localGameState.players.length > 1) {
+      const winResult = checkWinCondition(localGameState, gameSettings);
+      if (winResult.hasWinner && winResult.winner) {
+        setWinner({ player: winResult.winner, reason: winResult.reason || 'Game completed' });
+      }
+    }
+  }, [localGameState, gameSettings, checkWinCondition]);
 
   // Show game mode selector if no mode selected
   if (!gameMode) {
@@ -64,7 +81,10 @@ const Index = () => {
     if (!localGameState.gameStarted) {
       return (
         <LocalGameSetup
-          onStartGame={createLocalGame}
+          onStartGame={(playerNames, colors, settings) => {
+            setGameSettings(settings);
+            createLocalGame(playerNames, colors, settings);
+          }}
           onLoadGame={loadLocalGame}
           hasExistingGame={hasExistingLocalGame}
         />
@@ -72,17 +92,43 @@ const Index = () => {
     }
 
     return (
-      <LocalGameBoard
-        gameState={localGameState}
-        currentPlayerPrivate={currentPlayerPrivate}
-        onRollDice={localRollDice}
-        onEndTurn={localEndTurn}
-        onResetGame={resetGame}
-        onShowCurrentPlayer={showCurrentPlayer}
-        onHideCurrentPlayer={hideCurrentPlayer}
-        onBuyLand={buyLand}
-        onCardAction={handleCardAction}
-      />
+      <>
+        <LocalGameBoard
+          gameState={localGameState}
+          currentPlayerPrivate={currentPlayerPrivate}
+          onRollDice={localRollDice}
+          onEndTurn={localEndTurn}
+          onResetGame={() => {
+            resetGame();
+            setWinner(null);
+            setGameSettings(null);
+          }}
+          onShowCurrentPlayer={showCurrentPlayer}
+          onHideCurrentPlayer={hideCurrentPlayer}
+          onBuyLand={buyLand}
+          onBuildChurch={buildChurch}
+          onBuildSynagogue={buildSynagogue}
+          onPayRent={payRent}
+          onCardAction={handleCardAction}
+        />
+        
+        {winner && (
+          <WinModal
+            isOpen={true}
+            winner={winner.player}
+            reason={winner.reason}
+            onPlayAgain={() => {
+              resetGame();
+              setWinner(null);
+              setGameSettings(null);
+              setGameMode(null);
+            }}
+            onClose={() => {
+              setWinner(null);
+            }}
+          />
+        )}
+      </>
     );
   }
 
