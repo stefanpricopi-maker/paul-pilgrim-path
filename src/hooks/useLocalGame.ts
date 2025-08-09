@@ -38,10 +38,13 @@ export const useLocalGame = () => {
     getPlayerAchievements
   } = useAchievements();
   
+  // Ensure GAME_LOCATIONS is properly initialized
+  const safeGameLocations = GAME_LOCATIONS && Array.isArray(GAME_LOCATIONS) ? GAME_LOCATIONS : [];
+
   const [gameState, setGameState] = useState<LocalGameState>({
     players: [],
     currentPlayerIndex: 0,
-    locations: GAME_LOCATIONS,
+    locations: safeGameLocations,
     gameStarted: false,
     dice1: 0,
     dice2: 0,
