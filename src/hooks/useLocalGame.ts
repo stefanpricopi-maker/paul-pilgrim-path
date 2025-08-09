@@ -473,21 +473,20 @@ export const useLocalGame = () => {
 
   // End turn
   const endTurn = useCallback(() => {
+    console.log("EndTurn called - resetting hasRolled for next player");
     setGameState(prev => {
       const nextPlayerIndex = (prev.currentPlayerIndex + 1) % prev.players.length;
       const newRound = nextPlayerIndex === 0 ? prev.round + 1 : prev.round;
       
-      // Reset hasRolled for the next player (and all players if starting new round)
-      const playersWithResetRolls = prev.players.map((player, index) => {
-        if (nextPlayerIndex === 0) {
-          // New round - reset for everyone
-          return { ...player, hasRolled: false };
-        } else if (index === nextPlayerIndex) {
-          // Reset only for next player
-          return { ...player, hasRolled: false };
-        }
-        return player;
-      });
+      console.log("Current player index:", prev.currentPlayerIndex, "Next player index:", nextPlayerIndex);
+      
+      // Reset hasRolled for ALL players at the start of endTurn to prevent issues
+      const playersWithResetRolls = prev.players.map((player) => ({ 
+        ...player, 
+        hasRolled: false 
+      }));
+      
+      console.log("Reset hasRolled for all players");
       
       const newState = {
         ...prev,
