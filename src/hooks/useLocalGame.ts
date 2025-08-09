@@ -38,13 +38,23 @@ export const useLocalGame = () => {
     getPlayerAchievements
   } = useAchievements();
   
-  // Ensure GAME_LOCATIONS is properly initialized
-  const safeGameLocations = GAME_LOCATIONS && Array.isArray(GAME_LOCATIONS) ? GAME_LOCATIONS : [];
+  // Ensure GAME_LOCATIONS is properly initialized and create a deep copy to prevent mutations
+  const initializeLocations = () => {
+    if (!GAME_LOCATIONS || !Array.isArray(GAME_LOCATIONS)) {
+      console.error('GAME_LOCATIONS is not properly initialized');
+      return [];
+    }
+    // Create a deep copy to prevent mutations to the original data
+    return GAME_LOCATIONS.map(location => ({
+      ...location,
+      buildings: { ...location.buildings }
+    }));
+  };
 
-  const [gameState, setGameState] = useState<LocalGameState>({
+  const [gameState, setGameState] = useState<LocalGameState>(() => ({
     players: [],
     currentPlayerIndex: 0,
-    locations: safeGameLocations,
+    locations: initializeLocations(),
     gameStarted: false,
     dice1: 0,
     dice2: 0,
@@ -55,7 +65,7 @@ export const useLocalGame = () => {
     cardType: null,
     aiDecision: undefined,
     isAIThinking: false,
-  });
+  }));
 
   const [currentPlayerPrivate, setCurrentPlayerPrivate] = useState(true);
 
