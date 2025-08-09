@@ -250,9 +250,25 @@ export const useLocalGame = () => {
       return;
     }
     
+    // Validate current player exists
+    if (!gameState.players || gameState.players.length === 0) {
+      console.log("No players in game");
+      return;
+    }
+    
+    if (gameState.currentPlayerIndex >= gameState.players.length || gameState.currentPlayerIndex < 0) {
+      console.log("Invalid currentPlayerIndex:", gameState.currentPlayerIndex, "Players length:", gameState.players.length);
+      return;
+    }
+    
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    console.log("Current player:", currentPlayer?.name, "hasRolled:", currentPlayer?.hasRolled);
-    if (currentPlayer?.hasRolled) {
+    if (!currentPlayer) {
+      console.log("Current player is undefined at index:", gameState.currentPlayerIndex);
+      return;
+    }
+    
+    console.log("Current player:", currentPlayer.name, "hasRolled:", currentPlayer.hasRolled);
+    if (currentPlayer.hasRolled) {
       console.log("Player has already rolled this turn");
       return; // Player can only roll once per turn
     }
