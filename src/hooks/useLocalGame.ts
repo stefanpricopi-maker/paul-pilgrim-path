@@ -511,7 +511,7 @@ export const useLocalGame = () => {
         dice1: 0,
         dice2: 0,
         round: newRound,
-        gameLog: [...prev.gameLog, `${prev.players[nextPlayerIndex].name}'s turn (Round ${newRound})`].slice(-10),
+        gameLog: [...prev.gameLog, `${playersWithResetRolls[nextPlayerIndex]?.name || 'Unknown'}'s turn (Round ${newRound})`].slice(-10),
       };
 
       // Save to localStorage
@@ -528,19 +528,24 @@ export const useLocalGame = () => {
 
     setCurrentPlayerPrivate(true);
     
-    // Auto-roll for AI players after a short delay
+    // Auto-roll for AI players after ensuring state update
     setTimeout(() => {
-      setGameState(current => {
-        const nextPlayer = current.players[current.currentPlayerIndex];
-        const isAI = 'isAI' in nextPlayer && nextPlayer.isAI;
-        if (isAI && !nextPlayer.hasRolled && !current.isRolling) {
-          // Use a fresh setTimeout to ensure state is properly updated
-          setTimeout(() => rollDice(), 100);
+      setGameState(currentState => {
+        const nextPlayer = currentState.players[currentState.currentPlayerIndex];
+        console.log("Checking AI turn for:", nextPlayer?.name, "isAI:", 'isAI' in nextPlayer && nextPlayer.isAI);
+        
+        const isAI = nextPlayer && 'isAI' in nextPlayer && nextPlayer.isAI;
+        if (isAI && !nextPlayer.hasRolled && !currentState.isRolling) {
+          console.log("AI player turn - auto rolling");
+          // Call rollDice directly in another timeout to avoid state conflicts
+          setTimeout(() => {
+            rollDice();
+          }, 500);
         }
-        return current;
+        return currentState;
       });
-    }, 1500); // 1.5 second delay for AI to "think"
-  }, []);
+    }, 1000);
+  }, [rollDice]);
 
   // Reset game
   const resetGame = useCallback(() => {
