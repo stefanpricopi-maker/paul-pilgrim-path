@@ -245,35 +245,40 @@ export const useLocalGame = () => {
   // Roll dice
   const rollDice = useCallback(() => {
     console.log("Roll dice called");
-    if (gameState.isRolling) {
-      console.log("Already rolling, returning");
-      return;
-    }
     
-    // Validate current player exists
-    if (!gameState.players || gameState.players.length === 0) {
-      console.log("No players in game");
-      return;
-    }
-    
-    if (gameState.currentPlayerIndex >= gameState.players.length || gameState.currentPlayerIndex < 0) {
-      console.log("Invalid currentPlayerIndex:", gameState.currentPlayerIndex, "Players length:", gameState.players.length);
-      return;
-    }
-    
-    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-    if (!currentPlayer) {
-      console.log("Current player is undefined at index:", gameState.currentPlayerIndex);
-      return;
-    }
-    
-    console.log("Current player:", currentPlayer.name, "hasRolled:", currentPlayer.hasRolled);
-    if (currentPlayer.hasRolled) {
-      console.log("Player has already rolled this turn");
-      return; // Player can only roll once per turn
-    }
+    setGameState(prev => {
+      // Check all conditions using the latest state
+      if (prev.isRolling) {
+        console.log("Already rolling, returning");
+        return prev;
+      }
+      
+      // Validate current player exists
+      if (!prev.players || prev.players.length === 0) {
+        console.log("No players in game");
+        return prev;
+      }
+      
+      if (prev.currentPlayerIndex >= prev.players.length || prev.currentPlayerIndex < 0) {
+        console.log("Invalid currentPlayerIndex:", prev.currentPlayerIndex, "Players length:", prev.players.length);
+        return prev;
+      }
+      
+      const currentPlayer = prev.players[prev.currentPlayerIndex];
+      if (!currentPlayer) {
+        console.log("Current player is undefined at index:", prev.currentPlayerIndex);
+        return prev;
+      }
+      
+      console.log("Current player:", currentPlayer.name, "hasRolled:", currentPlayer.hasRolled);
+      if (currentPlayer.hasRolled) {
+        console.log("Player has already rolled this turn");
+        return prev; // Player can only roll once per turn
+      }
 
-    setGameState(prev => ({ ...prev, isRolling: true }));
+      // All checks passed, start rolling
+      return { ...prev, isRolling: true };
+    });
 
     // Simulate dice animation
     const rollAnimation = setInterval(() => {
