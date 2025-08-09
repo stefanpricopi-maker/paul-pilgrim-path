@@ -519,7 +519,8 @@ export const useLocalGame = () => {
         const nextPlayer = current.players[current.currentPlayerIndex];
         const isAI = 'isAI' in nextPlayer && nextPlayer.isAI;
         if (isAI && !nextPlayer.hasRolled && !current.isRolling) {
-          rollDice();
+          // Use a fresh setTimeout to ensure state is properly updated
+          setTimeout(() => rollDice(), 100);
         }
         return current;
       });
