@@ -7,6 +7,7 @@ import PlayerCard from '@/components/game/PlayerCard';
 import Dice from '@/components/game/Dice';
 import { Player, GameLocation } from '@/types/game';
 import { Card as GameCard } from '@/types/cards';
+import { AIPlayer } from '@/types/ai';
 import CardModal from './CardModal';
 import { Church, Building2, Coins, MapPin, RotateCcw, Eye, EyeOff, ArrowRight } from 'lucide-react';
 import PlayerOrderPanel from './PlayerOrderPanel';
@@ -14,16 +15,21 @@ import PlayerStatsPanel from './PlayerStatsPanel';
 
 interface LocalGameBoardProps {
   gameState: {
-    players: Player[];
+    players: (Player | AIPlayer)[];
     currentPlayerIndex: number;
     locations: GameLocation[];
+    gameStarted: boolean;
     dice1: number;
     dice2: number;
     isRolling: boolean;
     gameLog: string[];
     round: number;
+    rentPaidThisTurn: Record<string, boolean>;
+    showCardModal: boolean;
     drawnCard: GameCard | null;
     cardType: 'community' | 'chance' | null;
+    aiDecision: any;
+    isAIThinking: boolean;
   };
   currentPlayerPrivate: boolean;
   onRollDice: () => void;
@@ -56,10 +62,11 @@ export default function LocalGameBoard({
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const currentLocation = gameState.locations[currentPlayer?.position] || null;
-
+  
   const canBuyLand = currentLocation && !currentLocation.owner && currentLocation.type === 'city' && currentPlayer.money >= currentLocation.price;
   const canBuildOnCurrentLocation = currentLocation && currentLocation.owner === currentPlayer.id && currentLocation.type === 'city';
-  const needsToPayRent = currentLocation && currentLocation.owner && currentLocation.owner !== currentPlayer.id && currentLocation.rent > 0;
+  const hasAlreadyPaidRent = currentLocation ? gameState.rentPaidThisTurn[currentLocation.id] || false : false;
+  const needsToPayRent = currentLocation && currentLocation.owner && currentLocation.owner !== currentPlayer.id && currentLocation.rent > 0 && !hasAlreadyPaidRent;
 
   const handleLocationClick = (location: GameLocation) => {
     setSelectedLocation(location);
@@ -240,14 +247,15 @@ export default function LocalGameBoard({
                  {/* Action Buttons */}
                 {!currentPlayerPrivate && (
                   <div className="space-y-2">
-                    {needsToPayRent && (
+                     {(needsToPayRent || hasAlreadyPaidRent) && (
                       <Button 
                         onClick={handlePayRent}
                         className="w-full text-sm"
-                        variant="destructive"
+                        variant={hasAlreadyPaidRent ? "outline" : "destructive"}
+                        disabled={hasAlreadyPaidRent}
                       >
                         <Coins className="w-3 h-3 mr-1" />
-                        Pay Rent ({currentLocation.rent} denarii)
+                        {hasAlreadyPaidRent ? "Rent Paid ✓" : `Pay Rent (${currentLocation.rent} denarii)`}
                       </Button>
                     )}
 

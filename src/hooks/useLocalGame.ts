@@ -19,6 +19,7 @@ interface LocalGameState {
   isRolling: boolean;
   gameLog: string[];
   round: number;
+  rentPaidThisTurn: Record<string, boolean>; // Track rent payments per location per turn
   drawnCard: Card | null;
   cardType: 'community' | 'chance' | null;
   aiDecision?: string;
@@ -61,6 +62,7 @@ export const useLocalGame = () => {
     isRolling: false,
     gameLog: [],
     round: 1,
+    rentPaidThisTurn: {},
     drawnCard: null,
     cardType: null,
     aiDecision: undefined,
@@ -155,6 +157,7 @@ export const useLocalGame = () => {
           dice2: 0,
           isRolling: false,
           gameLog: savedState.gameLog || [],
+          rentPaidThisTurn: {},
           aiDecision: undefined,
           isAIThinking: false,
         }));
@@ -529,6 +532,7 @@ export const useLocalGame = () => {
         dice1: 0,
         dice2: 0,
         round: newRound,
+        rentPaidThisTurn: {}, // Reset rent tracking for new turn
         gameLog: [...prev.gameLog, `${playersWithResetRolls[nextPlayerIndex]?.name || 'Unknown'}'s turn (Round ${newRound})`].slice(-10),
       };
 
@@ -577,6 +581,7 @@ export const useLocalGame = () => {
       isRolling: false,
       gameLog: [],
       round: 1,
+      rentPaidThisTurn: {},
       drawnCard: null,
       cardType: null,
       aiDecision: undefined,
@@ -806,6 +811,10 @@ export const useLocalGame = () => {
           }
           return p;
         }),
+        rentPaidThisTurn: {
+          ...prevState.rentPaidThisTurn,
+          [locationId]: true
+        },
         gameLog: [
           ...prevState.gameLog,
           `${payer.name} paid ${rentAmount} denarii rent to ${owner.name} for ${location.name}`

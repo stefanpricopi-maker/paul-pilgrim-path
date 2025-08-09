@@ -15,6 +15,7 @@ interface PropertyActionsProps {
   onEndTurn: () => void;
   isCurrentPlayerLocation: boolean;
   allPlayers: Player[];
+  rentPaidThisTurn: Record<string, boolean>;
 }
 
 const PropertyActions = ({
@@ -26,7 +27,8 @@ const PropertyActions = ({
   onPayRent,
   onEndTurn,
   isCurrentPlayerLocation,
-  allPlayers
+  allPlayers,
+  rentPaidThisTurn
 }: PropertyActionsProps) => {
   const [pendingAction, setPendingAction] = useState<{
     type: 'buy' | 'church' | 'synagogue' | 'pay';
@@ -37,7 +39,8 @@ const PropertyActions = ({
   const isOwnedByCurrentPlayer = location.owner === currentPlayer.id;
   const canBuy = !isOwned && location.type === 'city' && isCurrentPlayerLocation;
   const canBuild = isOwnedByCurrentPlayer && location.type === 'city' && isCurrentPlayerLocation;
-  const needsToPayRent = isOwned && !isOwnedByCurrentPlayer && isCurrentPlayerLocation && location.rent > 0;
+  const hasAlreadyPaidRent = rentPaidThisTurn[location.id] || false;
+  const needsToPayRent = isOwned && !isOwnedByCurrentPlayer && isCurrentPlayerLocation && location.rent > 0 && !hasAlreadyPaidRent;
 
   // Visit tracking for building restrictions
   const visitCount = currentPlayer.propertyVisits[location.id] || 0;
@@ -129,15 +132,16 @@ const PropertyActions = ({
 
           {/* Action Buttons */}
           <div className="space-y-2">
-            {needsToPayRent && (
+            {(needsToPayRent || hasAlreadyPaidRent) && (
               <Button
                 onClick={() => setPendingAction({ type: 'pay', location })}
-                variant="destructive"
+                variant={hasAlreadyPaidRent ? "outline" : "destructive"}
                 size="sm"
                 className="w-full"
+                disabled={hasAlreadyPaidRent}
               >
                 <Coins className="w-4 h-4 mr-2" />
-                Pay Rent ({location.rent} denarii)
+                {hasAlreadyPaidRent ? "Rent Paid ✓" : `Pay Rent (${location.rent} denarii)`}
               </Button>
             )}
 
