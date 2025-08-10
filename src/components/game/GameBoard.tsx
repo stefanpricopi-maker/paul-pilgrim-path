@@ -5,6 +5,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { GameLocation, Player } from '@/types/game';
 import { Church, Building2, Anchor, Crown, MapPin, Lock, ArrowRight, Dice1, Gift, Scale, Flame, User } from 'lucide-react';
 import AnimatedPlayerPiece from './AnimatedPlayerPiece';
+
 interface GameBoardProps {
   locations: GameLocation[];
   players: Player[];
@@ -27,6 +28,7 @@ const GameBoard = ({
   const getPlayersAtLocation = (locationIndex: number) => {
     return players.filter(player => player.position === locationIndex);
   };
+
   const getLocationIcon = (location: GameLocation) => {
     switch (location.type) {
       case 'port':
@@ -81,59 +83,36 @@ const GameBoard = ({
 
     return board;
   };
-  const boardLayout = createBoardLayout();
-  return <div className="w-full max-w-6xl mx-auto p-4">
-      {/* Board Title */}
-      {/* <div className="text-center mb-6"> 
-        <h2 className="text-3xl font-bold text-primary ancient-text mb-2">
-          Paul's Missionary Journeys
-        </h2>
-        <p className="text-muted-foreground">
-          Follow in the footsteps of the great apostle
-        </p>
-      </div>*/}
 
+  const boardLayout = createBoardLayout();
+
+  return (
+    <div className="w-full max-w-6xl mx-auto p-4">
       {/* Game Board */}
       <div className="relative bg-gradient-board rounded-2xl p-6 shadow-ancient border-4 border-accent/30">
-        {/* Center area with journey descriptions */}
-        <div className="absolute inset-0 flex items-start justify-center pointer-events-none pt-40">
-          <Card className="w-80 h-60 p-6 bg-gradient-parchment border-2 border-primary/30">
-            <div className="text-center space-y-3 ancient-text">
+        {/* Center area with journey log */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <Card className="w-80 h-60 p-6 bg-gradient-parchment border-2 border-primary/30 pointer-events-auto">
+            <div className="text-center space-y-3 ancient-text h-full flex flex-col">
               <h3 className="text-xl font-bold text-primary">Journey Log</h3>
               
-              <ScrollArea className="h-32">
-                <div className="space-y-1">
-                  {gameLog?.slice().reverse().map((entry, index) => (
-                    <p key={index} className="text-sm text-muted-foreground text-center">
-                      {entry}
+              <ScrollArea className="flex-1">
+                <div className="space-y-2">
+                  {gameLog && gameLog.length > 0 ? (
+                    gameLog.slice().reverse().map((entry, index) => (
+                      <p key={index} className="text-sm text-muted-foreground text-center leading-relaxed">
+                        {entry}
+                      </p>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground text-center italic">
+                      Your journey begins...
                     </p>
-                  ))}
+                  )}
                 </div>
               </ScrollArea>
             </div>  
           </Card>
-        
-      
-
-
-
-            {/* Journey Log - Center Position */}
-            {gameLog && gameLog.length > 0 && (
-              <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
-                <h3 className="font-bold text-primary ancient-text mb-3 text-center">Journey Log</h3>
-                <ScrollArea className="h-32">
-                  <div className="space-y-1">
-                    {gameLog.slice().reverse().map((entry, index) => (
-                      <p key={index} className="text-sm text-muted-foreground text-center">
-                        {entry}
-                      </p>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </UICard>
-            )}
-        
-        
         </div>
 
         {/* Board Grid */}
@@ -265,6 +244,8 @@ const GameBoard = ({
         }))}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default GameBoard;
