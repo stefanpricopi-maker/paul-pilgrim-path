@@ -691,9 +691,28 @@ export const useLocalGame = () => {
       }
       const updatedPlayers = applyTransactions(prevState.players, transactions);
       
+      // Handle position changes (like go_to_jail)
+      let finalPlayers = updatedPlayers;
+      if (cardResult.newPosition !== currentPlayer.position) {
+        finalPlayers = updatedPlayers.map((player, index) => 
+          index === prevState.currentPlayerIndex 
+            ? { 
+                ...player, 
+                position: cardResult.newPosition,
+                // If going to jail (position 10), set jail status
+                ...(cardResult.newPosition === 10 && card.action_type === 'go_to_jail' ? {
+                  inJail: true,
+                  jailTurns: 0,
+                  consecutiveDoubles: 0
+                } : {})
+              }
+            : player
+        );
+      }
+      
       const newState = {
         ...prevState,
-        players: updatedPlayers,
+        players: finalPlayers,
         gameLog: [...prevState.gameLog, `${currentPlayer.name}: ${cardResult.description}`].slice(-10),
         drawnCard: null,
         cardType: null

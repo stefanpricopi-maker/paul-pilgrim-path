@@ -89,6 +89,12 @@ export const useCards = () => {
         result.description = 'Go to nearest port';
         break;
 
+      case 'go_to_jail':
+        // Send player directly to jail
+        result.newPosition = 10; // Prison position (index 10 in GAME_LOCATIONS)
+        result.description = 'Go directly to jail';
+        break;
+
       default:
         result.description = card.text_en;
     }
