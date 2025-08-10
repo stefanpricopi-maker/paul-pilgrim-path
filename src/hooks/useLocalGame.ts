@@ -202,8 +202,16 @@ export const useLocalGame = () => {
         break;
         
       default:
-        // Check if it's a PORT for teleport ability
-        if (location.type === 'port') {
+        // Check for general tile types
+        if (location.type === 'sacrifice') {
+          // JERTFA: Pay sacrifice tax
+          const tax = 100;
+          transactions.push({
+            playerId: player.id,
+            amount: -tax,
+            reason: `Sacrifice tax at ${location.name}`
+          });
+        } else if (location.type === 'port') {
           // Player can choose to teleport to another port
           // For now, automatically teleport to next available port
           const ports = gameState.locations.filter(loc => loc.type === 'port' && loc.id !== location.id);
@@ -414,14 +422,22 @@ export const useLocalGame = () => {
         }
         if (specialEffects.immunityUntil) {
           logEntries.push(`${currentPlayer.name} gained immunity for 1 round (CORT)`);
-        }
-        
-        // Handle passing start bonus
-        if (passedStart) {
-          const startTransaction = handlePassStart(currentPlayer);
-          updatedPlayers = applyTransactions(updatedPlayers, [startTransaction]);
-          logEntries.push(`${currentPlayer.name} passed Antiohia and received 200 denarii`);
-        }
+         }
+         
+         // Apply special tile transactions (sacrifice tax, etc.)
+         if (specialTransactions.length > 0) {
+           updatedPlayers = applyTransactions(updatedPlayers, specialTransactions);
+           specialTransactions.forEach(transaction => {
+             logEntries.push(transaction.reason);
+           });
+         }
+         
+         // Handle passing start bonus
+         if (passedStart) {
+           const startTransaction = handlePassStart(currentPlayer);
+           updatedPlayers = applyTransactions(updatedPlayers, [startTransaction]);
+           logEntries.push(`${currentPlayer.name} passed Antiohia and received 200 denarii`);
+         }
 
         // Handle landing on special tiles for card drawing
         const currentLocation = prev.locations[newPosition];
