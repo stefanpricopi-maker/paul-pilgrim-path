@@ -28,7 +28,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'First port in Cyprus where Paul preached',
-    color: '#693d11' // Brown
+    color: '#6B4A4F	'//'#693d11' // Brown
   },
    {
     id: 'comunitate1',
