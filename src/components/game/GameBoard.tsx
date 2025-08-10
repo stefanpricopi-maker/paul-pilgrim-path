@@ -103,6 +103,15 @@ const GameBoard = ({
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <Badge className="bg-purple-100 text-purple-800 border-purple-300">Journey 4</Badge>
               </div>
+              <ScrollArea className="h-32">
+                <div className="space-y-1">
+                  {gameState.gameLog.slice().reverse().map((entry, index) => (
+                    <p key={index} className="text-sm text-muted-foreground text-center">
+                      {entry}
+                    </p>
+                  ))}
+                </div>
+              </ScrollArea>
             </div>  
           </Card>
         
