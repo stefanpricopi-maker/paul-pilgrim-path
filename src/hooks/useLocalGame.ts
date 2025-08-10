@@ -151,21 +151,33 @@ export const useLocalGame = () => {
     if (saved) {
       try {
         const savedState = JSON.parse(saved);
+        
+        // Validate the saved state has required properties
+        if (!savedState.players || !Array.isArray(savedState.players)) {
+          console.error('Invalid saved state: missing or invalid players array');
+          return false;
+        }
+        
         setGameState(prev => ({
           ...prev,
           ...savedState,
-          locations: GAME_LOCATIONS,
+          locations: initializeLocations(), // Use fresh locations to prevent corruption
           dice1: 0,
           dice2: 0,
           isRolling: false,
           gameLog: savedState.gameLog || [],
           rentPaidThisTurn: {},
-          aiDecision: undefined,
+          showCardModal: false,
+          drawnCard: null,
+          cardType: null,
+          aiDecision: '',
           isAIThinking: false,
         }));
         return true;
       } catch (error) {
         console.error('Failed to load saved game:', error);
+        // Clear corrupted save data
+        localStorage.removeItem('localGameState');
       }
     }
     return false;
@@ -718,14 +730,18 @@ export const useLocalGame = () => {
         cardType: null
       };
       
-      // Save to localStorage
-      localStorage.setItem('localGameState', JSON.stringify({
-        players: newState.players,
-        currentPlayerIndex: newState.currentPlayerIndex,
-        gameStarted: newState.gameStarted,
-        round: newState.round,
-        gameLog: newState.gameLog,
-      }));
+      // Save to localStorage - sanitize data before saving
+      try {
+        localStorage.setItem('localGameState', JSON.stringify({
+          players: newState.players,
+          currentPlayerIndex: newState.currentPlayerIndex,
+          gameStarted: newState.gameStarted,
+          round: newState.round,
+          gameLog: newState.gameLog,
+        }));
+      } catch (error) {
+        console.error('Failed to save game state:', error);
+      }
       
       return newState;
     });
