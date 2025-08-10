@@ -20,9 +20,10 @@ interface LocalGameState {
   gameLog: string[];
   round: number;
   rentPaidThisTurn: Record<string, boolean>; // Track rent payments per location per turn
+  showCardModal: boolean;
   drawnCard: Card | null;
   cardType: 'community' | 'chance' | null;
-  aiDecision?: string;
+  aiDecision: string;
   isAIThinking: boolean;
 }
 
@@ -63,9 +64,10 @@ export const useLocalGame = () => {
     gameLog: [],
     round: 1,
     rentPaidThisTurn: {},
+    showCardModal: false,
     drawnCard: null,
     cardType: null,
-    aiDecision: undefined,
+    aiDecision: '',
     isAIThinking: false,
   }));
 
@@ -582,9 +584,10 @@ export const useLocalGame = () => {
       gameLog: [],
       round: 1,
       rentPaidThisTurn: {},
+      showCardModal: false,
       drawnCard: null,
       cardType: null,
-      aiDecision: undefined,
+      aiDecision: '',
       isAIThinking: false,
     });
     localStorage.removeItem('localGameState');
