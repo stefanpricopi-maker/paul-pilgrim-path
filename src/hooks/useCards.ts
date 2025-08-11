@@ -86,7 +86,26 @@ export const useCards = () => {
         break;
 
       case 'go_to_nearest_port':
-        result.description = 'Go to nearest port';
+        // Find nearest port and apply 50 denari tax
+        // Port positions: port1=9, port2=19, port3=29, port4=39 (based on game locations)
+        const portPositions = [9, 19, 29, 39];
+        let nearestPort = portPositions[0];
+        let minDistance = Math.abs(currentPlayerPosition - portPositions[0]);
+        
+        for (const portPos of portPositions) {
+          const distance = Math.min(
+            Math.abs(currentPlayerPosition - portPos),
+            boardLength - Math.abs(currentPlayerPosition - portPos)
+          );
+          if (distance < minDistance) {
+            minDistance = distance;
+            nearestPort = portPos;
+          }
+        }
+        
+        result.newPosition = nearestPort;
+        result.moneyChange = -50; // 50 denari tax
+        result.description = 'Go to nearest port and pay 50 denari ticket tax';
         break;
 
       case 'go_to_jail':
