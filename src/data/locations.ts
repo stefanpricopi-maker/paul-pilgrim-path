@@ -170,7 +170,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul\'s famous sermon in the synagogue',
-    color: '#ea2b8a' // black pink
+    color: '#A4746B' // dusty rose
   },
   
   {
@@ -197,7 +197,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul\'s birthplace',
-    color: '#ea2b8a' // black pink
+    color: '#A4746B' // dusty rose
   },
   {
     id: 'troas',
@@ -210,7 +210,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Port where Paul had his Macedonian vision',
-    color: '#ea2b8a' // black pink
+    color: '#A4746B' // dusty rose
   },
     
 {
