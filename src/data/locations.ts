@@ -28,7 +28,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'First port in Cyprus where Paul preached',
-    color: '#6B4A4F	'//'#693d11' // Brown
+    color: '#6B4A4F	'// Brown
   },
    {
     id: 'comunitate1',
@@ -55,7 +55,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Capital of Cyprus, where Paul met the proconsul',
-    color: '#693d11' // Brown
+    color: '#6B4A4F	'// Brown
   },
 
   {
@@ -69,7 +69,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'City in Pamphylia where John Mark left them',
-    color: '#693d11' // Brown
+    color: '#6B4A4F	'// Brown
   },
 
     {
