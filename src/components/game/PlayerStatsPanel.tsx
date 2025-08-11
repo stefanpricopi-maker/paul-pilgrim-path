@@ -10,7 +10,7 @@ interface PlayerStatsPanelProps {
 
 export default function PlayerStatsPanel({ players, locations }: PlayerStatsPanelProps) {
   const getPlayerStats = (player: Player) => {
-    const ownedProperties = locations.filter(loc => loc.owner === player.id);
+    const ownedProperties = locations.filter(loc => player.properties.includes(loc.id));
     const totalValue = ownedProperties.reduce((sum, prop) => sum + (prop.price || 0), 0);
     const totalIncome = ownedProperties.reduce((sum, prop) => sum + (prop.rent || 0), 0);
     const netWorth = player.money + totalValue;
