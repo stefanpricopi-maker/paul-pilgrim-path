@@ -32,7 +32,7 @@ const GameBoard = ({
   const getLocationIcon = (location: GameLocation) => {
     switch (location.type) {
       case 'port':
-        return <Anchor className="w-4 h-4 text-red" />;
+        return <Anchor className="w-4 h-4 text-white" />;
       case 'city':
         return <Building2 className="w-4 h-4 text-white" />;
       case 'special':
