@@ -177,21 +177,8 @@ export default function LocalGameBoard({
               locations={gameState.locations}
               players={gameState.players}
               onLocationClick={handleLocationClick}
+              gameLog={gameState.gameLog}
             />
-            
-            {/* Journey Log - Center Position */}
-            <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
-              <h3 className="font-bold text-primary ancient-text mb-3 text-center">Journey Log</h3>
-              <ScrollArea className="h-32">
-                <div className="space-y-1">
-                  {gameState.gameLog.slice().reverse().map((entry, index) => (
-                    <p key={index} className="text-sm text-muted-foreground text-center">
-                      {entry}
-                    </p>
-                  ))}
-                </div>
-              </ScrollArea>
-            </UICard>
           </div>
 
           {/* Right Sidebar */}

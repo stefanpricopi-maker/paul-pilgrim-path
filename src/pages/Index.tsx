@@ -246,21 +246,8 @@ const Index = () => {
               locations={gameLocationsForDisplay}
               players={gamePlayersForDisplay}
               onLocationClick={handleLocationClick}
+              gameLog={onlineGameState.gameLog.map(entry => entry.description)}
             />
-            
-            {/* Journey Log - Center Position */}
-            <Card className="p-4 bg-gradient-parchment border-2 border-primary/30">
-              <h3 className="font-bold text-primary ancient-text mb-3 text-center">Journey Log</h3>
-              <ScrollArea className="h-32">
-                 <div className="space-y-1">
-                   {onlineGameState.gameLog.slice().reverse().map((entry, index) => (
-                     <p key={index} className="text-sm text-muted-foreground text-center">
-                       {entry.description}
-                     </p>
-                   ))}
-                 </div>
-              </ScrollArea>
-            </Card>
           </div>
 
           {/* Right Sidebar */}
