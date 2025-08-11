@@ -450,7 +450,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Island stop on return journey',
-    color: '#0000FF' // Green
+    color: '#5F7F82	' // Faded Teal
   },
   
   {
@@ -464,7 +464,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Phoenician port city',
-    color: '#0000FF' // Blue
+    color: '#5F7F82	' // Faded Teal
   },
   
   {
@@ -492,7 +492,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Island where Paul was shipwrecked',
-    color: '#0000FF' // Blue
+    color: '#5F7F82	' // Faded Teal
   },
   
   {
