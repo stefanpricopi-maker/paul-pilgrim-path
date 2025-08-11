@@ -29,24 +29,33 @@ const GameBoard = ({
     return players.filter(player => player.position === locationIndex);
   };
 
-//iconpicker depending on location type.
-const iconClasses = "w-4 h-4 text-white";
-
-const getLocationIcon = (location: GameLocation) => {
-  const icons: Record<string, JSX.Element> = {
-    port: <Anchor className={iconClasses} />,
-    city: <Building2 className={iconClasses} />,
-    special: <Crown className={iconClasses} />,
-    prison: <Lock className={iconClasses} />,
-    "go-to-prison": <ArrowRight className={iconClasses} />,
-    chance: <Dice1 className={iconClasses} />,
-    "community-chest": <Gift className={iconClasses} />,
-    court: <Scale className={iconClasses} />,
-    sacrifice: <Flame className={iconClasses} />,
+  const getLocationIcon = (location: GameLocation) => {
+    switch (location.type) {
+      case 'port':
+        return <Anchor className="w-4 h-4 text-white" />;
+      case 'city':
+        return <Building2 className="w-4 h-4 text-white" />;
+      case 'special':
+        if (location.id === 'sabat') {
+          return <Crown className="w-4 h-4 text-white" />;
+        }
+        return <Crown className="w-4 h-4 text-white" />;
+      case 'prison':
+        return <Lock className="w-4 h-4 text-white" />;
+      case 'go-to-prison':
+        return <ArrowRight className="w-4 h-4 text-white" />;
+      case 'chance':
+        return <Dice1 className="w-4 h-4 text-white" />;
+      case 'community-chest':
+        return <Gift className="w-4 h-4 text-white" />;
+      case 'court':
+        return <Scale className="w-4 h-4 text-white" />;
+      case 'sacrifice':
+        return <Flame className="w-4 h-4 text-white" />;
+      default:
+        return <MapPin className="w-4 h-4 text-white" />;
+    }
   };
-
-  return icons[location.type] ?? <MapPin className={iconClasses} />;
-};
 
   // Create the board layout for clockwise movement starting from bottom-right
   const createBoardLayout = () => {
@@ -86,7 +95,6 @@ const getLocationIcon = (location: GameLocation) => {
           <Card className="w-80 h-100 p-6 bg-gradient-parchment border-2 border-primary/30 pointer-events-auto">
             <div className="text-center space-y-3 ancient-text h-full flex flex-col">
               <h3 className="text-xl font-bold text-primary">Journey Log</h3>
-              
               <ScrollArea className="flex-1">
                 <div className="space-y-2">
                   {gameLog && gameLog.length > 0 ? (
