@@ -76,6 +76,25 @@ const Index = () => {
     return <GameModeSelector onSelectMode={setGameMode} />;
   }
 
+  // If online mode but loading and no game, show loading with option to go back
+  if (gameMode === 'online' && loading && !onlineGameState.game) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="w-full max-w-lg p-8 text-center">
+          <div className="text-4xl mb-4">⛪</div>
+          <h1 className="text-2xl font-bold text-primary mb-4">Loading your missionary journey...</h1>
+          <p className="text-muted-foreground mb-6">Setting up the game environment</p>
+          <Button 
+            onClick={() => setGameMode(null)} 
+            variant="outline"
+          >
+            Back to Game Mode Selection
+          </Button>
+        </Card>
+      </div>
+    );
+  }
+
   // Local game flow
   if (gameMode === 'local') {
     if (!localGameState.gameStarted) {
