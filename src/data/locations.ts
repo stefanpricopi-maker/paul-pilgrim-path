@@ -83,7 +83,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#E3D9B3' //aged ivory
+    color: '#4B3F35' //Warm Charcoal
   },
   
   {
@@ -224,7 +224,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#E3D9B3' //aged ivory
+    color: '#4B3F35' //Warm Charcoal
   },
   
   {
@@ -366,7 +366,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#E3D9B3' //aged ivory
+    color: '#4B3F35' //Warm Charcoal
   },
     {
     id: 'amfipolis',
@@ -506,7 +506,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#E3D9B3' //aged ivory
+    color: '#4B3F35' //Warm Charcoal
   },
   
   {
