@@ -680,6 +680,13 @@ export const useLocalGame = () => {
   const handleCardAction = useCallback((card: Card) => {
     setGameState(prevState => {
       const currentPlayer = prevState.players[prevState.currentPlayerIndex];
+      
+      // Safety check: ensure currentPlayer exists
+      if (!currentPlayer) {
+        console.error('No current player found when handling card action');
+        return prevState;
+      }
+      
       const cardResult = processCardAction(card, currentPlayer.position, prevState.locations.length);
       
       // For money cards, use the processed result amount
