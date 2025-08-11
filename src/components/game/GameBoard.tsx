@@ -92,7 +92,7 @@ const GameBoard = ({
       <div className="relative bg-gradient-board rounded-2xl p-6 shadow-ancient border-4 border-accent/30">
         {/* Center area with journey log */}
         <div className="absolute inset-0 flex items-start justify-center pt-40 pointer-events-none">
-          <Card className="w-80 h-100 p-6 bg-gradient-parchment border-2 border-primary/30 pointer-events-auto">
+          <Card className="w-100 h-100 p-6 bg-gradient-parchment border-2 border-primary/30 pointer-events-auto">
             <div className="text-center space-y-3 ancient-text h-full flex flex-col">
               <h3 className="text-xl font-bold text-primary">Journey Log</h3>
               <ScrollArea className="flex-1">
@@ -100,7 +100,7 @@ const GameBoard = ({
                   {gameLog && gameLog.length > 0 ? (
                     gameLog.slice().reverse().map((entry, index) => (
                       <p key={index} className="text-sm text-muted-foreground text-center leading-relaxed">
-                        - {entry}
+                        {entry}
                       </p>
                     ))
                   ) : (
