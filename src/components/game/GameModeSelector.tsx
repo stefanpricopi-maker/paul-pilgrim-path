@@ -84,10 +84,6 @@ export default function GameModeSelector({ onSelectMode }: GameModeSelectorProps
                   <span className="text-green-600 mr-2">✓</span>
                   <span>Up to 6 players</span>
                 </div>
-                <div className="flex items-center">
-                  <span className="text-green-600 mr-2">✓</span>
-                  <span>Privacy mode for turns</span>
-                </div>
               </div>
               <Button className="w-full" size="lg" variant="outline">
                 <Monitor className="w-4 h-4 mr-2" />
