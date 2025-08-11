@@ -63,35 +63,35 @@ export default function LocalGameBoard({
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
   const currentLocation = gameState.locations[currentPlayer?.position] || null;
   
-  const canBuyLand = currentLocation && !currentLocation.owner && currentLocation.type === 'city' && currentPlayer.money >= currentLocation.price;
-  const canBuildOnCurrentLocation = currentLocation && currentLocation.owner === currentPlayer.id && currentLocation.type === 'city';
+  const canBuyLand = currentLocation && !currentLocation.owner && currentLocation.type === 'city' && currentPlayer?.money >= currentLocation.price;
+  const canBuildOnCurrentLocation = currentLocation && currentLocation.owner === currentPlayer?.id && currentLocation.type === 'city';
   const hasAlreadyPaidRent = currentLocation ? gameState.rentPaidThisTurn[currentLocation.id] || false : false;
-  const needsToPayRent = currentLocation && currentLocation.owner && currentLocation.owner !== currentPlayer.id && currentLocation.rent > 0 && !hasAlreadyPaidRent;
+  const needsToPayRent = currentLocation && currentLocation.owner && currentLocation.owner !== currentPlayer?.id && currentLocation.rent > 0 && !hasAlreadyPaidRent;
 
   const handleLocationClick = (location: GameLocation) => {
     setSelectedLocation(location);
   };
 
   const handleBuyLand = () => {
-    if (currentLocation && onBuyLand) {
+    if (currentLocation && onBuyLand && currentPlayer?.id) {
       onBuyLand(currentPlayer.id, currentLocation.id);
     }
   };
 
   const handleBuildChurch = () => {
-    if (currentLocation && onBuildChurch) {
+    if (currentLocation && onBuildChurch && currentPlayer?.id) {
       onBuildChurch(currentPlayer.id, currentLocation.id);
     }
   };
 
   const handleBuildSynagogue = () => {
-    if (currentLocation && onBuildSynagogue) {
+    if (currentLocation && onBuildSynagogue && currentPlayer?.id) {
       onBuildSynagogue(currentPlayer.id, currentLocation.id);
     }
   };
 
   const handlePayRent = () => {
-    if (currentLocation && onPayRent) {
+    if (currentLocation && onPayRent && currentPlayer?.id) {
       onPayRent(currentPlayer.id, currentLocation.id);
     }
   };
