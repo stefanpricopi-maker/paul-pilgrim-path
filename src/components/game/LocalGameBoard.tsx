@@ -194,18 +194,6 @@ export default function LocalGameBoard({
               />
             )}
 
-            {/* Player Order Panel */}
-            <PlayerOrderPanel 
-              players={gameState.players}
-              currentPlayerIndex={gameState.currentPlayerIndex}
-            />
-
-            {/* Player Statistics Panel */}
-            <PlayerStatsPanel 
-              players={gameState.players}
-              locations={gameState.locations}
-            />
-
             {/* Current Location Info */}
             <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
               <h3 className="font-bold text-primary ancient-text mb-3 flex items-center">
@@ -293,6 +281,21 @@ export default function LocalGameBoard({
                 )}
               </div>
             </UICard>
+            
+
+            {/* Player Order Panel */}
+            <PlayerOrderPanel 
+              players={gameState.players}
+              currentPlayerIndex={gameState.currentPlayerIndex}
+            />
+
+            {/* Player Statistics Panel */}
+            <PlayerStatsPanel 
+              players={gameState.players}
+              locations={gameState.locations}
+            />
+
+            
 
           </div>
         </div>
