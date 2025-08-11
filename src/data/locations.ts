@@ -238,7 +238,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'First European city where Paul preached',
-    color: '#FFFF00' // Yellow
+    color: '#B56A2D' //Burnt Ochre
   },
 
   {
@@ -266,7 +266,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Important port city in Macedonia',
-    color: '#FFFF00' // Yellow
+    color: '#B56A2D' //Burnt Ochre
   },
   
   {
@@ -280,7 +280,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Noble Bereans who searched the Scriptures',
-    color: '#FFFF00' // Yellow
+    color: '#B56A2D' //Burnt Ochre
   },
 
   // CORNER: SABAT (top-left corner) - position 20
