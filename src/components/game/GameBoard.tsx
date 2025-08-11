@@ -136,7 +136,7 @@ const GameBoard = ({
           // Set bigger tile dimensions with no spacing
           let tileClasses = '';
           let contentClasses = 'flex-col';
-          let stripOrientation = 'h-8 w-full';
+          let stripOrientation = 'h-6 w-full';
           
           if (isCorner) {
             tileClasses = 'w-[120px] h-[120px]';
