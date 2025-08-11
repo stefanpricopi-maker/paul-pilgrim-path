@@ -679,9 +679,13 @@ export const useLocalGame = () => {
   // Handle card action after player confirms
   const handleCardAction = useCallback((card: Card) => {
     setGameState(prevState => {
-      const currentPlayer = prevState.players[prevState.currentPlayerIndex];
+      // Safety checks: ensure game state is valid
+      if (!prevState.players || prevState.players.length === 0) {
+        console.error('No players found when handling card action');
+        return prevState;
+      }
       
-      // Safety check: ensure currentPlayer exists
+      const currentPlayer = prevState.players[prevState.currentPlayerIndex];
       if (!currentPlayer) {
         console.error('No current player found when handling card action');
         return prevState;
