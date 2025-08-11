@@ -95,7 +95,6 @@ const GameBoard = ({
           <Card className="w-80 h-100 p-6 bg-gradient-parchment border-2 border-primary/30 pointer-events-auto">
             <div className="text-center space-y-3 ancient-text h-full flex flex-col">
               <h3 className="text-xl font-bold text-primary">Journey Log</h3>
-              
               <ScrollArea className="flex-1">
                 <div className="space-y-2">
                   {gameLog && gameLog.length > 0 ? (
