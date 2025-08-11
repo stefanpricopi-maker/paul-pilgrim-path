@@ -534,7 +534,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Roman capital of Judea',
-    color: '#800080' // Purple
+    color: '#2E4057' // Deep Indigo
   },
   {
     id: 'jertfa2',
@@ -561,6 +561,6 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'The eternal city, Paul\'s final destination',
-    color: '#800080' // Purple
+    color: '#2E4057' // Deep Indigo
   }
 ];
