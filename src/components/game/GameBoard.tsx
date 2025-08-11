@@ -139,7 +139,7 @@ const GameBoard = ({
           let stripOrientation = 'h-8 w-full';
           
           if (isCorner) {
-            tileClasses = 'w-[200px] h-[200px]';
+            tileClasses = 'w-[120px] h-[120px]';
           } else if (isLeftColumn || isRightColumn) {
             // Make left/right tiles wider and taller
             tileClasses = 'w-[120px] h-[120px]';
