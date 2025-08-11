@@ -13,7 +13,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Starting point of Paul\'s missionary journeys',
-    color: '#ffffff' // white
+    color: '#E3D9B3' //aged ivory
   },
   
   // BOTTOM ROW: positions 1-9 (moving left from ANTIOCHIA)
@@ -83,7 +83,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#ffffff' // White
+    color: '#E3D9B3' //aged ivory
   },
   
   {
@@ -154,7 +154,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Just visiting or in prison',
-    color: '#ffffff' // white
+    color: '#E3D9B3' //aged ivory
   },
     
   // LEFT COLUMN: positions 11-19 (moving up from PRISON)
@@ -224,7 +224,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#ffffff' // white
+    color: '#E3D9B3' //aged ivory
   },
   
   {
@@ -295,7 +295,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Sabbath - Skip next turn',
-    color: '#ffffff' // white
+    color: '#E3D9B3' //aged ivory
   },
   
   // TOP ROW: positions 21-29 (moving right from SABAT)
@@ -366,7 +366,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#ffffff' // white
+    color: '#E3D9B3' //aged ivory
   },
     {
     id: 'amfipolis',
@@ -379,7 +379,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul passed through it',
-    color: '#00FF00' // Green
+    color: '#7B8B61' //sage green
   },
     {
     id: 'apolonia',
@@ -392,7 +392,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul passed through it',
-    color: '#00FF00' // Green
+    color: '#7B8B61' //sage green
   },
 
   {
@@ -420,7 +420,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul\'s farewell to Ephesian elders',
-    color: '#00FF00' // Green
+    color: '#7B8B61' //sage green
   },
   
   // CORNER: GO TO PRISON (top-right corner) - position 30
@@ -435,7 +435,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Go directly to prison',
-    color: '#ffffff' // white
+    color: '#E3D9B3' //aged ivory
   },
   
   // RIGHT COLUMN: positions 31-39 (moving down from GO TO PRISON)
@@ -506,7 +506,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Mediterranean Port',
-    color: '#ffffff' // white
+    color: '#E3D9B3' //aged ivory
   },
   
   {
