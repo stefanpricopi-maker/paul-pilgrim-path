@@ -100,7 +100,7 @@ const GameBoard = ({
                   {gameLog && gameLog.length > 0 ? (
                     gameLog.slice().reverse().map((entry, index) => (
                       <p key={index} className="text-sm text-muted-foreground text-center leading-relaxed">
-                        {entry}
+                        - {entry}
                       </p>
                     ))
                   ) : (
