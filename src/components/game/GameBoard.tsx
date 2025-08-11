@@ -143,7 +143,7 @@ const GameBoard = ({
             tileClasses = 'w-[120px] h-[120px]';
           } else if (isLeftColumn || isRightColumn) {
             // Make left/right tiles wider and taller
-            tileClasses = 'w-[120px] h-[90px]';
+            tileClasses = 'w-[120px] h-[120px]';
           } else {
             // Make top/bottom tiles wider and taller  
             tileClasses = 'w-[90px] h-[120px]';
