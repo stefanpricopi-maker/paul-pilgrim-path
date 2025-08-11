@@ -238,7 +238,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'First European city where Paul preached',
-    color: '#B56A2D' //Burnt Ochre
+    color: '#FFFF00' // Yellow
   },
 
   {
@@ -266,7 +266,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Important port city in Macedonia',
-    color: '#B56A2D' //Burnt Ochre
+    color: '#FFFF00' // Yellow
   },
   
   {
@@ -280,7 +280,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Noble Bereans who searched the Scriptures',
-    color: '#B56A2D' //Burnt Ochre
+    color: '#FFFF00' // Yellow
   },
 
   // CORNER: SABAT (top-left corner) - position 20
@@ -310,7 +310,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Great commercial center, Paul stayed 3 years',
-    color: '#FF0000' // Red
+    color: '#8B3A2B' //brick red 
   },
 
     {
@@ -338,7 +338,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul\'s speech at the Areopagus',
-    color: '#FF0000' // Red
+    color: '#8B3A2B' //brick red
   },
   
   {
@@ -352,7 +352,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Where Paul stayed 18 months',
-    color: '#FF0000' // Red
+    color: '#8B3A2B' //brick red
   },
   
   {
@@ -379,7 +379,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul passed through it',
-    color: '#00FF00' // Green
+    color: '#C7A14A' // Golden Ochre
   },
     {
     id: 'apolonia',
@@ -392,7 +392,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul passed through it',
-    color: '#00FF00' // Green
+    color: '#C7A14A' // Golden Ochre
   },
 
   {
@@ -420,7 +420,7 @@ export const GAME_LOCATIONS: GameLocation[] = [
     synagogueCost: 50,
     buildings: { churches: 0, synagogues: 0 },
     description: 'Paul\'s farewell to Ephesian elders',
-    color: '#00FF00' // Green
+    color: '#C7A14A' // Golden Ochre
   },
   
   // CORNER: GO TO PRISON (top-right corner) - position 30
