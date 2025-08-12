@@ -63,19 +63,19 @@ export const BIBLICAL_CHARACTERS: BiblicalCharacter[] = [
     name: "Barnabas",
     description: "The encourager and Paul's trusted companion",
     specialAbility: "Receives 10% more income from properties",
-    avatar: "👨‍🦳"
+    avatar: "🧙‍♂️"
   },
   {
     name: "Silas",
     description: "The faithful missionary partner",
     specialAbility: "Can move an extra space once per turn",
-    avatar: "🧔"
+    avatar: "🤴🏽"
   },
   {
     name: "Timothy",
     description: "The young disciple",
     specialAbility: "Pays 50% less for building churches",
-    avatar: "👱‍♂️"
+    avatar: "👨‍🎓"
   },
   {
     name: "Luke",
@@ -87,12 +87,12 @@ export const BIBLICAL_CHARACTERS: BiblicalCharacter[] = [
     name: "Aquila",
     description: "The tentmaker and teacher",
     specialAbility: "Earns extra money when passing GO",
-    avatar: "👨‍🔧"
+    avatar: "👨‍🏭"
   },
   {
     name: "Priscilla",
     description: "The wise teacher and leader",
     specialAbility: "Can negotiate better property prices",
-    avatar: "👩‍🦰"
+    avatar: "👸🏽"
   }
 ];
