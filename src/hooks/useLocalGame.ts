@@ -377,7 +377,7 @@ export const useLocalGame = () => {
         
         // Player can move - calculate new position
         let newPosition = (currentPlayer.position + totalValue) % prev.locations.length;
-        const passedStart = newPosition < currentPlayer.position && !currentPlayer.inJail;
+        const passedStart = (currentPlayer.position + totalValue) >= prev.locations.length && !currentPlayer.inJail;
         
         // Handle special tile effects
         const newLocation = prev.locations[newPosition];
