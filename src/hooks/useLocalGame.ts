@@ -710,7 +710,7 @@ export const useLocalGame = () => {
           type: 'expense' as const
         }];
       } else {
-        transactions = processEconomyAction(currentPlayer, card.action_type, card.action_value);
+        transactions = currentPlayer ? processEconomyAction(currentPlayer, card.action_type, card.action_value) : [];
       }
       const updatedPlayers = applyTransactions(prevState.players, transactions);
       
