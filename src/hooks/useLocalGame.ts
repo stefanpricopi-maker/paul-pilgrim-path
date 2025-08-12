@@ -250,7 +250,7 @@ export const useLocalGame = () => {
   }, [gameState.round, gameState.locations]);
 
   // Handle jail mechanics
-  const handleJailLogic = useCallback((player: Player, diceValue: number) => {
+  const handleJailLogic = useCallback((player: Player, diceValue: number, isDoubles: boolean) => {
     if (!player.inJail) return { canMove: true, effects: {} };
     
     // Check if player has been in jail for 3 turns
@@ -265,10 +265,7 @@ export const useLocalGame = () => {
     }
     
     // Check for doubles to get out of jail
-    // For simplicity, we'll use a random chance here
-    const isDouble = Math.random() < 0.16; // ~1/6 chance like rolling doubles
-    
-    if (isDouble || player.hasGetOutOfJailCard) {
+    if (isDoubles || player.hasGetOutOfJailCard) {
       return {
         canMove: true,
         effects: {
@@ -364,7 +361,7 @@ export const useLocalGame = () => {
         }
         
         // Handle jail logic
-        const jailResult = handleJailLogic(currentPlayer, totalValue);
+        const jailResult = handleJailLogic(currentPlayer, totalValue, isDoubles);
         
         if (!jailResult.canMove && !isDoubles) {
           const updatedPlayers = prev.players.map((player, index) => 
