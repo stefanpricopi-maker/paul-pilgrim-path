@@ -73,10 +73,15 @@ export const useLocalGame = () => {
 
   const [currentPlayerPrivate, setCurrentPlayerPrivate] = useState(true);
 
-  // Load cards when component mounts
-  useEffect(() => {
-    loadCards();
-  }, [loadCards]);
+  // Load cards only when game starts (deferred loading for performance)
+  const [cardsLoaded, setCardsLoaded] = useState(false);
+  
+  const ensureCardsLoaded = useCallback(async () => {
+    if (!cardsLoaded) {
+      await loadCards();
+      setCardsLoaded(true);
+    }
+  }, [loadCards, cardsLoaded]);
 
   // Create local game with players and settings
   const createLocalGame = useCallback((playerNames: string[], playerColors: string[], settings?: any) => {
@@ -451,37 +456,31 @@ export const useLocalGame = () => {
            logEntries.push(`${currentPlayer.name} passed Antiohia and received 200 denarii`);
          }
 
-        // Handle landing on special tiles for card drawing
-        const currentLocation = prev.locations[newPosition];
-        if (currentLocation.type === 'community-chest') {
-          const card = drawCommunityCard();
-          if (card) {
-            return {
-              ...prev,
-              dice1: dice1Value,
-              dice2: dice2Value,
-              isRolling: false,
-              players: updatedPlayers,
-              gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Community Chest card`].slice(-10),
-              drawnCard: card,
-              cardType: 'community'
-            };
-          }
-        } else if (currentLocation.type === 'chance') {
-          const card = drawChanceCard();
-          if (card) {
-            return {
-              ...prev,
-              dice1: dice1Value,
-              dice2: dice2Value,
-              isRolling: false,
-              players: updatedPlayers,
-              gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Chance card`].slice(-10),
-              drawnCard: card,
-              cardType: 'chance'
-            };
-          }
-        }
+         // Handle landing on special tiles for card drawing (ensure cards are loaded)
+         const currentLocation = prev.locations[newPosition];
+         if (currentLocation.type === 'community-chest') {
+           ensureCardsLoaded().then(() => {
+             const card = drawCommunityCard();
+             if (card) {
+               setGameState(current => ({
+                 ...current,
+                 drawnCard: card,
+                 cardType: 'community'
+               }));
+             }
+           });
+         } else if (currentLocation.type === 'chance') {
+           ensureCardsLoaded().then(() => {
+             const card = drawChanceCard();
+             if (card) {
+               setGameState(current => ({
+                 ...current,
+                 drawnCard: card,
+                 cardType: 'chance'
+               }));
+             }
+           });
+         }
         
         // Track achievements
         incrementCurrentGameStat(currentPlayer.id, 'passedStart');
@@ -536,7 +535,7 @@ export const useLocalGame = () => {
         return finalState;
       });
     }, 1500);
-  }, [gameState.isRolling, handlePassStart, applyTransactions, drawCommunityCard, drawChanceCard]);
+  }, [gameState.isRolling, handlePassStart, applyTransactions, ensureCardsLoaded, incrementCurrentGameStat, shouldAIBuyProperty, shouldAIBuildChurch, shouldAIBuildSynagogue]);
 
   // End turn
   const endTurn = useCallback(() => {
