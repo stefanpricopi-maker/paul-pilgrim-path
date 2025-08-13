@@ -32,80 +32,106 @@ const PlayerCard = ({
   };
 
   return (
-    <Card className={`p-4 transition-all duration-300 ${
-      isCurrentPlayer 
-        ? 'ring-2 ring-accent shadow-glow transform scale-105' 
-        : 'hover:shadow-ancient'
-    } ${getPlayerColorClass(player.color)} bg-gradient-parchment`}>
-
-
-
-
-
-
-<div className="flex space-x-3">
-  {/* Avatar */}
-  <div className="w-20 flex-shrink-0">
-    {typeof player.character.avatar === "string" && player.character.avatar.endsWith(".png") ? (
-      <img
-        src={player.character.avatar}
-        alt={player.character.name}
-        className="w-full h-full object-cover rounded-lg"
-      />
-    ) : (
-      player.character.avatar
-    )}
-  </div>
-
-  {/* Details */}
-  <div className="flex-1 flex flex-col justify-between space-y-3">
+    <Card
+  className={`p-4 transition-all duration-300 ${
+    isCurrentPlayer
+      ? "ring-2 ring-accent shadow-glow transform scale-105"
+      : "hover:shadow-ancient"
+  } ${getPlayerColorClass(player.color)} bg-gradient-parchment`}
+>
+  <div className="space-y-3">
     {/* Player Header */}
     <div className="flex items-center justify-between">
-      <div>
-        <h3 className="font-bold text-primary ancient-text">{player.name}</h3>
-        <p className="text-sm text-muted-foreground">{player.character.name}</p>
-        {player.inJail && (
-          <div className="text-xs text-orange-500 font-medium">🔒 In Prison ({player.jailTurns}/3)</div>
-        )}
-        {player.skipNextTurn && (
-          <div className="text-xs text-blue-500 font-medium">⏸️ Skip Next Turn</div>
-        )}
-        {player.immunityUntil > 0 && (
-          <div className="text-xs text-green-500 font-medium">🛡️ Immunity Active</div>
-        )}
+      <div className="flex items-center space-x-3">
+        <div className="text-3xl">
+          {typeof player.character.avatar === "string" &&
+          player.character.avatar.endsWith(".png") ? (
+            <img
+              src={player.character.avatar}
+              alt={player.character.name}
+              className="w-10 h-10 object-cover rounded-full border border-border"
+            />
+          ) : (
+            player.character.avatar
+          )}
+        </div>
+        <div>
+          <h3 className="font-bold text-primary ancient-text leading-tight">
+            {player.name}
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            {player.character.name}
+          </p>
+        </div>
       </div>
       {isCurrentPlayer && (
-        <Badge variant="default" className="bg-accent text-accent-foreground">
+        <Badge
+          variant="default"
+          className="bg-accent text-accent-foreground px-2 py-1 text-xs"
+        >
           Current
         </Badge>
       )}
     </div>
 
+    {/* Player Status */}
+    {(player.inJail || player.skipNextTurn || player.immunityUntil > 0) && (
+      <div className="flex flex-wrap gap-2">
+        {player.inJail && (
+          <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md">
+            🔒 In Prison ({player.jailTurns}/3)
+          </span>
+        )}
+        {player.skipNextTurn && (
+          <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md">
+            ⏸️ Skip Next Turn
+          </span>
+        )}
+        {player.immunityUntil > 0 && (
+          <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-md">
+            🛡️ Immunity Active
+          </span>
+        )}
+      </div>
+    )}
+
     {/* Money */}
-    <div className="flex items-center space-x-2 bg-card/50 rounded-lg p-2">
+    <div className="flex items-center space-x-2 bg-card/50 rounded-lg p-2 shadow-inner">
       <Coins className="w-4 h-4 text-accent" />
-      <span className="font-bold text-accent ancient-text">{player.money} denarii</span>
+      <span className="font-bold text-accent ancient-text text-lg">
+        {player.money.toLocaleString()} denarii
+      </span>
     </div>
 
     {/* Properties */}
-    <div className="text-sm">
-      <p className="text-muted-foreground">Properties: {player.properties.length}</p>
-    </div>
+    {player.properties.length > 0 && (
+      <div className="text-sm">
+        <p className="text-muted-foreground">
+          Properties: {player.properties.length}
+        </p>
+      </div>
+    )}
 
     {/* Special Ability */}
-    <div className="text-xs p-2 bg-secondary/50 rounded-lg">
-      <p className="font-semibold text-secondary-foreground">Special Ability:</p>
-      <p className="text-secondary-foreground/80">{player.character.specialAbility}</p>
-    </div>
+    {player.character.specialAbility && (
+      <div className="text-xs p-2 bg-secondary/50 rounded-lg border border-secondary/30">
+        <p className="font-semibold text-secondary-foreground">
+          Special Ability:
+        </p>
+        <p className="text-secondary-foreground/80">
+          {player.character.specialAbility}
+        </p>
+      </div>
+    )}
 
     {/* Building Actions */}
     {isCurrentPlayer && canBuild && (
-      <div className="space-y-2 pt-2 border-t border-border">
+      <div className="pt-2 border-t border-border space-y-2">
         <Button
           onClick={onBuildChurch}
           size="sm"
           variant="outline"
-          className="w-full text-xs hover:bg-game-church/20"
+          className="w-full text-xs flex items-center justify-center hover:bg-game-church/20"
         >
           <Church className="w-3 h-3 mr-1" />
           Build Church
@@ -114,7 +140,7 @@ const PlayerCard = ({
           onClick={onBuildSynagogue}
           size="sm"
           variant="outline"
-          className="w-full text-xs hover:bg-game-synagogue/20"
+          className="w-full text-xs flex items-center justify-center hover:bg-game-synagogue/20"
         >
           <Building2 className="w-3 h-3 mr-1" />
           Build Synagogue
@@ -122,14 +148,8 @@ const PlayerCard = ({
       </div>
     )}
   </div>
-</div>
+</Card>
 
-
-
-
-
-      
-    </Card>
   );
 };
 
