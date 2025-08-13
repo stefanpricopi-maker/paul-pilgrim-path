@@ -54,7 +54,7 @@ const PlayerCard = ({
             </div>
             <div className="flex-1">
               <h3 className="font-bold text-primary ancient-text">{player.name}</h3>
-              <p className="text-sm text-muted-foreground"> -  {player.character.name}</p>
+              <p className="text-sm text-muted-foreground">{player.character.name}</p>
               {player.inJail && (
                 <div className="text-xs text-orange-500 font-medium">🔒 In Prison ({player.jailTurns}/3)</div>
               )}
