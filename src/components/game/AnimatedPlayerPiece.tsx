@@ -62,7 +62,25 @@ const AnimatedPlayerPiece = ({
         transform: isAnimating ? 'scale(1.1)' : undefined
       }}
     >
-      {player.character.avatar}
+
+
+      
+     {typeof player.character.avatar === 'string' && player.character.avatar.startsWith('/')
+    ? (
+        <img
+          src={player.character.avatar}
+          alt={player.character.name}
+          className="w-full h-full object-cover"
+        />
+      )
+    : (
+        <span className="text-sm">{player.character.avatar}</span>
+      )
+  }
+    
+    
+    
+    
     </div>
   );
 };
