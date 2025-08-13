@@ -461,30 +461,130 @@ export const useLocalGame = () => {
         if (currentLocation.type === 'community-chest') {
           const card = drawCommunityCard();
           if (card) {
-            return {
-              ...prev,
-              dice1: dice1Value,
-              dice2: dice2Value,
-              isRolling: false,
-              players: updatedPlayers,
-              gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Community Chest card`].slice(-10),
-              drawnCard: card,
-              cardType: 'community'
-            };
+            const isAI = 'isAI' in currentPlayer && currentPlayer.isAI;
+            
+            if (isAI) {
+              // For AI players, automatically process the card action
+              const cardResult = processCardAction(card, currentPlayer.position, prev.locations.length);
+              
+              // Apply card effects
+              let cardTransactions = [];
+              if (card.action_type === 'add_money' && cardResult.moneyChange > 0) {
+                cardTransactions = [{
+                  playerId: currentPlayer.id,
+                  amount: cardResult.moneyChange,
+                  reason: 'Community Chest card reward',
+                  type: 'income' as const
+                }];
+              } else if ((card.action_type === 'lose_money' || card.action_type === 'pay_money') && cardResult.moneyChange < 0) {
+                cardTransactions = [{
+                  playerId: currentPlayer.id,
+                  amount: cardResult.moneyChange,
+                  reason: 'Community Chest card penalty',
+                  type: 'expense' as const
+                }];
+              }
+              
+              if (cardTransactions.length > 0) {
+                updatedPlayers = applyTransactions(updatedPlayers, cardTransactions);
+              }
+              
+              // Handle position changes
+              if (cardResult.newPosition !== currentPlayer.position) {
+                updatedPlayers = updatedPlayers.map((player, index) => 
+                  index === prev.currentPlayerIndex 
+                    ? { 
+                        ...player, 
+                        position: cardResult.newPosition,
+                        // If going to jail, set jail status
+                        ...(cardResult.newPosition === 10 && card.action_type === 'go_to_jail' ? {
+                          inJail: true,
+                          jailTurns: 0,
+                          consecutiveDoubles: 0
+                        } : {})
+                      }
+                    : player
+                );
+              }
+              
+              logEntries.push(`${currentPlayer.name} (AI) drew a Community Chest card: ${cardResult.description}`);
+            } else {
+              // For human players, show the card modal
+              return {
+                ...prev,
+                dice1: dice1Value,
+                dice2: dice2Value,
+                isRolling: false,
+                players: updatedPlayers,
+                gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Community Chest card`].slice(-10),
+                drawnCard: card,
+                cardType: 'community'
+              };
+            }
           }
         } else if (currentLocation.type === 'chance') {
           const card = drawChanceCard();
           if (card) {
-            return {
-              ...prev,
-              dice1: dice1Value,
-              dice2: dice2Value,
-              isRolling: false,
-              players: updatedPlayers,
-              gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Chance card`].slice(-10),
-              drawnCard: card,
-              cardType: 'chance'
-            };
+            const isAI = 'isAI' in currentPlayer && currentPlayer.isAI;
+            
+            if (isAI) {
+              // For AI players, automatically process the card action
+              const cardResult = processCardAction(card, currentPlayer.position, prev.locations.length);
+              
+              // Apply card effects
+              let cardTransactions = [];
+              if (card.action_type === 'add_money' && cardResult.moneyChange > 0) {
+                cardTransactions = [{
+                  playerId: currentPlayer.id,
+                  amount: cardResult.moneyChange,
+                  reason: 'Chance card reward',
+                  type: 'income' as const
+                }];
+              } else if ((card.action_type === 'lose_money' || card.action_type === 'pay_money') && cardResult.moneyChange < 0) {
+                cardTransactions = [{
+                  playerId: currentPlayer.id,
+                  amount: cardResult.moneyChange,
+                  reason: 'Chance card penalty',
+                  type: 'expense' as const
+                }];
+              }
+              
+              if (cardTransactions.length > 0) {
+                updatedPlayers = applyTransactions(updatedPlayers, cardTransactions);
+              }
+              
+              // Handle position changes
+              if (cardResult.newPosition !== currentPlayer.position) {
+                updatedPlayers = updatedPlayers.map((player, index) => 
+                  index === prev.currentPlayerIndex 
+                    ? { 
+                        ...player, 
+                        position: cardResult.newPosition,
+                        // If going to jail, set jail status
+                        ...(cardResult.newPosition === 10 && card.action_type === 'go_to_jail' ? {
+                          inJail: true,
+                          jailTurns: 0,
+                          consecutiveDoubles: 0
+                        } : {})
+                      }
+                    : player
+                );
+              }
+              
+              logEntries.push(`${currentPlayer.name} (AI) drew a Chance card: ${cardResult.description}`);
+            } else {
+              // For human players, show the card modal
+              return {
+                ...prev,
+                dice1: dice1Value,
+                dice2: dice2Value,
+                isRolling: false,
+                players: updatedPlayers,
+                gameLog: [...prev.gameLog, ...logEntries, `${currentPlayer.name} drew a Chance card`].slice(-10),
+                drawnCard: card,
+                cardType: 'chance'
+              };
+            }
           }
         }
         
