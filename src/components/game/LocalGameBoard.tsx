@@ -118,8 +118,21 @@ export default function LocalGameBoard({
         <UICard className="p-4 bg-accent/10 border-2 border-accent">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center text-2xl">
-                {currentPlayer?.character?.avatar || '👤'}
+              <div className="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center overflow-hidden">
+                {currentPlayer?.character?.avatar ? (
+                  typeof currentPlayer.character.avatar === "string" &&
+                  currentPlayer.character.avatar.endsWith(".png") ? (
+                    <img
+                      src={currentPlayer.character.avatar}
+                      alt={currentPlayer.character.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    currentPlayer.character.avatar // emoji or JSX
+                  )
+                ) : (
+                  '👤'
+                )}
               </div>
               <div>
                 <h3 className="font-bold text-lg">{currentPlayer?.name || 'Unknown Player'}'s Turn</h3>
