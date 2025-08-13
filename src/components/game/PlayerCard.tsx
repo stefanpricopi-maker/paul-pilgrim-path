@@ -41,7 +41,17 @@ const PlayerCard = ({
         {/* Player Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="text-3xl">{player.character.avatar}</div>
+            <div className="text-3xl">
+              {typeof player.character.avatar === "string" && player.character.avatar.endsWith(".png") ? (
+                <img
+                  src={player.character.avatar}
+                  alt={player.character.name}
+                  className="w-8 h-8 object-cover inline-block"
+                />
+              ) : (
+                player.character.avatar
+              )}
+            </div>
             <div className="flex-1">
               <h3 className="font-bold text-primary ancient-text">{player.name}</h3>
               <p className="text-sm text-muted-foreground">{player.character.name}</p>
