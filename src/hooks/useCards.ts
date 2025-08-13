@@ -70,8 +70,34 @@ export const useCards = () => {
 
       case 'go_to_tile':
         if (card.action_value) {
-          // This would need to map tile names to positions
-          // For now, simplified logic
+          // Map tile names to positions from GAME_LOCATIONS
+          const tileNameMap: Record<string, number> = {
+            'EFES': 21,
+            'ANTIOCHIA': 0,
+            'CORINT': 24,
+            'ATENA': 22,
+            'FILIPI': 15,
+            'TESALONIC': 17,
+            'BEREEA': 18,
+            'ICONIA': 5,
+            'LISTRA': 7,
+            'DERBE': 8,
+            'TARS': 12,
+            'TROAS': 13,
+            'MALTA': 34,
+            'RODOS': 31,
+            'MILET': 28
+          };
+          
+          const targetPosition = tileNameMap[card.action_value.toUpperCase()];
+          if (targetPosition !== undefined) {
+            result.newPosition = targetPosition;
+            // Check if player passes start
+            if (targetPosition < currentPlayerPosition) {
+              result.passedStart = true;
+              result.moneyChange = 200; // Start bonus
+            }
+          }
           result.description = `Go to ${card.action_value}`;
         }
         break;
