@@ -69,7 +69,7 @@ export const BIBLICAL_CHARACTERS: BiblicalCharacter[] = [
     name: "Silas",
     description: "The faithful missionary partner",
     specialAbility: "Can move an extra space once per turn",
-    avatar: "/Silar_small.png"
+    avatar: "/Silas_small.png"
   },
   {
     name: "Timothy",
