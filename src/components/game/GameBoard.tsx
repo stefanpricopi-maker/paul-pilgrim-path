@@ -226,7 +226,28 @@ const GameBoard = ({
                                   filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))'
                                 }}
                               >
-                                {player.character.avatar}
+                                
+                                
+                                
+                                
+                                
+                                {typeof player.character.avatar === 'string' && player.character.avatar.startsWith('/')
+                                  ? (
+                                          <img
+                                            src={player.character.avatar}
+                                            alt={player.character.name}
+                                            className="w-full h-full object-cover"
+                                            />
+                                    )
+                                  : (
+                                      <span className="text-sm">{player.character.avatar}</span>
+                                      )
+  }
+                             
+                              
+                              
+                              
+                              
                               </div>
                             );
                           })}
