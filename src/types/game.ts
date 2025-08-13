@@ -63,13 +63,13 @@ export const BIBLICAL_CHARACTERS: BiblicalCharacter[] = [
     name: "Barnabas",
     description: "The encourager and Paul's trusted companion",
     specialAbility: "Receives 10% more income from properties",
-    avatar: "/Barnabas_small.png"
+    avatar: "/barnabas_small.png"
   },
   {
     name: "Silas",
     description: "The faithful missionary partner",
     specialAbility: "Can move an extra space once per turn",
-    avatar: "/Silas_small.png"
+    avatar: "/silas_small.png"
   },
   {
     name: "Timothy",
