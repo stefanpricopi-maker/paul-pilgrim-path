@@ -81,9 +81,11 @@ const Dice = ({
             <p className="text-lg font-bold text-accent ancient-text">
               {dice1} + {dice2} = {dice1 + dice2}
             </p>
-            {dice1 === dice2 && (
-            {/*<p className="text-sm text-primary font-bold">Doubles!</p>*/}
+         {/*   {dice1 === dice2 && (
+            <p className="text-sm text-primary font-bold">Doubles!</p>
             )}
+
+            */}
           </div>
         )}
         
