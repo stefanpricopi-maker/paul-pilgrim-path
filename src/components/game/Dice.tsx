@@ -82,7 +82,7 @@ const Dice = ({
               {dice1} + {dice2} = {dice1 + dice2}
             </p>
             {dice1 === dice2 && (
-              <p className="text-sm text-primary font-bold">Doubles!</p>
+            {/*<p className="text-sm text-primary font-bold">Doubles!</p>*/}
             )}
           </div>
         )}
