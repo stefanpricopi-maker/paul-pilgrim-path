@@ -242,7 +242,7 @@ const GameBoard = ({
                                   : (
                                       <span className="text-sm">{player.character.avatar}</span>
                                       )
-  }
+                                }
                              
                               
                               
