@@ -31,12 +31,9 @@ interface LocalGameBoardProps {
     aiDecision: any;
     isAIThinking: boolean;
   };
-  currentPlayerPrivate: boolean;
   onRollDice: () => void;
   onEndTurn: () => void;
   onResetGame: () => void;
-  onShowCurrentPlayer: () => void;
-  onHideCurrentPlayer: () => void;
   onBuyLand?: (playerId: string, locationId: string) => void;
   onBuildChurch?: (playerId: string, locationId: string) => void;
   onBuildSynagogue?: (playerId: string, locationId: string) => void;
@@ -46,12 +43,9 @@ interface LocalGameBoardProps {
 
 export default function LocalGameBoard({
   gameState,
-  currentPlayerPrivate,
   onRollDice,
   onEndTurn,
   onResetGame,
-  onShowCurrentPlayer,
-  onHideCurrentPlayer,
   onBuyLand,
   onBuildChurch,
   onBuildSynagogue,
@@ -121,53 +115,22 @@ export default function LocalGameBoard({
         </UICard>
 
         {/* Current Player Turn Banner */}
-        {currentPlayerPrivate ? (
-          <UICard className="p-4 bg-accent/10 border-2 border-accent">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div 
-                  className="w-6 h-6 rounded-full border-2 border-accent"
-                  style={{ backgroundColor: currentPlayer?.color }}
-                />
-                <div>
-                  <h3 className="font-bold text-accent">
-                    {currentPlayer?.name}'s Turn
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Pass the device to {currentPlayer?.name}
-                  </p>
-                </div>
+        <UICard className="p-4 bg-accent/10 border-2 border-accent">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center text-2xl">
+                {currentPlayer?.character?.avatar || '👤'}
               </div>
-              <Button onClick={onShowCurrentPlayer} size="sm">
-                <Eye className="w-4 h-4 mr-2" />
-                Show My Turn
-              </Button>
-            </div>
-          </UICard>
-        ) : (
-          <UICard className="p-4 bg-primary/10 border-2 border-primary">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div 
-                  className="w-6 h-6 rounded-full border-2 border-primary"
-                  style={{ backgroundColor: currentPlayer?.color }}
-                />
-                <div>
-                  <h3 className="font-bold text-primary">
-                    Your Turn, {currentPlayer?.name}!
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    Character: {currentPlayer?.character.name} • Money: {currentPlayer?.money} coins
-                  </p>
-                </div>
+              <div>
+                <h3 className="font-bold text-lg">{currentPlayer?.name || 'Unknown Player'}'s Turn</h3>
+                <p className="text-sm text-muted-foreground">
+                  {currentPlayer ? `${currentPlayer.money} denarii` : '0 denarii'}
+                  {gameState.round > 1 && ` • Round ${gameState.round}`}
+                </p>
               </div>
-              <Button onClick={onHideCurrentPlayer} variant="outline" size="sm">
-                <EyeOff className="w-4 h-4 mr-2" />
-                Hide
-              </Button>
             </div>
-          </UICard>
-        )}
+          </div>
+        </UICard>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           
@@ -183,16 +146,13 @@ export default function LocalGameBoard({
 
           {/* Right Sidebar */}
           <div className="space-y-6">
-            
             {/* Dice */}
-            {!currentPlayerPrivate && (
-              <Dice 
+            <Dice
                 dice1={gameState.dice1}
                 dice2={gameState.dice2}
                 isRolling={gameState.isRolling}
-                onRoll={onRollDice}
-              />
-            )}
+              onRoll={onRollDice}
+            />
 
             {/* Current Location Info */}
             <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
@@ -218,10 +178,8 @@ export default function LocalGameBoard({
                     Owned by: {gameState.players.find(p => p.id === currentLocation.owner)?.name}
                   </div>
                 )}
-                
                  {/* Action Buttons */}
-                {!currentPlayerPrivate && (
-                  <div className="space-y-2">
+                <div className="space-y-2">
                      {(needsToPayRent || hasAlreadyPaidRent) && (
                       <Button 
                         onClick={handlePayRent}
@@ -277,8 +235,7 @@ export default function LocalGameBoard({
                       <ArrowRight className="w-3 h-3 mr-1" />
                       End Turn
                     </Button>
-                  </div>
-                )}
+                </div>
               </div>
             </UICard>
             
@@ -300,21 +257,19 @@ export default function LocalGameBoard({
           </div>
         </div>
 
-        {/* Players Panel - Bottom (only show when not private) */}
-        {!currentPlayerPrivate && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
-            {gameState.players.map((player, index) => (
-              <PlayerCard
-                key={player.id}
-                player={player}
-                isCurrentPlayer={index === gameState.currentPlayerIndex}
-                onBuildChurch={() => {/* Handled via current location actions */}}
-                onBuildSynagogue={() => {/* Handled via current location actions */}}
-                canBuild={false}
-              />
-            ))}
-          </div>
-        )}
+        {/* Players Panel - Bottom */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {gameState.players.map((player, index) => (
+            <PlayerCard
+              key={player.id}
+              player={player}
+              isCurrentPlayer={index === gameState.currentPlayerIndex}
+              onBuildChurch={() => {/* Handled via current location actions */}}
+              onBuildSynagogue={() => {/* Handled via current location actions */}}
+              canBuild={false}
+            />
+          ))}
+        </div>
       </div>
 
       {/* Card Modal */}

@@ -71,7 +71,7 @@ export const useLocalGame = () => {
     isAIThinking: false,
   }));
 
-  const [currentPlayerPrivate, setCurrentPlayerPrivate] = useState(true);
+  // Removed currentPlayerPrivate - always show UI
 
   // Load cards only when game starts (deferred loading for performance)
   const [cardsLoaded, setCardsLoaded] = useState(false);
@@ -682,8 +682,6 @@ export const useLocalGame = () => {
 
       return newState;
     });
-
-    setCurrentPlayerPrivate(true);
     
     // Auto-roll for AI players after ensuring state update
     setTimeout(() => {
@@ -724,18 +722,9 @@ export const useLocalGame = () => {
       isAIThinking: false,
     });
     localStorage.removeItem('localGameState');
-    setCurrentPlayerPrivate(true);
   }, []);
 
-  // Show current player info (for shared device)
-  const showCurrentPlayer = useCallback(() => {
-    setCurrentPlayerPrivate(false);
-  }, []);
-
-  // Hide current player info (for privacy on shared device)
-  const hideCurrentPlayer = useCallback(() => {
-    setCurrentPlayerPrivate(true);
-  }, []);
+  // Removed show/hide current player functions
 
   // Buy land functionality
   const buyLand = useCallback((playerId: string, locationId: string) => {
@@ -1053,14 +1042,11 @@ export const useLocalGame = () => {
 
   return {
     gameState,
-    currentPlayerPrivate,
     createLocalGame,
     loadLocalGame,
     rollDice,
     endTurn,
     resetGame,
-    showCurrentPlayer,
-    hideCurrentPlayer,
     buyLand,
     buildChurch,
     buildSynagogue,

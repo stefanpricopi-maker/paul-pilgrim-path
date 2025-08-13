@@ -40,14 +40,11 @@ const Index = () => {
   // Local game state
   const {
     gameState: localGameState,
-    currentPlayerPrivate,
     createLocalGame,
     loadLocalGame,
     rollDice: localRollDice,
     endTurn: localEndTurn,
     resetGame,
-    showCurrentPlayer,
-    hideCurrentPlayer,
     buyLand,
     buildChurch,
     buildSynagogue,
@@ -114,7 +111,6 @@ const Index = () => {
       <>
         <LocalGameBoard
           gameState={localGameState}
-          currentPlayerPrivate={currentPlayerPrivate}
           onRollDice={localRollDice}
           onEndTurn={localEndTurn}
           onResetGame={() => {
@@ -122,8 +118,6 @@ const Index = () => {
             setWinner(null);
             setGameSettings(null);
           }}
-          onShowCurrentPlayer={showCurrentPlayer}
-          onHideCurrentPlayer={hideCurrentPlayer}
           onBuyLand={buyLand}
           onBuildChurch={buildChurch}
           onBuildSynagogue={buildSynagogue}
