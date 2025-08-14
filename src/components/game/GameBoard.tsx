@@ -160,7 +160,7 @@ const GameBoard = ({
 <Card className={`board-cell ${tileClasses} p-0 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 border-gray-400 overflow-hidden ${
     isCorner ? '' : 'bg-white'} -m-px`} 
   
-  style={isCorner ? { backgroundColor: location.color || '#4a5568' } : {}}
+  style={isCorner ? { backgroundColor: location.color || '#ffffff' } : {}}
   onClick={() => onLocationClick(location)}>
   
   <div className={`h-full flex ${contentClasses} relative`}>
