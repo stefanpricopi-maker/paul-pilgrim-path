@@ -155,22 +155,23 @@ const GameBoard = ({
             <div key={`${rowIndex}-${colIndex}`} className="relative flex items-center justify-center -m-px">
               {location ? (
                 
-              
-              
-              
-              
-              
-              
-                 <Card className={`board-cell ${tileClasses} p-0 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 border-gray-400 overflow-hidden bg-white -m-px`} 
-                      onClick={() => onLocationClick(location)}>
-                  <div className={`h-full flex ${contentClasses} relative`}>
-                    {/* Color strip */}
-                    <div className={stripOrientation}
-                      style={{ backgroundColor: location.color || '#4a5568' }}
-                    />
+                  <Card className={`board-cell ${tileClasses} p-0 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 border-gray-400 overflow-hidden ${
+                                    isCorner ? '' : 'bg-white'} -m-px`} 
+                  style={isCorner ? { backgroundColor: location.color || '#4a5568' } : {}}
+                  onClick={() => onLocationClick(location)}
 
-
-
+          <div className={`h-full flex ${contentClasses} relative`}>
+            {/* Color strip for non-corner tiles */}
+              {!isCorner && (
+                  <div 
+                    className={stripOrientation}
+                    style={{ backgroundColor: location.color || '#4a5568' }}
+                  />
+                )
+              }
+              
+              
+              
 
 
 
