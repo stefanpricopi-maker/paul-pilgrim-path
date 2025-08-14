@@ -139,7 +139,7 @@ const GameBoard = ({
           let stripOrientation = 'h-6 w-full';
           
           if (isCorner) {
-            tileClasses = 'w-[120px] h-[120px]';
+            tileClasses = 'w-[120px] h-[120px] backgroundColor: #fbbf24 ';
           } else if (isLeftColumn || isRightColumn) {
             // Make left/right tiles wider and taller
             tileClasses = 'w-[120px] h-[120px]';
@@ -231,6 +231,11 @@ const GameBoard = ({
                                   filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))'
                                 }}
                               >
+                                
+                                
+                                
+                                
+                                
                                 {typeof player.character.avatar === 'string' && player.character.avatar.startsWith('/')
                                   ? (
                                           <img
@@ -243,6 +248,11 @@ const GameBoard = ({
                                       <span className="text-sm">{player.character.avatar}</span>
                                       )
                                 }
+                             
+                              
+                              
+                              
+                              
                               </div>
                             );
                           })}
