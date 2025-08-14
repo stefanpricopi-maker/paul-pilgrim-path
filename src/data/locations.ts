@@ -176,14 +176,14 @@ export const GAME_LOCATIONS: GameLocation[] = [
   {
     id: 'cort',
     name: 'CORT',
-    type: 'court',
+    type: 'special',
     journey: 4,
     price: 0,
     rent: 0,
     churchCost: 0,
     synagogueCost: 0,
     buildings: { churches: 0, synagogues: 0 },
-    description: 'Free Parking - Court',
+    description: 'Immunity tent - Gain temporary immunity',
     color: '#FF0000' // Red
   },
   {

@@ -195,10 +195,12 @@ export const useLocalGame = () => {
   const handleSpecialTile = useCallback((player: Player, location: GameLocation, diceValue: number) => {
     const transactions = [];
     let specialEffects: Partial<Player> = {};
+    let specialMessage = '';
     
     switch (location.id) {
       case 'prison':
         // TEMNIȚA: If landing here directly, just visiting
+        specialMessage = 'Just visiting the prison';
         break;
         
       case 'go-to-prison':
@@ -209,70 +211,112 @@ export const useLocalGame = () => {
           jailTurns: 0,
           consecutiveDoubles: 0
         };
+        specialMessage = 'Sent directly to prison!';
         break;
         
       case 'sabat':
         // SABAT: Skip next turn
         specialEffects = { skipNextTurn: true };
+        specialMessage = 'Must skip next turn (SABAT)';
         break;
         
       case 'cort':
         // CORT: Add temporary immunity (1 round)
-        specialEffects = { immunityUntil: gameState.round + 1 };
+        if (player.immunityUntil <= gameState.round) {
+          specialEffects = { immunityUntil: gameState.round + 1 };
+          specialMessage = 'Gained immunity for 1 round!';
+        } else {
+          specialMessage = 'Already has immunity';
+        }
         break;
         
       default:
         // Check for general tile types
         if (location.type === 'sacrifice') {
-          // JERTFA: Pay sacrifice tax
-          const tax = 100;
-          transactions.push({
-            playerId: player.id,
-            amount: -tax,
-            reason: `Sacrifice tax at ${location.name}`
-          });
+          // JERTFA: Pay sacrifice tax (unless immune)
+          if (player.immunityUntil <= gameState.round) {
+            const tax = 100;
+            transactions.push({
+              playerId: player.id,
+              amount: -tax,
+              reason: `Sacrifice tax at ${location.name}`,
+              type: 'expense' as const
+            });
+            specialMessage = `Paid ${tax} denarii sacrifice tax`;
+          } else {
+            specialMessage = 'Immune to sacrifice tax!';
+          }
         } else if (location.type === 'port') {
-          // Player can choose to teleport to another port
-          // For now, automatically teleport to next available port
-          const ports = gameState.locations.filter(loc => loc.type === 'port' && loc.id !== location.id);
-          if (ports.length > 0) {
-            const randomPort = ports[Math.floor(Math.random() * ports.length)];
-            const portIndex = gameState.locations.findIndex(loc => loc.id === randomPort.id);
-            if (portIndex !== -1) {
-              specialEffects = { position: portIndex };
+          // PORT: Teleport to next port in clockwise order
+          const ports = gameState.locations.filter(loc => loc.type === 'port');
+          const currentPortIndex = ports.findIndex(port => port.id === location.id);
+          
+          if (ports.length > 1 && currentPortIndex !== -1) {
+            const nextPortIndex = (currentPortIndex + 1) % ports.length;
+            const nextPort = ports[nextPortIndex];
+            const boardIndex = gameState.locations.findIndex(loc => loc.id === nextPort.id);
+            
+            if (boardIndex !== -1) {
+              specialEffects = { position: boardIndex };
+              specialMessage = `Teleported to ${nextPort.name}!`;
             }
           }
         }
         break;
     }
     
-    return { transactions, specialEffects };
+    return { transactions, specialEffects, specialMessage };
   }, [gameState.round, gameState.locations]);
 
-  // Handle jail mechanics
+  // Handle jail mechanics and consecutive doubles
   const handleJailLogic = useCallback((player: Player, diceValue: number, isDoubles: boolean) => {
-    if (!player.inJail) return { canMove: true, effects: {} };
+    if (!player.inJail) {
+      // Check for 3 consecutive doubles - send to jail
+      if (isDoubles) {
+        const newConsecutiveDoubles = player.consecutiveDoubles + 1;
+        if (newConsecutiveDoubles >= 3) {
+          return {
+            canMove: false,
+            effects: {
+              position: 10, // Prison position
+              inJail: true,
+              jailTurns: 0,
+              consecutiveDoubles: 0
+            },
+            message: "Three consecutive doubles! Go to prison!"
+          };
+        }
+        return { canMove: true, effects: { consecutiveDoubles: newConsecutiveDoubles } };
+      } else {
+        return { canMove: true, effects: { consecutiveDoubles: 0 } };
+      }
+    }
     
-    // Check if player has been in jail for 3 turns
+    // Player is in jail
+    // Check if player has been in jail for 3 turns (forced release)
     if (player.jailTurns >= 3) {
       return {
         canMove: true,
         effects: {
           inJail: false,
-          jailTurns: 0
-        }
+          jailTurns: 0,
+          consecutiveDoubles: 0
+        },
+        message: "Released from jail after 3 turns!"
       };
     }
     
-    // Check for doubles to get out of jail
+    // Check for doubles or get out of jail card to escape
     if (isDoubles || player.hasGetOutOfJailCard) {
       return {
         canMove: true,
         effects: {
           inJail: false,
           jailTurns: 0,
+          consecutiveDoubles: 0,
           hasGetOutOfJailCard: player.hasGetOutOfJailCard ? false : player.hasGetOutOfJailCard
-        }
+        },
+        message: isDoubles ? "Escaped jail with doubles!" : "Used get out of jail card!"
       };
     }
     
@@ -281,7 +325,8 @@ export const useLocalGame = () => {
       canMove: false,
       effects: {
         jailTurns: player.jailTurns + 1
-      }
+      },
+      message: `Remains in jail (${player.jailTurns + 1}/3 turns)`
     };
   }, []);
 
@@ -360,15 +405,18 @@ export const useLocalGame = () => {
           };
         }
         
-        // Handle jail logic
+        // Handle jail logic and consecutive doubles
         const jailResult = handleJailLogic(currentPlayer, totalValue, isDoubles);
         
-        if (!jailResult.canMove && !isDoubles) {
+        // If player can't move (either in jail or sent to jail for 3 doubles)
+        if (!jailResult.canMove) {
           const updatedPlayers = prev.players.map((player, index) => 
             index === prev.currentPlayerIndex 
-              ? { ...player, ...jailResult.effects }
+              ? { ...player, ...jailResult.effects, hasRolled: true }
               : player
           );
+          
+          const logMessage = jailResult.message || `${currentPlayer.name} rolled ${dice1Value}+${dice2Value}=${totalValue}`;
           
           return {
             ...prev,
@@ -376,7 +424,7 @@ export const useLocalGame = () => {
             dice1: dice1Value,
             dice2: dice2Value,
             isRolling: false,
-            gameLog: [...prev.gameLog, `${currentPlayer.name} rolled ${dice1Value}+${dice2Value}=${totalValue} but remains in jail (${currentPlayer.jailTurns + 1}/3 turns)`].slice(-10)
+            gameLog: [...prev.gameLog, logMessage].slice(-10)
           };
         }
         
@@ -386,7 +434,7 @@ export const useLocalGame = () => {
         
         // Handle special tile effects
         const newLocation = prev.locations[newPosition];
-        const { transactions: specialTransactions, specialEffects } = handleSpecialTile(currentPlayer, newLocation, totalValue);
+        const { transactions: specialTransactions, specialEffects, specialMessage } = handleSpecialTile(currentPlayer, newLocation, totalValue);
         
         // Apply special effects (like teleporting or going to jail)
         if (specialEffects.position !== undefined) {
@@ -421,25 +469,17 @@ export const useLocalGame = () => {
 
         let logEntries = [`${currentPlayer.name} rolled ${dice1Value}+${dice2Value}=${totalValue}${isDoubles ? ' (doubles!)' : ''}`];
         
-        if (currentPlayer.inJail && jailResult.canMove) {
-          logEntries.push(`${currentPlayer.name} got out of jail!`);
+        // Add jail-related messages
+        if (jailResult.message) {
+          logEntries.push(jailResult.message);
         }
         
         logEntries.push(`${currentPlayer.name} moved to ${prev.locations[newPosition].name}`);
         
-        // Add special effect messages
-        if (specialEffects.position !== undefined && prev.locations[newPosition].type === 'port') {
-          logEntries.push(`${currentPlayer.name} teleported via PORT!`);
+        // Add special tile messages
+        if (specialMessage) {
+          logEntries.push(specialMessage);
         }
-        if (specialEffects.inJail) {
-          logEntries.push(`${currentPlayer.name} was sent to prison!`);
-        }
-        if (specialEffects.skipNextTurn) {
-          logEntries.push(`${currentPlayer.name} will skip next turn (SABAT)`);
-        }
-        if (specialEffects.immunityUntil) {
-          logEntries.push(`${currentPlayer.name} gained immunity for 1 round (CORT)`);
-         }
          
          // Apply special tile transactions (sacrifice tax, etc.)
          if (specialTransactions.length > 0) {
