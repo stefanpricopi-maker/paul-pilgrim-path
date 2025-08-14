@@ -46,7 +46,7 @@ const PlayerCard = ({
         <img
           src={player.character.avatar.startsWith('/') ? player.character.avatar : `/${player.character.avatar}`}
           alt={player.character.name || 'Avatar'}
-          className="max-h-32 w-auto object-contain"    //"h-full w-full object-cover"
+          className="h-full w-full object-cover object-top"
         />
       ) : (
         <div className="h-full w-full flex items-center justify-center">
