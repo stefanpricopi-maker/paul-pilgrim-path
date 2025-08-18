@@ -9,7 +9,6 @@ import { BIBLICAL_CHARACTERS } from '@/types/game';
 import { GameState } from '@/types/database';
 import { Users, Crown, Play, Copy, Loader2 } from 'lucide-react';
 
-
 interface GameLobbyProps {
   gameState: GameState;
   loading: boolean;
@@ -105,7 +104,7 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
               <h3 className="font-bold text-primary ancient-text mb-3">Assembled Missionaries</h3>
               <div className="space-y-2">
              
-                {gameState.players.map((player,index) => (
+                {gameState.players.map((player, index) => (
                   <div key={player.id} className="flex items-center justify-between p-2 bg-background rounded">
                     <div className="flex items-center space-x-3">
                       <div className="text-lg">
