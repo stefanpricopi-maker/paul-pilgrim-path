@@ -157,6 +157,7 @@ const OnlineGameBoard = ({ gameId }: OnlineGameBoardProps) => {
               players={gameState.players.map(p => ({
                 id: p.id,
                 name: p.name,
+                role: p.role,
                 character: getPlayerCharacter(p.character_name),
                 position: p.position,
                 money: p.coins,
