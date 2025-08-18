@@ -73,6 +73,7 @@ const GameSetup = ({ onStartGame }: GameSetupProps) => {
       const completePlayers: Player[] = players.map((player, index) => ({
         id: `player-${index + 1}`,
         name: player.name!.trim(),
+        role: p.role,
         character: player.character!,
         position: 0,
         money: 500,
