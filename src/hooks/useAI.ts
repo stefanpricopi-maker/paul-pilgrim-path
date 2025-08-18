@@ -18,6 +18,7 @@ export const useAI = () => {
     return {
       id,
       name,
+      role,
       character,
       position: 0,
       money: 1000,
