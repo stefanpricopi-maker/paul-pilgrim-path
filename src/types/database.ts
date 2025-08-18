@@ -28,7 +28,7 @@ export interface Player {
   game_id: string | null;
   user_id: string | null;
   name: string;
-  role: string;
+  role: 'host' | 'player';
   character_name: string | null;
   avatar_url: string | null;
   position: number;
