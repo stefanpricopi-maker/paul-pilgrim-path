@@ -103,25 +103,33 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
             <Card className="p-4 bg-card/50">
               <h3 className="font-bold text-primary ancient-text mb-3">Assembled Missionaries</h3>
               <div className="space-y-2">
-                {gameState.players.map((player, index) => (
-                  <div key={player.id} className="flex items-center justify-between p-2 bg-background rounded">
-                    <div className="flex items-center space-x-3">
-                      <div className="text-lg">
-                        {BIBLICAL_CHARACTERS.find(c => c.name === player.character_name)?.avatar || '👤'}
-                      </div>
-                      <div>
-                        <p className="font-semibold">{player.name}</p>
-                        <p className="text-xs text-muted-foreground">{player.character_name}</p>
-                      </div>
-                    </div>
-                    {index === 0 && (
-                      <Badge variant="outline" className="text-xs">
-                        <Crown className="w-3 h-3 mr-1" />
-                        Host
-                      </Badge>
-                    )}
-                  </div>
-                ))}
+
+
+
+
+
+                
+                {gameState.players.map((player) => (
+  <div key={player.id} className="flex items-center gap-3">
+    <div className="relative w-16 h-16 rounded-lg overflow-hidden border">
+      <img
+        src={`/${player.character.avatar}`}
+        alt={player.character.name}
+        className="w-full h-full object-cover"
+      />
+    </div>
+    <div className="flex flex-col">
+      <span className="font-semibold">{player.character.name}</span>
+      {player.role === "host" && (
+        <span className="text-xs text-yellow-600 font-medium">👑 Host</span>
+      )}
+    </div>
+  </div>
+))}
+             
+              
+              
+              
               </div>
             </Card>
 
