@@ -26,6 +26,7 @@ export interface GameInsert {
 export interface Player {
   id: string;
   game_id: string | null;
+  user_id: string | null;
   name: string;
   character_name: string | null;
   avatar_url: string | null;
@@ -35,12 +36,15 @@ export interface Player {
   jail_turns: number;
   has_get_out_of_jail_card: boolean;
   immunity_until: number;
+  skip_next_turn?: boolean;
+  consecutive_doubles?: number;
   created_at: string;
 }
 
 export interface PlayerInsert {
-  id: string;
+  id?: string;
   game_id: string;
+  user_id: string;
   name: string;
   character_name: string;
   avatar_url?: string | null;
@@ -50,6 +54,8 @@ export interface PlayerInsert {
   jail_turns?: number;
   has_get_out_of_jail_card?: boolean;
   immunity_until?: number;
+  skip_next_turn?: boolean;
+  consecutive_doubles?: number;
 }
 
 export interface GameMember {

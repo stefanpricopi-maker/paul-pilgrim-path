@@ -3,7 +3,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
 import { GameState, Game, Player, GameMember, GameLog, Tile } from '@/types/database';
-import { BIBLICAL_CHARACTERS } from '@/types/game';
+import { BIBLICAL_CHARACTERS, GameLocation } from '@/types/game';
+import { GAME_LOCATIONS } from '@/data/locations';
 
 export const useGameDatabase = () => {
   const { user } = useAuth();
@@ -343,7 +344,7 @@ export const useGameDatabase = () => {
     }
   }, [gameState.game, gameState.isHost, gameState.players.length, user]);
 
-  // Roll dice
+  // Roll dice with special tile logic
   const rollDice = useCallback(async () => {
     if (!gameState.game || !user || gameState.isRolling || !gameState.isMyTurn) return;
 
@@ -351,15 +352,105 @@ export const useGameDatabase = () => {
 
     // Simulate dice roll animation
     setTimeout(async () => {
-      const diceValue = Math.floor(Math.random() * 6) + 1;
+      const dice1 = Math.floor(Math.random() * 6) + 1;
+      const dice2 = Math.floor(Math.random() * 6) + 1;
+      const diceValue = dice1 + dice2;
+      const isDouble = dice1 === dice2;
+      
       const currentPlayer = gameState.players[gameState.currentPlayerIndex];
-      const newPosition = (currentPlayer.position + diceValue) % 40; // Assuming 40 tiles
+      let newPosition = (currentPlayer.position + diceValue) % 40;
+      let updatedPlayer = { ...currentPlayer };
+      
+      // Track consecutive doubles for jail logic
+      if (isDouble) {
+        updatedPlayer.consecutive_doubles = (currentPlayer.consecutive_doubles || 0) + 1;
+        if (updatedPlayer.consecutive_doubles >= 3) {
+          // Go to jail for 3 consecutive doubles
+          newPosition = 10; // Prison position
+          updatedPlayer.in_jail = true;
+          updatedPlayer.consecutive_doubles = 0;
+        }
+      } else {
+        updatedPlayer.consecutive_doubles = 0;
+      }
+
+      // Handle special tiles
+      const currentLocation = GAME_LOCATIONS[newPosition];
+      let logMessage = `${currentPlayer.name} rolled ${dice1}+${dice2}=${diceValue}`;
+
+      // Check if passed GO (Antiochia)
+      if (currentPlayer.position + diceValue >= 40) {
+        updatedPlayer.coins += 200;
+        logMessage += ` and passed Antiochia, receiving 200 denarii`;
+      }
+
+      // Special tile effects
+      switch (currentLocation.type) {
+        case 'special':
+          if (currentLocation.id === 'cort') {
+            updatedPlayer.immunity_until = Math.floor(gameState.currentPlayerIndex / gameState.players.length) + 2;
+            logMessage += ` and gained immunity for 1 round`;
+          }
+          break;
+        
+        case 'prison':
+          if (currentLocation.id === 'sabat') {
+            // Skip next turn
+            const { error: skipError } = await (supabase as any)
+              .from('players')
+              .update({ skip_next_turn: true })
+              .eq('id', currentPlayer.id);
+            
+            if (!skipError) {
+              logMessage += ` and must skip their next turn`;
+            }
+          }
+          break;
+
+        case 'port':
+          // Teleport to next PORT
+          const ports = GAME_LOCATIONS.filter(loc => loc.type === 'port');
+          const currentPortIndex = ports.findIndex(port => port.id === currentLocation.id);
+          const nextPortIndex = (currentPortIndex + 1) % ports.length;
+          const nextPort = ports[nextPortIndex];
+          const nextPortPosition = GAME_LOCATIONS.findIndex(loc => loc.id === nextPort.id);
+          
+          if (nextPortPosition !== -1) {
+            newPosition = nextPortPosition;
+            logMessage += ` and teleported to ${nextPort.name}`;
+          }
+          break;
+
+        case 'go-to-prison':
+          newPosition = 10; // Prison position
+          updatedPlayer.in_jail = true;
+          logMessage += ` and goes to prison`;
+          break;
+
+        case 'sacrifice':
+          // Pay sacrifice tax (unless immune)
+          const currentRound = Math.floor(gameState.currentPlayerIndex / gameState.players.length) + 1;
+          if (updatedPlayer.immunity_until < currentRound) {
+            const tax = 100;
+            updatedPlayer.coins = Math.max(0, updatedPlayer.coins - tax);
+            logMessage += ` and pays ${tax} denarii in sacrifice`;
+          } else {
+            logMessage += ` but is immune to sacrifice`;
+          }
+          break;
+      }
 
       try {
-        // Update player position
+        // Update player in database
         const { error: playerError } = await (supabase as any)
           .from('players')
-          .update({ position: newPosition })
+          .update({ 
+            position: newPosition, 
+            coins: updatedPlayer.coins,
+            in_jail: updatedPlayer.in_jail,
+            immunity_until: updatedPlayer.immunity_until,
+            consecutive_doubles: updatedPlayer.consecutive_doubles || 0
+          })
           .eq('id', currentPlayer.id);
 
         if (playerError) throw playerError;
@@ -371,7 +462,7 @@ export const useGameDatabase = () => {
             game_id: gameState.game.id,
             player_id: currentPlayer.id,
             action: 'dice_roll',
-            description: `${currentPlayer.name} rolled ${diceValue} and moved to position ${newPosition}`,
+            description: logMessage,
             round: Math.floor(gameState.currentPlayerIndex / gameState.players.length) + 1
           });
 
@@ -392,12 +483,36 @@ export const useGameDatabase = () => {
     }, 800);
   }, [gameState.game, gameState.isRolling, gameState.isMyTurn, gameState.players, gameState.currentPlayerIndex, user]);
 
-  // End turn
+  // End turn with skip turn logic
   const endTurn = useCallback(async () => {
     if (!gameState.game || !gameState.isMyTurn) return;
 
     try {
-      const nextPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+      let nextPlayerIndex = (gameState.currentPlayerIndex + 1) % gameState.players.length;
+      
+      // Check if next player should skip their turn
+      const nextPlayer = gameState.players[nextPlayerIndex];
+      if (nextPlayer?.skip_next_turn) {
+        // Reset skip turn flag and advance to next player
+        await (supabase as any)
+          .from('players')
+          .update({ skip_next_turn: false })
+          .eq('id', nextPlayer.id);
+          
+        // Log the skip
+        await (supabase as any)
+          .from('game_log')
+          .insert({
+            game_id: gameState.game.id,
+            player_id: nextPlayer.id,
+            action: 'skip_turn',
+            description: `${nextPlayer.name} skips their turn due to Sabat`,
+            round: Math.floor(nextPlayerIndex / gameState.players.length) + 1
+          });
+          
+        // Advance to the next player
+        nextPlayerIndex = (nextPlayerIndex + 1) % gameState.players.length;
+      }
       
       const { error } = await (supabase as any)
         .from('games')
@@ -410,7 +525,7 @@ export const useGameDatabase = () => {
         ...prev,
         currentPlayerIndex: nextPlayerIndex,
         diceValue: 0,
-        isMyTurn: gameState.players[nextPlayerIndex]?.id === user?.id
+        isMyTurn: gameState.players[nextPlayerIndex]?.user_id === user?.id
       }));
 
     } catch (error) {
@@ -494,9 +609,24 @@ export const useGameDatabase = () => {
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
     setGameState(prev => ({
       ...prev,
-      isMyTurn: currentPlayer?.id === user.id
+      isMyTurn: currentPlayer?.user_id === user.id
     }));
   }, [user, gameState.players, gameState.currentPlayerIndex]);
+
+  // Convert tiles to game locations for rendering
+  const getGameLocations = useCallback((): GameLocation[] => {
+    return GAME_LOCATIONS.map((location, index) => {
+      const tile = gameState.tiles.find(t => t.tile_index === index);
+      return {
+        ...location,
+        owner: tile?.owner_id,
+        buildings: {
+          churches: 0, // TODO: Get from property_buildings table
+          synagogues: 0
+        }
+      };
+    });
+  }, [gameState.tiles]);
 
   return {
     gameState,
@@ -507,5 +637,6 @@ export const useGameDatabase = () => {
     startGame,
     rollDice,
     endTurn,
+    getGameLocations,
   };
 };
