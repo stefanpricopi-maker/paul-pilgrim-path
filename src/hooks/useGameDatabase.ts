@@ -169,12 +169,14 @@ export const useGameDatabase = () => {
 
       console.log('Player created successfully');
 
-      // Load the created game
+      // Load the created game and set up real-time subscriptions
       await loadGame(game!.id);
+
+      console.log('Game created successfully, setting up real-time listeners');
 
       toast({
         title: "Game Created!",
-        description: "Share the game ID with other players to join.",
+        description: "Share the game ID with other players to join. Real-time updates are active!",
       });
 
       return game!.id;
@@ -288,6 +290,8 @@ export const useGameDatabase = () => {
       if (playerError) throw playerError;
 
       await loadGame(gameId);
+
+      console.log('Player joined game successfully, real-time subscriptions should update host');
 
       toast({
         title: "Joined Game!",
@@ -539,7 +543,9 @@ export const useGameDatabase = () => {
 
   // Set up real-time subscriptions
   useEffect(() => {
-    if (!gameState.game) return;
+    if (!gameState.game?.id || !user) return;
+
+    console.log('Setting up real-time subscriptions for game:', gameState.game.id);
 
     const gameChannel = supabase
       .channel(`game_${gameState.game.id}`)
@@ -551,8 +557,8 @@ export const useGameDatabase = () => {
           table: 'players',
           filter: `game_id=eq.${gameState.game.id}`
         },
-        () => {
-          console.log('Players changed, reloading game data');
+        (payload) => {
+          console.log('Players changed:', payload);
           loadGame(gameState.game!.id);
         }
       )
