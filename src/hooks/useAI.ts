@@ -9,7 +9,6 @@ export const useAI = () => {
   const createAIPlayer = useCallback((
     id: string,
     name: string,
-    role: string,
     character: any,
     color: string,
     personalityIndex: number = 0
@@ -19,7 +18,6 @@ export const useAI = () => {
     return {
       id,
       name,
-      role,
       character,
       position: 0,
       money: 1000,
