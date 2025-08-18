@@ -9,13 +9,6 @@ import { BIBLICAL_CHARACTERS } from '@/types/game';
 import { GameState } from '@/types/database';
 import { Users, Crown, Play, Copy, Loader2 } from 'lucide-react';
 
-import { GameMember } from '@/types/database'; // added for Host icon fix
-
-type GameState = {
-  players: GameMember[];
-  turn: number;
-  phase: string;
-};
 
 interface GameLobbyProps {
   gameState: GameState;
