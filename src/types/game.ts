@@ -1,6 +1,7 @@
 export interface Player {
   id: string;
   name: string;
+  role: 'host' | 'player';  // 👈 NEW field
   character: BiblicalCharacter;
   position: number;
   money: number;

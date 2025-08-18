@@ -115,7 +115,7 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
                         <p className="text-xs text-muted-foreground">{player.character_name}</p>
                       </div>
                     </div>
-                      {GameState.role === "host" && (
+                    {player.role === "host" && (
                       <Badge variant="outline" className="text-xs">
                         <Crown className="w-3 h-3 mr-1" />
                         Host
