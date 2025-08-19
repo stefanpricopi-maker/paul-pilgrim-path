@@ -93,7 +93,7 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
                   <span>Players:</span>
                   <span className="flex items-center">
                     <Users className="w-3 h-3 mr-1" />
-                    {gameState.players.length}/6
+                    {Math.max(gameState.players.length, gameState.gameMembers?.length || 0)}/6
                   </span>
                 </div>
               </div>
@@ -104,21 +104,20 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
               <h3 className="font-bold text-primary ancient-text mb-3">Assembled Missionaries</h3>
               <div className="space-y-2">
              
-                  {gameState.players.map((player, index) => {
-                    const member = gameState.gameMembers.find(m => m.user_id === player.user_id);
-                    console.log(`Player ${player.name} (${player.user_id}) -> Member:`, member);
+                  {gameState.gameMembers?.map((member) => {
+                    const player = gameState.players.find(p => p.user_id === member.user_id);
                     return (
-                      <div key={player.id} className="flex items-center justify-between p-2 bg-background rounded">
+                      <div key={member.id} className="flex items-center justify-between p-2 bg-background rounded">
                         <div className="flex items-center space-x-3">
                           <div className="text-lg">
-                            {BIBLICAL_CHARACTERS.find(c => c.name === player.character_name)?.avatar || '👤'}
+                            {player ? (BIBLICAL_CHARACTERS.find(c => c.name === player.character_name)?.avatar || '👤') : '👤'}
                           </div>
                           <div>
-                            <p className="font-semibold">{player.name}</p>
-                            <p className="text-xs text-muted-foreground">{player.character_name}</p>
+                            <p className="font-semibold">{player?.name || 'Joining…'}</p>
+                            <p className="text-xs text-muted-foreground">{player?.character_name || ''}</p>
                           </div>
                         </div>
-                        {member?.role === "host" && (
+                        {member.role === "host" && (
                           <Badge variant="outline" className="text-xs">
                             <Crown className="w-3 h-3 mr-1" />
                             Host
@@ -126,7 +125,7 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
                         )}
                       </div>
                     );
-                  })}          
+                  })}
               </div>
             </Card>
 
@@ -134,7 +133,7 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
             {gameState.isHost && (
               <Button 
                 onClick={onStartGame}
-                disabled={loading || gameState.players.length < 2}
+                disabled={loading || Math.max(gameState.players.length, gameState.gameMembers?.length || 0) < 2}
                 size="lg"
                 className="w-full ancient-text"
               >
