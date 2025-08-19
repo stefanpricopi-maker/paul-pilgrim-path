@@ -103,6 +103,7 @@ export interface Tile {
 export interface GameState {
   game: Game | null;
   players: Player[];
+  gameMembers: GameMember[];
   currentPlayerIndex: number;
   tiles: Tile[];
   gameStarted: boolean;

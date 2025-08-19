@@ -11,6 +11,7 @@ export const useGameDatabase = () => {
   const [gameState, setGameState] = useState<GameState>({
     game: null,
     players: [],
+    gameMembers: [],
     currentPlayerIndex: 0,
     tiles: [],
     gameStarted: false,
@@ -46,6 +47,15 @@ export const useGameDatabase = () => {
 
       if (playersError) throw playersError;
 
+      // Load game members
+      const { data: gameMembers, error: membersError } = await (supabase as any)
+        .from('game_members')
+        .select('*')
+        .eq('game_id', gameId)
+        .order('joined_at');
+
+      if (membersError) throw membersError;
+
       // Load tiles
       const { data: tiles, error: tilesError } = await (supabase as any)
         .from('tiles')
@@ -69,6 +79,7 @@ export const useGameDatabase = () => {
         ...prev,
         game,
         players: players || [],
+        gameMembers: gameMembers || [],
         tiles: tiles || [],
         gameLog: gameLogs || [],
         gameStarted: game.status === 'active',
@@ -598,6 +609,19 @@ export const useGameDatabase = () => {
         },
         () => {
           console.log('Tiles changed, reloading game data');
+          loadGame(gameState.game!.id);
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'game_members',
+          filter: `game_id=eq.${gameState.game.id}`
+        },
+        () => {
+          console.log('Game members changed, reloading game data');
           loadGame(gameState.game!.id);
         }
       )

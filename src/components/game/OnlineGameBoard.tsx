@@ -7,7 +7,7 @@ import GameBoard from './GameBoard';
 import PlayerStatsPanel from './PlayerStatsPanel';
 import { useGameDatabase } from '@/hooks/useGameDatabase';
 import { useAuth } from '@/hooks/useAuth';
-import { BIBLICAL_CHARACTERS } from '@/types/game';
+import { BIBLICAL_CHARACTERS, Player } from '@/types/game';
 import { Users, Crown, Play } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
@@ -170,7 +170,7 @@ const OnlineGameBoard = ({ gameId }: OnlineGameBoardProps) => {
                 skipNextTurn: p.skip_next_turn || false,
                 consecutiveDoubles: p.consecutive_doubles || 0,
                 hasRolled: false
-              }))}
+              } as Player))}
               onLocationClick={handleLocationClick}
               animatingPlayer={animatingPlayer}
               targetPosition={targetPosition}
@@ -200,7 +200,7 @@ const OnlineGameBoard = ({ gameId }: OnlineGameBoardProps) => {
                 skipNextTurn: p.skip_next_turn || false,
                 consecutiveDoubles: p.consecutive_doubles || 0,
                 hasRolled: false
-              }))}
+              } as Player))}
               locations={gameLocations}
             />
 
