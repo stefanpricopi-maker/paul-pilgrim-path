@@ -1,73 +1,38 @@
-# Welcome to your Lovable project
+# Paul Pilgrim Path
 
-## Project info
+A turn-based adventure board game where players journey through biblical locations, encountering challenges, earning points, and learning about faith. Built with TypeScript and modern web technologies.
 
-**URL**: https://lovable.dev/projects/e45b5493-eca1-4491-bff6-cfe7c00e2fd4
+## Table of Contents
 
-## How can I edit this code?
+- [Overview](#overview)
+- [Features](#features)
+- [Demo](#demo)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Game Rules](#game-rules)
+- [Contributing](#contributing)
+- [License](#license)
 
-There are several ways of editing your application.
+## Overview
 
-**Use Lovable**
+Paul Pilgrim Path is a digital board game inspired by the travels of Apostle Paul. Players move across locations, interact with game tiles, and complete challenges. It is designed for fun, education, and spiritual engagement.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/e45b5493-eca1-4491-bff6-cfe7c00e2fd4) and start prompting.
+## Features
 
-Changes made via Lovable will be committed automatically to this repo.
+- Turn-based gameplay with multiple players
+- Dynamic board tiles stored in a database
+- Chance and community cards for added interaction
+- Real-time updates for local and online games
+- Scoring system with rewards and penalties
 
-**Use your preferred IDE**
+## Demo
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+You can see a live demo (if hosted) here:  
+https://paul-pilgrim-path.lovable.app/
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+## Installation
 
-Follow these steps:
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/stefanpricopi-maker/paul-pilgrim-path.git
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/e45b5493-eca1-4491-bff6-cfe7c00e2fd4) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
