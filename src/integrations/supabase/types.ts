@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
@@ -417,10 +417,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: {
           games_deleted: number
-          tiles_deleted: number
-          players_deleted: number
-          members_deleted: number
           logs_deleted: number
+          members_deleted: number
+          players_deleted: number
+          tiles_deleted: number
         }[]
       }
       copy_template_tiles: {
