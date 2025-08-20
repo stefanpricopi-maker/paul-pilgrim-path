@@ -126,30 +126,33 @@ export const useGameDatabase = () => {
     setLoading(true);
     
     try {
-      // Create game
-      const { data: game, error: gameError } = await (supabase as any)
+      // Create game with client-generated ID to avoid RLS return issues
+      const newGameId = (typeof crypto !== 'undefined' && 'randomUUID' in crypto)
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+      const { error: gameError } = await (supabase as any)
         .from('games')
         .insert({
+          id: newGameId,
           host_id: user.id,
           status: 'waiting',
           language: 'en',
           initial_balance: 1000,
-        })
-        .select()
-        .single();
+        });
 
       if (gameError) {
         console.error('Game creation error:', gameError);
         throw gameError;
       }
 
-      console.log('Game created successfully:', game.id);
+      console.log('Game created successfully with id:', newGameId);
 
       // Add host as game member
       const { error: memberError } = await (supabase as any)
         .from('game_members')
         .insert({
-          game_id: game!.id,
+          game_id: newGameId,
           user_id: user.id,
           role: 'host'
         });
@@ -165,7 +168,7 @@ export const useGameDatabase = () => {
       const { error: playerError } = await (supabase as any)
         .from('players')
         .insert({
-          game_id: game!.id,
+          game_id: newGameId,
           user_id: user.id,
           name: playerName,
           character_name: characterName,
@@ -181,7 +184,7 @@ export const useGameDatabase = () => {
       console.log('Player created successfully');
 
       // Load the created game and set up real-time subscriptions
-      await loadGame(game!.id);
+      await loadGame(newGameId);
 
       console.log('Game created successfully, setting up real-time listeners');
 
@@ -190,7 +193,7 @@ export const useGameDatabase = () => {
         description: "Share the game ID with other players to join. Real-time updates are active!",
       });
 
-      return game!.id;
+      return newGameId;
     } catch (error) {
       console.error('Game creation failed:', error);
       
