@@ -75,6 +75,14 @@ export const useGameDatabase = () => {
 
       if (logsError) throw logsError;
 
+      console.log('loadGame: Setting game state', {
+        game,
+        gameStarted: game.status === 'active',
+        isHost: game.host_id === user.id,
+        playersCount: players?.length || 0,
+        membersCount: gameMembers?.length || 0
+      });
+
       setGameState(prev => ({
         ...prev,
         game,
