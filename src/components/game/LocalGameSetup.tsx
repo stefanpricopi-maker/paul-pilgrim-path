@@ -8,8 +8,6 @@ import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Trash2, Plus, Users, Play, Bot } from 'lucide-react';
 import { AI_PERSONALITIES, AI_NAMES } from '@/types/ai';
-//add setings icon - src/components/GameMenu.tsx
-import { Link } from 'next/link';
 
 interface LocalGameSetupProps {
   onStartGame: (playerNames: string[], playerColors: string[], settings?: any) => void;
@@ -118,23 +116,6 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
       onLoadGame();
     }
   };
-
-
-
-interface GameMenuProps {
-  isAdmin: boolean;
-}
-
-export default function GameMenu({ isAdmin }: GameMenuProps) {
-  return (
-    <nav className="flex gap-4">
-      <Link href="/game">Back to Game</Link>
-      {isAdmin && <Link href="/admin">⚙️ Admin Dashboard</Link>}
-    </nav>
-  );
-}
-
-
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
       <Card className="w-full max-w-2xl bg-gradient-parchment border-2 border-accent/30">
