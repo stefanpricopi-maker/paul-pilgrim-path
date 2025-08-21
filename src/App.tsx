@@ -6,13 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
-//Admin Area
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import AdminDashboard from "./pages/admin";
-import AdminCards from "./pages/admin/cards";
-import AdminTiles from "./pages/admin/tiles";
-import AdminUsers from "./pages/admin/users";
-
 // Lazy load pages to reduce initial bundle size
 const Index = lazy(() => import("./pages/Index"));
 const Auth = lazy(() => import("./pages/Auth"));
@@ -38,13 +31,6 @@ const App = () => (
       <BrowserRouter>
         <Suspense fallback={<PageLoader />}>
           <Routes>
-            {/* Admin routes */}
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/cards" element={<AdminCards />} />
-            <Route path="/admin/tiles" element={<AdminTiles />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            
-            {/*Other Rootes*/}
             <Route path="/auth" element={<Auth />} />
             <Route path="/" element={
               <ProtectedRoute>
