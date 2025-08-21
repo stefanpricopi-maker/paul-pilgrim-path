@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Trash2, Plus, Users, Play, Bot } from 'lucide-react';
 import { AI_PERSONALITIES, AI_NAMES } from '@/types/ai';
 //add setings icon - src/components/GameMenu.tsx
-import Link from "next/link";
+import { Link } from 'next/link';
 
 interface LocalGameSetupProps {
   onStartGame: (playerNames: string[], playerColors: string[], settings?: any) => void;
