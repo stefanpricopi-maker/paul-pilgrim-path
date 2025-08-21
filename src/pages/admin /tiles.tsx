@@ -1,82 +1,52 @@
 // src/pages/admin/tiles.tsx
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import AdminLayout from "@/components/admin/AdminLayout";
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function TilesAdmin() {
   const [tiles, setTiles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTiles();
+    supabase.from("game_locations").select("*").then(({ data }) => {
+      if (data) setTiles(data);
+    });
   }, []);
 
-  async function fetchTiles() {
-    setLoading(true);
-    const { data, error } = await supabase.from('game_locations').select('*');
-    if (!error) setTiles(data || []);
-    setLoading(false);
-  }
-
-  async function updateTile(id: string, field: string, value: any) {
-    await supabase.from('game_locations').update({ [field]: value }).eq('id', id);
-    fetchTiles();
-  }
-
   return (
-    <div className="p-6">
-      <h2 className="text-xl font-bold mb-4">Manage Tiles</h2>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <table className="min-w-full border">
-          <thead>
+    <AdminLayout>
+      <h2 className="text-2xl font-bold mb-4">Manage Tiles</h2>
+      <div className="overflow-x-auto">
+        <table className="w-full border rounded-lg bg-white shadow">
+          <thead className="bg-gray-50">
             <tr>
-              <th className="border p-2">ID</th>
-              <th className="border p-2">Name</th>
-              <th className="border p-2">Type</th>
-              <th className="border p-2">Price</th>
-              <th className="border p-2">Actions</th>
+              <th className="p-2 border">Name</th>
+              <th className="p-2 border">Type</th>
+              <th className="p-2 border">Price</th>
+              <th className="p-2 border">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {tiles.map(tile => (
+            {tiles.map((tile) => (
               <tr key={tile.id}>
-                <td className="border p-2">{tile.id}</td>
-                <td className="border p-2">
-                  <input
-                    value={tile.name}
-                    onChange={(e) => updateTile(tile.id, 'name', e.target.value)}
-                    className="border px-2"
-                  />
+                <td className="p-2 border">
+                  <Input defaultValue={tile.name} />
                 </td>
-                <td className="border p-2">
-                  <input
-                    value={tile.type}
-                    onChange={(e) => updateTile(tile.id, 'type', e.target.value)}
-                    className="border px-2"
-                  />
+                <td className="p-2 border">
+                  <Input defaultValue={tile.type} />
                 </td>
-                <td className="border p-2">
-                  <input
-                    type="number"
-                    value={tile.price}
-                    onChange={(e) => updateTile(tile.id, 'price', +e.target.value)}
-                    className="border px-2"
-                  />
+                <td className="p-2 border">
+                  <Input type="number" defaultValue={tile.price} />
                 </td>
-                <td className="border p-2">
-                  <button
-                    onClick={() => supabase.from('game_locations').delete().eq('id', tile.id).then(fetchTiles)}
-                    className="bg-red-500 text-white px-3 py-1 rounded"
-                  >
-                    Delete
-                  </button>
+                <td className="p-2 border text-center">
+                  <Button size="sm" variant="destructive">Delete</Button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-      )}
-    </div>
+      </div>
+    </AdminLayout>
   );
 }
