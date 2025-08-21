@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useRouter } from 'next/router';
+import { AdminLayout } from "@/pages/admin/AdminLayout";
 
 export default function AdminPage() {
   const router = useRouter();
@@ -27,3 +28,15 @@ export default function AdminPage() {
     </div>
   );
 }
+
+export default function AdminHome() {
+  return (
+    <AdminLayout>
+      <h1 className="text-3xl font-bold mb-6">Welcome to the Admin Dashboard</h1>
+      <p className="text-gray-600">
+        Use the sidebar to manage tiles, cards, and players.  
+      </p>
+    </AdminLayout>
+  );
+}
+
