@@ -350,7 +350,7 @@ export const useGameDatabase = () => {
         .from('game_log')
         .insert({
           game_id: gameState.game.id,
-          player_id: gameState.players[gameState.currentPlayerIndex]?.id,
+          player_id: user?.id,
           action: 'game_start',
           description: `Game started with ${gameState.players.length} players!`,
           round: 1
@@ -486,7 +486,7 @@ export const useGameDatabase = () => {
           .from('game_log')
           .insert({
             game_id: gameState.game.id,
-            player_id: currentPlayer.id,
+            player_id: user?.id,
             action: 'dice_roll',
             description: logMessage,
             round: Math.floor(gameState.currentPlayerIndex / gameState.players.length) + 1
@@ -530,7 +530,7 @@ export const useGameDatabase = () => {
           .from('game_log')
           .insert({
             game_id: gameState.game.id,
-            player_id: nextPlayer.id,
+            player_id: user?.id,
             action: 'skip_turn',
             description: `${nextPlayer.name} skips their turn due to Sabat`,
             round: Math.floor(nextPlayerIndex / gameState.players.length) + 1
