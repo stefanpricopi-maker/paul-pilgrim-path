@@ -162,6 +162,45 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
     );
   }
 
+  // Show transitional waiting room if a Game ID exists but game state not loaded yet
+  if (gameId && !gameState.game) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="w-full max-w-2xl p-8 bg-gradient-parchment shadow-ancient border-2 border-accent/30">
+          <div className="text-center mb-8">
+            <div className="text-4xl mb-4">⛪</div>
+            <h1 className="text-3xl font-bold text-primary ancient-text mb-2">
+              Waiting Room
+            </h1>
+            <p className="text-muted-foreground">
+              Game created. Preparing your waiting room...
+            </p>
+          </div>
+
+          <Card className="p-4 bg-card/50 mb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-semibold">Game ID</p>
+                <p className="text-sm text-muted-foreground">Share this with friends to join</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <code className="text-xs bg-muted px-2 py-1 rounded">{gameId}</code>
+                <Button onClick={() => navigator.clipboard.writeText(gameId)} variant="outline" size="sm">
+                  <Copy className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+
+          <div className="flex items-center justify-center text-muted-foreground">
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            Loading game details...
+          </div>
+        </Card>
+      </div>
+    );
+  }
+
   // Show create/join form if no game
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-6">
