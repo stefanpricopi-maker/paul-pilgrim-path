@@ -1,5 +1,5 @@
 // src/components/admin/AdminLayout.tsx
-import Link from "next/link";
+import { Link } from "react-router-dom";
 import { ReactNode } from "react";
 import { Home, Square, Layers, Users } from "lucide-react";
 
