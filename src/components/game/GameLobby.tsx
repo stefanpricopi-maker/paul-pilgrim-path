@@ -176,6 +176,23 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
           </p>
         </div>
 
+        {gameId && !gameState.game && (
+          <Card className="p-4 bg-card/50 mb-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-semibold">Game created!</p>
+                <p className="text-sm text-muted-foreground">Share this Game ID with friends:</p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <code className="text-xs bg-muted px-2 py-1 rounded">{gameId}</code>
+                <Button onClick={() => navigator.clipboard.writeText(gameId)} variant="outline" size="sm">
+                  <Copy className="w-3 h-3" />
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
+
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="create">Create Game</TabsTrigger>

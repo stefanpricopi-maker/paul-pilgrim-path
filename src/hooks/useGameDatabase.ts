@@ -350,7 +350,7 @@ export const useGameDatabase = () => {
         .from('game_log')
         .insert({
           game_id: gameState.game.id,
-          player_id: user?.id,
+          player_id: gameState.players[gameState.currentPlayerIndex]?.id,
           action: 'game_start',
           description: `Game started with ${gameState.players.length} players!`,
           round: 1
