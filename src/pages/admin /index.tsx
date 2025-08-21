@@ -1,7 +1,7 @@
 // src/pages/admin/index.tsx
 import { useEffect, useState } from 'react';
 import { supabase } from "@/lib/supabase";
-import { useRouter } from 'next/router';
+import { useNavigate } from "react-router-dom";
 import { AdminLayout } from "@/pages/admin/AdminLayout";
 
 export default function AdminPage() {
