@@ -7,7 +7,6 @@ import { lazy, Suspense } from "react";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 
 //Admin Area
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AdminDashboard from "./pages/admin";
 import AdminCards from "./pages/admin/cards";
 import AdminTiles from "./pages/admin/tiles";
