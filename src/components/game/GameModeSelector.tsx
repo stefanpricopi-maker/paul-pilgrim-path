@@ -8,13 +8,11 @@ interface GameModeSelectorProps {
   onSelectMode: (mode: 'online' | 'local') => void;
 }
 
-
-
 export default function GameModeSelector({ onSelectMode }: GameModeSelectorProps) {
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
 
-  console.log('Admin status:', isAdmin); // <-- see what value isAdmin has
+  
   
   
   return (
