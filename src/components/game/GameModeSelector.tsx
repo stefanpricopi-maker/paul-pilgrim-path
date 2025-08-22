@@ -20,6 +20,7 @@ export default function GameModeSelector({ onSelectMode }: GameModeSelectorProps
             <h1 className="text-4xl font-bold text-primary ancient-text">
               Paul's Missionary Journeys
             </h1>
+            console.log("Admin status:", isAdmin);
             {isAdmin && (
               <Button
                 variant="ghost"
