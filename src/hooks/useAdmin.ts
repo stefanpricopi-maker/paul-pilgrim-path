@@ -9,7 +9,6 @@ export function useAdmin() {
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-   const { data: session } = await supabase.auth.getSession();
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -29,8 +28,6 @@ export function useAdmin() {
       console.log('RPC error:', error); // <-- Add this
       console.log('Current user:', user);
       console.log('useAdmin hook:', { isAdmin, loading });
-       
-console.log("Current session:", session);
 
 
         
