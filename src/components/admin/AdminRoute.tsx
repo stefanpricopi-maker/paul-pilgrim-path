@@ -33,7 +33,7 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
       </div>
     );
   }
-
+console.log('AdminRoute → loading:', loading, 'isAdmin:', isAdmin);
   return <>{children}</>;
 };
 
