@@ -7,9 +7,6 @@ type AdminArgs = { user_id: string };
 
 export function useAdmin() {
   const { user } = useAuth();
-
-console.log('Logged-in user:', user); //
-  
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -28,32 +25,24 @@ console.log('Logged-in user:', user); //
 
       
       try {
-        const { data, error } = await supabase.rpc('get_profile_admin_status',
-            { 
-              user_id: user.id 
-            });
+      const { data, error } = await supabase.rpc('get_profile_admin_status', { user_id: user.id });
 
-      console.log('RPC data:', data);   // <-- Add this
-      console.log('RPC error:', error); // <-- Add this
-      console.log('useAdmin hook is this thing!:', { isAdmin, loading });
-  
-      if (error) {
-          console.error('Error checking admin status:', error);
-          setIsAdmin(false);
-        } else {
-                    setIsAdmin(data?.[0]?.is_admin ?? false);
-                }
+      console.log('RPC data:', data);
+      console.log('RPC error:', error);
 
-      } catch (error) {
-        console.error('Error checking admin status:', error);
-        setIsAdmin(false);
-      } finally {
-        setLoading(false);
-      }
-    };
+      setIsAdmin(data?.[0]?.is_admin ?? false);
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setIsAdmin(false);
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  if (user) {
     checkAdminStatus();
-  }, [user]);
+  }
+}, [user]);
 
   return { isAdmin, loading };
 }
