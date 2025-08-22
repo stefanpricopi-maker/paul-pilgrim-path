@@ -3,6 +3,7 @@ import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
 type AdminStatus = { is_admin: boolean };
+type AdminArgs = { user_id: string };
 
 export function useAdmin() {
   const { user } = useAuth();
@@ -18,14 +19,15 @@ export function useAdmin() {
       }
 
       try {
-        const { data, error } = await supabase
-          .rpc<AdminStatus>('get_profile_admin_status', { user_id: user.id });
+        const { data, error } = await supabase.rpc<AdminStatus, AdminArgs>(
+          'get_profile_admin_status',
+          { user_id: user.id }
+        );
 
         if (error) {
           console.error('Error checking admin status:', error);
           setIsAdmin(false);
         } else {
-          // data is an array of rows → check the first one
           setIsAdmin(data?.[0]?.is_admin ?? false);
         }
       } catch (error) {
