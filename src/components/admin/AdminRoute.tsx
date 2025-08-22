@@ -10,6 +10,8 @@ interface AdminRouteProps {
 const AdminRoute = ({ children }: AdminRouteProps) => {
   const { isAdmin, loading } = useAdmin();
 
+  console.log('AdminRoute → loading:', loading, 'isAdmin:', isAdmin);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -33,7 +35,7 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
       </div>
     );
   }
-console.log('AdminRoute → loading:', loading, 'isAdmin:', isAdmin);
+
   return <>{children}</>;
 };
 
