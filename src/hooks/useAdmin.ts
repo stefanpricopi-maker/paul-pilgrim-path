@@ -32,8 +32,7 @@ export function useAdmin() {
 
       console.log('RPC data:', data);   // <-- Add this
       console.log('RPC error:', error); // <-- Add this
-     
-     // console.log('useAdmin hook is this thing!:', { isAdmin, loading });
+      console.log('useAdmin hook is this thing!:', { isAdmin, loading });
   
       if (error) {
           console.error('Error checking admin status:', error);
