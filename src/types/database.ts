@@ -10,6 +10,8 @@ export interface Game {
   church_goal: number | null;
   win_condition: string | null;
   created_at: string;
+  updated_at: string;
+  players: string[]; // optional, can fetch names
 }
 
 export interface GameInsert {
