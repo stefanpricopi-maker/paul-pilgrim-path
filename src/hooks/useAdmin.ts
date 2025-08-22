@@ -7,6 +7,9 @@ type AdminArgs = { user_id: string };
 
 export function useAdmin() {
   const { user } = useAuth();
+
+console.log('Logged-in user:', user); //
+  
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
