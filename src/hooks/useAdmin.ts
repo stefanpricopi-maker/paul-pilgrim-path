@@ -6,7 +6,7 @@ type AdminStatus = { is_admin: boolean };
 type AdminArgs = { user_id: string };
 
 export function useAdmin() {
- /* const { user } = useAuth();
+  const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -18,6 +18,12 @@ export function useAdmin() {
         return;
       }
 
+      const { data: session } = await supabase.auth.getSession();
+      console.log("Session check:", session);
+
+
+
+      
       try {
         const { data, error } = await supabase.rpc('get_profile_admin_status',
             { 
@@ -28,20 +34,14 @@ export function useAdmin() {
       console.log('RPC error:', error); // <-- Add this
       console.log('Current user:', user);
       console.log('useAdmin hook:', { isAdmin, loading });
+  
+      if (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdmin(false);
+        } else {
+                    setIsAdmin(data?.[0]?.is_admin ?? false);
+                }
 
-
-        
-if (error) {
-  console.error('Error checking admin status:', error);
-  setIsAdmin(false);
-} else {
-  setIsAdmin(data?.[0]?.is_admin ?? false);
-}
-
-
-
-
-        
       } catch (error) {
         console.error('Error checking admin status:', error);
         setIsAdmin(false);
@@ -54,34 +54,4 @@ if (error) {
   }, [user]);
 
   return { isAdmin, loading };
-}*/
-
-const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      const { data: session } = await supabase.auth.getSession();
-      console.log("Session check:", session);
-
-      if (!session?.session?.user) {
-        console.log("No logged in user!");
-        setIsAdmin(false);
-        return;
-      }
-
-      // your existing RPC call
-      const { data, error } = await supabase.rpc("get_profile_admin_status", {
-        user_id: session.session.user.id,
-      });
-
-      console.log("RPC data:", data);
-      console.log("RPC error:", error);
-
-      setIsAdmin(!!data?.[0]?.is_admin);
-    };
-
-    checkAdmin();
-  }, []);
-
-  return isAdmin;
-      }
+}
