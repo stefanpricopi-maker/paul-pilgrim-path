@@ -6,7 +6,6 @@ import type { Database } from "@/types/supabase";
 
 console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
 console.log("Supabase Key:", import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY);
-console.log({ isAdmin, loading });
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
