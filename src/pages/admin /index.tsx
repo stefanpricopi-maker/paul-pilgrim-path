@@ -1,37 +1,42 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/lib/supabase";
-import AdminLayout from "./AdminLayout";
+// src/pages/admin/index.tsx
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import { useRouter } from 'next/router';
+import { AdminLayout } from "@/pages/admin/AdminLayout";
 
-export default function AdminDashboard() {
-  const navigate = useNavigate();
+export default function AdminPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<any>(null);
 
   useEffect(() => {
-    const checkAdmin = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        navigate("/");
-        return;
-      }
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) router.push('/login');
+      else setUser(data.user);
+    });
+  }, [router]);
 
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", user.id)
-        .single();
-
-      if (error || !data?.is_admin) {
-        navigate("/");
-      }
-    };
-
-    checkAdmin();
-  }, [navigate]);
+  if (!user) return <p>Loading...</p>;
 
   return (
-    <AdminLayout>
+    <div className="p-6">
       <h1 className="text-2xl font-bold mb-4">Admin Dashboard</h1>
-      <p>Welcome to the admin panel.</p>
+      <ul className="space-y-2">
+        <li><a href="/admin/tiles" className="text-blue-600">Manage Tiles</a></li>
+        <li><a href="/admin/cards" className="text-blue-600">Manage Cards</a></li>
+        <li><a href="/admin/players" className="text-blue-600">Manage Players</a></li>
+      </ul>
+    </div>
+  );
+}
+
+export default function AdminHome() {
+  return (
+    <AdminLayout>
+      <h1 className="text-3xl font-bold mb-6">Welcome to the Admin Dashboard</h1>
+      <p className="text-gray-600">
+        Use the sidebar to manage tiles, cards, and players.  
+      </p>
     </AdminLayout>
   );
 }
+

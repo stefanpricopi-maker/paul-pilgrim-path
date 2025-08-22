@@ -1,7 +1,7 @@
 // src/pages/admin/tiles.tsx
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabase } from "@/lib/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
