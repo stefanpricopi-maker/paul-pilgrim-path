@@ -563,25 +563,26 @@ export const useGameDatabase = () => {
     }
   }, [gameState.game, gameState.isMyTurn, gameState.currentPlayerIndex, gameState.players, user]);
 
-  // Set up real-time subscriptions
+  // Set up real-time subscriptions + waiting-room polling fallback
   useEffect(() => {
     if (!gameState.game?.id || !user) return;
 
-    console.log('Setting up real-time subscriptions for game:', gameState.game.id);
+    const gameId = gameState.game.id;
+    console.log('Setting up real-time subscriptions for game:', gameId);
 
     const gameChannel = supabase
-      .channel(`game_${gameState.game.id}`)
+      .channel(`game_${gameId}`)
       .on(
         'postgres_changes',
         {
           event: '*',
           schema: 'public',
           table: 'players',
-          filter: `game_id=eq.${gameState.game.id}`
+          filter: `game_id=eq.${gameId}`
         },
         (payload) => {
           console.log('Players changed:', payload);
-          loadGame(gameState.game!.id);
+          loadGame(gameId);
         }
       )
       .on(
@@ -590,11 +591,11 @@ export const useGameDatabase = () => {
           event: '*',
           schema: 'public',
           table: 'games',
-          filter: `id=eq.${gameState.game.id}`
+          filter: `id=eq.${gameId}`
         },
         () => {
           console.log('Game changed, reloading game data');
-          loadGame(gameState.game!.id);
+          loadGame(gameId);
         }
       )
       .on(
@@ -603,11 +604,11 @@ export const useGameDatabase = () => {
           event: '*',
           schema: 'public',
           table: 'game_log',
-          filter: `game_id=eq.${gameState.game.id}`
+          filter: `game_id=eq.${gameId}`
         },
         () => {
           console.log('Game log changed, reloading game data');
-          loadGame(gameState.game!.id);
+          loadGame(gameId);
         }
       )
       .on(
@@ -616,11 +617,11 @@ export const useGameDatabase = () => {
           event: '*',
           schema: 'public',
           table: 'tiles',
-          filter: `game_id=eq.${gameState.game.id}`
+          filter: `game_id=eq.${gameId}`
         },
         () => {
           console.log('Tiles changed, reloading game data');
-          loadGame(gameState.game!.id);
+          loadGame(gameId);
         }
       )
       .on(
@@ -629,19 +630,28 @@ export const useGameDatabase = () => {
           event: '*',
           schema: 'public',
           table: 'game_members',
-          filter: `game_id=eq.${gameState.game.id}`
+          filter: `game_id=eq.${gameId}`
         },
         () => {
           console.log('Game members changed, reloading game data');
-          loadGame(gameState.game!.id);
+          loadGame(gameId);
         }
       )
       .subscribe();
 
+    // Fallback: poll while waiting to ensure host sees new joins
+    let pollInterval: number | undefined;
+    if (gameState.game.status === 'waiting') {
+      pollInterval = window.setInterval(() => {
+        loadGame(gameId);
+      }, 2000);
+    }
+
     return () => {
+      if (pollInterval) window.clearInterval(pollInterval);
       supabase.removeChannel(gameChannel);
     };
-  }, [gameState.game, loadGame]);
+  }, [gameState.game?.id, gameState.game?.status, user, loadGame]);
 
   // Update isMyTurn when players or current turn changes
   useEffect(() => {
