@@ -113,3 +113,24 @@ export interface GameState {
   isHost: boolean;
   isMyTurn: boolean;
 }
+
+export type Json =
+  | string
+  | number
+  | boolean
+  | null
+  | { [key: string]: Json | undefined }
+  | Json[];
+
+export interface Database {
+  public: {
+    Functions: {
+      get_profile_admin_status: {
+        Args: { user_id: string };
+        Returns: { is_admin: boolean }[];
+      };
+    };
+  };
+}
+
+
