@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
+type AdminStatus = { is_admin: boolean };
+
 export function useAdmin() {
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -16,14 +18,15 @@ export function useAdmin() {
       }
 
       try {
-        const { data: profile, error } = await supabase
-          .rpc('get_profile_admin_status', { user_id: user.id });
+        const { data, error } = await supabase
+          .rpc<AdminStatus>('get_profile_admin_status', { user_id: user.id });
 
         if (error) {
           console.error('Error checking admin status:', error);
           setIsAdmin(false);
         } else {
-            setIsAdmin(profile?.[0]?.is_admin ?? false);
+          // data is an array of rows → check the first one
+          setIsAdmin(data?.[0]?.is_admin ?? false);
         }
       } catch (error) {
         console.error('Error checking admin status:', error);
