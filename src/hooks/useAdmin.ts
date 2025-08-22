@@ -19,11 +19,15 @@ export function useAdmin() {
       }
 
       try {
-        const { data, error } = await supabase.rpc(
-  'get_profile_admin_status',
-  { user_id: user.id }
-);
+        const { data, error } = await supabase.rpc('get_profile_admin_status',
+            { 
+              user_id: user.id 
+            });
 
+      console.log('RPC data:', data);   // <-- Add this
+      console.log('RPC error:', error); // <-- Add this
+
+        
 if (error) {
   console.error('Error checking admin status:', error);
   setIsAdmin(false);
