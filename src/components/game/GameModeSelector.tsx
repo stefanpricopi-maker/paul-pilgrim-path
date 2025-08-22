@@ -14,8 +14,7 @@ export default function GameModeSelector({ onSelectMode }: GameModeSelectorProps
   const { isAdmin } = useAdmin();
   const navigate = useNavigate();
 
-console.log("Admin status:", isAdmin);
-
+  console.log('Admin status:', isAdmin); // <-- see what value isAdmin has
   
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
