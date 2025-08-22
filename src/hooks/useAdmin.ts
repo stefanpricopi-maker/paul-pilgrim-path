@@ -23,7 +23,7 @@ export function useAdmin() {
           console.error('Error checking admin status:', error);
           setIsAdmin(false);
         } else {
-          setIsAdmin(profile || false);
+            setIsAdmin(profile?.[0]?.is_admin ?? false);
         }
       } catch (error) {
         console.error('Error checking admin status:', error);
