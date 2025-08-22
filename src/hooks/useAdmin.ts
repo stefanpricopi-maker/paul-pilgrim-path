@@ -6,7 +6,7 @@ type AdminStatus = { is_admin: boolean };
 type AdminArgs = { user_id: string };
 
 export function useAdmin() {
-  const { user } = useAuth();
+ /* const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -38,12 +38,7 @@ if (error) {
   setIsAdmin(data?.[0]?.is_admin ?? false);
 }
 
-const { data: session } = await supabase.auth.getSession();
-      console.log("Session check:", session);
 
-      if (!session?.session?.user) {
-        console.log("No logged in user!");
-        setIsAdmin(false);
 
 
         
@@ -59,4 +54,34 @@ const { data: session } = await supabase.auth.getSession();
   }, [user]);
 
   return { isAdmin, loading };
-}
+}*/
+
+const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const { data: session } = await supabase.auth.getSession();
+      console.log("Session check:", session);
+
+      if (!session?.session?.user) {
+        console.log("No logged in user!");
+        setIsAdmin(false);
+        return;
+      }
+
+      // your existing RPC call
+      const { data, error } = await supabase.rpc("get_profile_admin_status", {
+        user_id: session.session.user.id,
+      });
+
+      console.log("RPC data:", data);
+      console.log("RPC error:", error);
+
+      setIsAdmin(!!data?.[0]?.is_admin);
+    };
+
+    checkAdmin();
+  }, []);
+
+  return isAdmin;
+      }
