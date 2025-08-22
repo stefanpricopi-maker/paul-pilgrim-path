@@ -19,17 +19,17 @@ export function useAdmin() {
       }
 
       try {
-        const { data, error } = await supabase.rpc<AdminStatus, AdminArgs>(
-          'get_profile_admin_status',
-          { user_id: user.id }
-        );
+        const { data, error } = await supabase.rpc(
+  'get_profile_admin_status',
+  { user_id: user.id }
+);
 
-        if (error) {
-          console.error('Error checking admin status:', error);
-          setIsAdmin(false);
-        } else {
-          setIsAdmin(data?.[0]?.is_admin ?? false);
-        }
+if (error) {
+  console.error('Error checking admin status:', error);
+  setIsAdmin(false);
+} else {
+  setIsAdmin(data?.[0]?.is_admin ?? false);
+}
       } catch (error) {
         console.error('Error checking admin status:', error);
         setIsAdmin(false);
