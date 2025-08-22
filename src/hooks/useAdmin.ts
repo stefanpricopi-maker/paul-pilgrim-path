@@ -37,6 +37,16 @@ if (error) {
 } else {
   setIsAdmin(data?.[0]?.is_admin ?? false);
 }
+
+const { data: session } = await supabase.auth.getSession();
+      console.log("Session check:", session);
+
+      if (!session?.session?.user) {
+        console.log("No logged in user!");
+        setIsAdmin(false);
+
+
+        
       } catch (error) {
         console.error('Error checking admin status:', error);
         setIsAdmin(false);
