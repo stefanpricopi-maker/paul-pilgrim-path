@@ -360,6 +360,33 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string | null
+          full_name: string | null
+          id: string
+          is_admin: boolean | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          full_name?: string | null
+          id: string
+          is_admin?: boolean | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          full_name?: string | null
+          id?: string
+          is_admin?: boolean | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
       tiles: {
         Row: {
           building_type: string | null
@@ -426,6 +453,28 @@ export type Database = {
       copy_template_tiles: {
         Args: { target_game_id: string }
         Returns: undefined
+      }
+      debug_admin_status: {
+        Args: { uid: string }
+        Returns: {
+          found: boolean
+          is_admin: boolean
+          profile_id: string
+        }[]
+      }
+      ensure_admin: {
+        Args: { user_id: string }
+        Returns: undefined
+      }
+      get_profile_admin_status: {
+        Args: { user_id: string }
+        Returns: {
+          is_admin: boolean
+        }[]
+      }
+      is_member_of_game: {
+        Args: { target_game_id: string }
+        Returns: boolean
       }
     }
     Enums: {
