@@ -2,12 +2,14 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, MapPin, Users, Building2, CreditCard, Settings } from 'lucide-react';
+import { ArrowLeft, MapPin, Users, Building2, CreditCard, Settings, Trophy, Gamepad2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import TileEditor from '@/components/admin/TileEditor';
 import CharacterEditor from '@/components/admin/CharacterEditor';
 import BuildingEditor from '@/components/admin/BuildingEditor';
 import CardEditor from '@/components/admin/CardEditor';
+import CurrentGamesOverview from '@/components/admin/CurrentGamesOverview';
+import WinningConditionsEditor from '@/components/admin/WinningConditionsEditor';
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -31,25 +33,23 @@ const Admin = () => {
         </div>
 
         {/* Admin Tabs */}
-        <Tabs defaultValue="tiles" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="tiles" className="flex items-center space-x-2">
-              <MapPin className="w-4 h-4" />
-              <span>Tiles</span>
-            </TabsTrigger>
-            <TabsTrigger value="characters" className="flex items-center space-x-2">
-              <Users className="w-4 h-4" />
-              <span>Characters</span>
-            </TabsTrigger>
-            <TabsTrigger value="buildings" className="flex items-center space-x-2">
-              <Building2 className="w-4 h-4" />
-              <span>Buildings</span>
-            </TabsTrigger>
-            <TabsTrigger value="cards" className="flex items-center space-x-2">
-              <CreditCard className="w-4 h-4" />
-              <span>Cards</span>
-            </TabsTrigger>
+        <Tabs defaultValue="games" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-5">
+            <TabsTrigger value="games">Games</TabsTrigger>
+            <TabsTrigger value="winning">Win Conditions</TabsTrigger>
+            <TabsTrigger value="tiles">Tiles</TabsTrigger>
+            <TabsTrigger value="characters">Characters</TabsTrigger>
+            <TabsTrigger value="buildings">Buildings</TabsTrigger>
+            <TabsTrigger value="cards">Cards</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="games">
+            <CurrentGamesOverview />
+          </TabsContent>
+          
+          <TabsContent value="winning">
+            <WinningConditionsEditor />
+          </TabsContent>
 
           <TabsContent value="tiles">
             <Card>
