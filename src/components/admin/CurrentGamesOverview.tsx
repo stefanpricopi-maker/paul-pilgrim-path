@@ -26,9 +26,7 @@ export default function CurrentGamesOverview() {
             <tr key={game.id} className="hover:bg-gray-100">
               <td className="p-2 border">{game.id}</td>
               <td className="p-2 border">{game.status}</td>
-              <td className="p-2 border">
-                {game.players?.map(p => p.username).join(', ') || '—'}
-              </td>
+              <td className="p-2 border">—</td>
               <td className="p-2 border">{new Date(game.created_at).toLocaleString()}</td>
               <td className="p-2 border space-x-2">
                 <Button size="sm" onClick={() => console.log('Force start', game.id)}>Force Start</Button>

@@ -213,8 +213,8 @@ const OnlineGameBoard = ({ gameId }: OnlineGameBoardProps) => {
                 
                 <div className="space-y-4">
                   <Dice
-                    dice1={Math.floor(gameState.diceValue / 2) || 1}
-                    dice2={Math.ceil(gameState.diceValue / 2) || 1}
+                    dice1={gameState.dice1}
+                    dice2={gameState.dice2}
                     isRolling={gameState.isRolling}
                     onRoll={handleRollDice}
                   />

@@ -16,6 +16,8 @@ export const useGameDatabase = () => {
     tiles: [],
     gameStarted: false,
     diceValue: 0,
+    dice1: 0,
+    dice2: 0,
     isRolling: false,
     gameLog: [],
     isHost: false,
@@ -495,6 +497,8 @@ export const useGameDatabase = () => {
         setGameState(prev => ({
           ...prev,
           diceValue,
+          dice1,
+          dice2,
           isRolling: false
         }));
 

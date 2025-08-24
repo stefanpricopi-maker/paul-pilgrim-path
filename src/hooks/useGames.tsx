@@ -1,6 +1,7 @@
 // src/hooks/useGames.ts
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { Game } from '@/types/database';
 
 export function useGames() {
   const [games, setGames] = useState<Game[]>([]);
@@ -10,7 +11,7 @@ export function useGames() {
     setLoading(true);
     const { data, error } = await supabase
       .from('games')
-      .select('id, status, created_at, updated_at, players(username)')
+      .select('*')
       .order('created_at', { ascending: false });
     
     if (error) {

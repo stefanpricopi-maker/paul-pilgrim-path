@@ -110,6 +110,8 @@ export interface GameState {
   tiles: Tile[];
   gameStarted: boolean;
   diceValue: number;
+  dice1: number;
+  dice2: number;
   isRolling: boolean;
   gameLog: GameLog[];
   isHost: boolean;
