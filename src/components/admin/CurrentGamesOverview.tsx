@@ -4,7 +4,7 @@ import { useGames } from '@/hooks/useGames';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
+import { toast } from '@/hooks/use-toast';
 
 export default function CurrentGamesOverview() {
   const { games, loading, refresh } = useGames();
@@ -99,14 +99,14 @@ export default function CurrentGamesOverview() {
           </tr>
         </thead>
         <tbody>
-          {filteredGames.length === 0 ? (
+          {games.length === 0 ? (
             <tr>
               <td colSpan={5} className="p-4 text-center text-muted-foreground">
-                {games.length === 0 ? "No games found" : "No games match the current filter"}
+                No {showFinished ? 'games' : 'active games'} found
               </td>
             </tr>
           ) : (
-            filteredGames.map((game) => (
+            games.map((game) => (
             <tr key={game.id} className="hover:bg-gray-100">
               <td className="p-2 border">{game.id}</td>
               <td className="p-2 border">{game.status}</td>
