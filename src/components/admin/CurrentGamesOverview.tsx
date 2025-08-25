@@ -10,6 +10,12 @@ export default function CurrentGamesOverview() {
   const { games, loading, refresh } = useGames();
   const [selectedGame, setSelectedGame] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
+  const [showFinished, setShowFinished] = useState(false);
+
+  // Filter games based on showFinished toggle
+  const filteredGames = games.filter(game => 
+    showFinished ? true : game.status !== 'finished'
+  );
 
   const handleForceStart = async (gameId) => {
     setActionLoading(`start-${gameId}`);
@@ -69,8 +75,19 @@ export default function CurrentGamesOverview() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Current Games</h2>
-      <Button onClick={refresh}>Refresh</Button>
+      <div className="flex justify-between items-center">
+        <h2 className="text-2xl font-bold">Current Games</h2>
+        <div className="flex gap-2">
+          <Button 
+            variant={showFinished ? "default" : "outline"} 
+            size="sm"
+            onClick={() => setShowFinished(!showFinished)}
+          >
+            {showFinished ? "Hide Finished" : "Show Finished"}
+          </Button>
+          <Button onClick={refresh}>Refresh</Button>
+        </div>
+      </div>
       <table className="w-full border">
         <thead>
           <tr className="text-left">
@@ -82,7 +99,14 @@ export default function CurrentGamesOverview() {
           </tr>
         </thead>
         <tbody>
-          {games.map((game) => (
+          {filteredGames.length === 0 ? (
+            <tr>
+              <td colSpan={5} className="p-4 text-center text-muted-foreground">
+                {games.length === 0 ? "No games found" : "No games match the current filter"}
+              </td>
+            </tr>
+          ) : (
+            filteredGames.map((game) => (
             <tr key={game.id} className="hover:bg-gray-100">
               <td className="p-2 border">{game.id}</td>
               <td className="p-2 border">{game.status}</td>
@@ -113,7 +137,8 @@ export default function CurrentGamesOverview() {
                 </Button>
               </td>
             </tr>
-          ))}
+          ))
+          )}
         </tbody>
       </table>
 
