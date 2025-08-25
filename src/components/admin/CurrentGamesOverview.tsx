@@ -7,15 +7,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 
 export default function CurrentGamesOverview() {
-  const { games, loading, refresh } = useGames();
+  const [showFinished, setShowFinished] = useState(false);
+  const { games, loading, refresh } = useGames({ includeFinished: showFinished });
   const [selectedGame, setSelectedGame] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
-  const [showFinished, setShowFinished] = useState(false);
-
-  // Filter games based on showFinished toggle
-  const filteredGames = games.filter(game => 
-    showFinished ? true : game.status !== 'finished'
-  );
 
   const handleForceStart = async (gameId) => {
     setActionLoading(`start-${gameId}`);
@@ -27,10 +22,10 @@ export default function CurrentGamesOverview() {
       
       if (error) throw error;
       
-      toast.success('Game started successfully');
+      toast({ title: 'Game started', description: 'Game started successfully' });
       refresh();
     } catch (error) {
-      toast.error('Failed to start game: ' + error.message);
+      toast({ title: 'Failed to start game', description: (error as any)?.message || 'Unknown error', variant: 'destructive' });
     } finally {
       setActionLoading(null);
     }
@@ -46,10 +41,10 @@ export default function CurrentGamesOverview() {
       
       if (error) throw error;
       
-      toast.success('Game ended successfully');
+      toast({ title: 'Game ended', description: 'Game ended successfully' });
       refresh();
     } catch (error) {
-      toast.error('Failed to end game: ' + error.message);
+      toast({ title: 'Failed to end game', description: (error as any)?.message || 'Unknown error', variant: 'destructive' });
     } finally {
       setActionLoading(null);
     }
@@ -67,7 +62,7 @@ export default function CurrentGamesOverview() {
       
       setSelectedGame({ ...game, players: players || [] });
     } catch (error) {
-      toast.error('Failed to load game details: ' + error.message);
+      toast({ title: 'Failed to load game details', description: (error as any)?.message || 'Unknown error', variant: 'destructive' });
     }
   };
 
