@@ -70,9 +70,10 @@ const Admin = () => {
             <WinningConditionsEditor />
           </TabsContent>
 
-          <TabsContent value="players">
-            <PlayerManagement />
-          </TabsContent>
+          <TabsTrigger value="players" className="flex items-center space-x-2">
+            <Users className="w-4 h-4" />
+            <span>Players</span>
+          </TabsTrigger>
 
           <TabsContent value="tiles">
             <Card>
