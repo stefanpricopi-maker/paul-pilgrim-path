@@ -60,6 +60,12 @@ const Admin = () => {
               <CreditCard className="w-4 h-4" />
               <span>Cards</span>
             </TabsTrigger>
+
+            <TabsTrigger value="players" className="flex items-center space-x-2">
+              <Users className="w-4 h-4" />
+              <span>Players</span>
+            </TabsTrigger>
+            
           </TabsList>
 
           <TabsContent value="games">
