@@ -11,6 +11,10 @@ export default function CurrentGamesOverview() {
   const { games, loading, refresh } = useGames({ includeFinished: showFinished });
   const [selectedGame, setSelectedGame] = useState(null);
   const [actionLoading, setActionLoading] = useState(null);
+  const [hiddenIds, setHiddenIds] = useState<string[]>([]);
+  const filteredGames = games
+    .filter((g) => (showFinished ? true : g.status !== 'finished'))
+    .filter((g) => !hiddenIds.includes(g.id));
 
   const handleForceStart = async (gameId) => {
     setActionLoading(`start-${gameId}`);
@@ -42,6 +46,9 @@ export default function CurrentGamesOverview() {
       if (error) throw error;
       
       toast({ title: 'Game ended', description: 'Game ended successfully' });
+      if (!showFinished) {
+        setHiddenIds((prev) => (prev.includes(gameId) ? prev : [...prev, gameId]));
+      }
       refresh();
     } catch (error) {
       toast({ title: 'Failed to end game', description: (error as any)?.message || 'Unknown error', variant: 'destructive' });
@@ -94,14 +101,14 @@ export default function CurrentGamesOverview() {
           </tr>
         </thead>
         <tbody>
-          {games.length === 0 ? (
+          {filteredGames.length === 0 ? (
             <tr>
               <td colSpan={5} className="p-4 text-center text-muted-foreground">
                 No {showFinished ? 'games' : 'active games'} found
               </td>
             </tr>
           ) : (
-            games.map((game) => (
+            filteredGames.map((game) => (
             <tr key={game.id} className="hover:bg-gray-100">
               <td className="p-2 border">{game.id}</td>
               <td className="p-2 border">{game.status}</td>
