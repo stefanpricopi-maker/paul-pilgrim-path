@@ -24,16 +24,7 @@ const AdminRoute = ({ children }: AdminRouteProps) => {
   }
 
   if (!isAdmin) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <Shield className="w-12 h-12 text-destructive mx-auto" />
-          <h2 className="text-2xl font-bold text-foreground">Access Denied</h2>
-          <p className="text-muted-foreground">You need administrator privileges to access this area.</p>
-          <Navigate to="/" replace />
-        </div>
-      </div>
-    );
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
