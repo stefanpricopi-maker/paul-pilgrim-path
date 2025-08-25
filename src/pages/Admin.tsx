@@ -34,13 +34,31 @@ const Admin = () => {
 
         {/* Admin Tabs */}
         <Tabs defaultValue="games" className="space-y-4">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="games">Games</TabsTrigger>
-            <TabsTrigger value="winning">Win Conditions</TabsTrigger>
-            <TabsTrigger value="tiles">Tiles</TabsTrigger>
-            <TabsTrigger value="characters">Characters</TabsTrigger>
-            <TabsTrigger value="buildings">Buildings</TabsTrigger>
-            <TabsTrigger value="cards">Cards</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
+            <TabsTrigger value="games" className="flex items-center space-x-2">
+              <Gamepad2 className="w-4 h-4" />
+              <span>Games</span>
+            </TabsTrigger>
+            <TabsTrigger value="winning" className="flex items-center space-x-2">
+              <Trophy className="w-4 h-4" />
+              <span>Win Conditions</span>
+            </TabsTrigger>
+            <TabsTrigger value="tiles" className="flex items-center space-x-2">
+              <MapPin className="w-4 h-4" />
+              <span>Tiles</span>
+            </TabsTrigger>
+            <TabsTrigger value="characters" className="flex items-center space-x-2">
+              <Users className="w-4 h-4" />
+              <span>Characters</span>
+            </TabsTrigger>
+            <TabsTrigger value="buildings" className="flex items-center space-x-2">
+              <Building2 className="w-4 h-4" />
+              <span>Buildings</span>
+            </TabsTrigger>
+            <TabsTrigger value="cards" className="flex items-center space-x-2">
+              <CreditCard className="w-4 h-4" />
+              <span>Cards</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="games">
