@@ -1,44 +1,106 @@
-// src/components/admin/PlayerManagement.tsx
-import { usePlayers } from "@/hooks/usePlayers";
-import { Loader2, Shield, UserX } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
 
-export default function PlayerManagement() {
-  const { players, loading } = usePlayers();
+interface Player {
+  id: string;
+  email: string;
+  username: string;
+  is_admin: boolean;
+}
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-[200px]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
+const PlayerManagement = () => {
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+  const [username, setUsername] = useState("");
+
+  const fetchPlayers = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .order("username");
+
+    if (error) {
+      toast({ title: "Error fetching players", description: error.message, variant: "destructive" });
+    } else {
+      setPlayers(data);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchPlayers();
+  }, []);
+
+  const startEdit = (player: Player) => {
+    setEditingPlayer(player);
+    setUsername(player.username);
+  };
+
+  const saveEdit = async () => {
+    if (!editingPlayer) return;
+    const { error } = await supabase
+      .from("profiles")
+      .update({ username })
+      .eq("id", editingPlayer.id);
+
+    if (error) {
+      toast({ title: "Update failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Player updated!" });
+      fetchPlayers();
+      setEditingPlayer(null);
+    }
+  };
+
+  const deletePlayer = async (player: Player) => {
+    if (!confirm(`Are you sure you want to delete ${player.username}?`)) return;
+
+    const { error } = await supabase.from("profiles").delete().eq("id", player.id);
+
+    if (error) {
+      toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Player deleted!" });
+      fetchPlayers();
+    }
+  };
 
   return (
-    <Card className="p-4 shadow-md">
-      <h2 className="text-xl font-bold mb-4">Player Management</h2>
-      <div className="space-y-2">
-        {players.map((player) => (
-          <Card key={player.id} className="p-3 flex items-center justify-between">
-            <div>
-              <p className="font-semibold">{player.username}</p>
-              <p className="text-sm text-muted-foreground">
-                {player.is_admin ? "Admin" : "Player"} • Joined:{" "}
-                {new Date(player.created_at).toLocaleDateString()}
-              </p>
+    <Card>
+      <CardHeader>
+        <CardTitle>Player Management</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        {loading ? (
+          <p>Loading players...</p>
+        ) : (
+          players.map((p) => (
+            <div key={p.id} className="flex justify-between items-center">
+              <span>{p.username} ({p.email}) {p.is_admin && "[Admin]"}</span>
+              <div className="space-x-2">
+                <Button size="sm" onClick={() => startEdit(p)}>Edit</Button>
+                <Button size="sm" variant="destructive" onClick={() => deletePlayer(p)}>Delete</Button>
+              </div>
             </div>
-            <div className="flex gap-2">
-              <Button size="sm" variant="outline">
-                {player.is_admin ? <Shield className="w-4 h-4 mr-1" /> : "Promote"}
-              </Button>
-              <Button size="sm" variant="destructive">
-                <UserX className="w-4 h-4 mr-1" /> Ban
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+          ))
+        )}
+
+        {editingPlayer && (
+          <div className="flex space-x-2 items-center mt-4">
+            <Input value={username} onChange={(e) => setUsername(e.target.value)} />
+            <Button size="sm" onClick={saveEdit}>Save</Button>
+            <Button size="sm" variant="outline" onClick={() => setEditingPlayer(null)}>Cancel</Button>
+          </div>
+        )}
+      </CardContent>
     </Card>
   );
-}
+};
+
+export default PlayerManagement;
