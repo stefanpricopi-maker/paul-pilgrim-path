@@ -10,6 +10,7 @@ import BuildingEditor from '@/components/admin/BuildingEditor';
 import CardEditor from '@/components/admin/CardEditor';
 import CurrentGamesOverview from '@/components/admin/CurrentGamesOverview';
 import WinningConditionsEditor from '@/components/admin/WinningConditionsEditor';
+import PlayerManagement from "@/components/admin/PlayerManagement";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -67,6 +68,10 @@ const Admin = () => {
           
           <TabsContent value="winning">
             <WinningConditionsEditor />
+          </TabsContent>
+
+          <TabsContent value="players">
+            <PlayerManagement />
           </TabsContent>
 
           <TabsContent value="tiles">
