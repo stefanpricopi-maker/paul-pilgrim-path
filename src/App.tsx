@@ -48,6 +48,11 @@ const App = () => (
                 <Index />
               </ProtectedRoute>
             } />
+            <Route path="/online/:gameId" element={
+              <ProtectedRoute>
+                <OnlineGameBoardWrapper />
+              </ProtectedRoute>
+            } />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
