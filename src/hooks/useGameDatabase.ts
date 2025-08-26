@@ -131,25 +131,56 @@ export const useGameDatabase = () => {
     if (!storedGameId) return false;
 
     try {
-      // Check if user is still a member of this game
-      const { data: gameMember } = await (supabase as any)
-        .from('game_members')
+      // First, ensure the game still exists and is resumable
+      const { data: game, error: gameErr } = await (supabase as any)
+        .from('games')
         .select('*')
-        .eq('game_id', storedGameId)
-        .eq('user_id', user.id)
+        .eq('id', storedGameId)
         .single();
 
-      if (gameMember) {
-        await loadGame(storedGameId);
-        return true;
-      } else {
-        // User is no longer in this game, clear stored ID
+      if (gameErr || !game) {
         clearStoredGameId();
         return false;
       }
+
+      if (['finished', 'cancelled'].includes(game.status)) {
+        clearStoredGameId();
+        return false;
+      }
+
+      // Check membership via game_members
+      const { data: members, error: membersError } = await (supabase as any)
+        .from('game_members')
+        .select('id')
+        .eq('game_id', storedGameId)
+        .eq('user_id', user.id)
+        .limit(1);
+
+      const isMember = Array.isArray(members) && members.length > 0;
+
+      // Fallback: check if user has a player row in this game
+      let hasPlayer = false;
+      if (!isMember) {
+        const { data: players } = await (supabase as any)
+          .from('players')
+          .select('id')
+          .eq('game_id', storedGameId)
+          .eq('user_id', user.id)
+          .limit(1);
+        hasPlayer = Array.isArray(players) && players.length > 0;
+      }
+
+      if (isMember || hasPlayer) {
+        await loadGame(storedGameId);
+        return true;
+      }
+
+      // User no longer part of this game
+      clearStoredGameId();
+      return false;
     } catch (error) {
       console.log('Could not reconnect to stored game:', error);
-      clearStoredGameId();
+      // Do not clear stored game on transient errors
       return false;
     }
   }, [user, getStoredGameId, loadGame, clearStoredGameId]);
