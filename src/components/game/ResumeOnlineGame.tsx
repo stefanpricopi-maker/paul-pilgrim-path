@@ -8,15 +8,20 @@ export default function ResumeOnlineGame() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [hasGame, setHasGame] = useState(false);
+  const [resumePath, setResumePath] = useState<string | null>(null);
 
   useEffect(() => {
-    // Only show on non-game root routes to avoid overlap
     const storedId = localStorage.getItem('currentOnlineGameId');
-    setHasGame(!!user && !!storedId);
+    if (user && storedId) {
+      // build the route you use for online games
+      const path = `/online/${storedId}`;
+      setResumePath(path);
+    } else {
+      setResumePath(null);
+    }
   }, [user, location.pathname]);
 
-  if (!hasGame) return null;
+  if (!resumePath) return null;
 
   return (
     <div className="fixed bottom-4 right-4 z-50">
@@ -27,7 +32,7 @@ export default function ResumeOnlineGame() {
             <p className="text-sm font-semibold">Online game in progress</p>
             <p className="text-xs text-muted-foreground">Resume where you left off</p>
           </div>
-          <Button size="sm" onClick={() => navigate('/')}>Return</Button>
+          <Button size="sm" onClick={() => navigate(resumePath)}>Return</Button>
         </div>
       </Card>
     </div>
