@@ -374,7 +374,52 @@ export const useGameDatabase = () => {
 
   // Roll dice with special tile logic
   const rollDice = useCallback(async () => {
-    if (!gameState.game || !user || gameState.isRolling || !gameState.isMyTurn) return;
+    console.log('rollDice called:', {
+      hasGame: !!gameState.game,
+      hasUser: !!user,
+      isRolling: gameState.isRolling,
+      isMyTurn: gameState.isMyTurn,
+      currentPlayerIndex: gameState.currentPlayerIndex,
+      playersLength: gameState.players.length,
+      currentPlayer: gameState.players[gameState.currentPlayerIndex],
+      userId: user?.id
+    });
+
+    if (!gameState.game) {
+      toast({
+        title: "No Game",
+        description: "No active game found",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!user) {
+      toast({
+        title: "Not Authenticated",
+        description: "Please sign in to play",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (gameState.isRolling) {
+      toast({
+        title: "Please Wait",
+        description: "Dice are already rolling",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!gameState.isMyTurn) {
+      toast({
+        title: "Not Your Turn",
+        description: "Please wait for your turn to roll",
+        variant: "destructive"
+      });
+      return;
+    }
 
     setGameState(prev => ({ ...prev, isRolling: true }));
 

@@ -69,10 +69,18 @@ const Dice = ({
         
         <div className="flex justify-center gap-2">
           <Card key={`${animationKey}-1`} className={`dice-container w-16 h-16 border-2 border-primary shadow-elevated ${isRolling ? 'dice-roll' : ''}`}>
-            {dice1 > 0 && getDiceDisplay(dice1)}
+            {dice1 > 0 ? getDiceDisplay(dice1) : (
+              <div className="flex h-full w-full p-2 justify-center items-center">
+                <div className="w-3 h-3 bg-muted rounded-full opacity-30" />
+              </div>
+            )}
           </Card>
           <Card key={`${animationKey}-2`} className={`dice-container w-16 h-16 border-2 border-primary shadow-elevated ${isRolling ? 'dice-roll' : ''}`}>
-            {dice2 > 0 && getDiceDisplay(dice2)}
+            {dice2 > 0 ? getDiceDisplay(dice2) : (
+              <div className="flex h-full w-full p-2 justify-center items-center">
+                <div className="w-3 h-3 bg-muted rounded-full opacity-30" />
+              </div>
+            )}
           </Card>
         </div>
         
