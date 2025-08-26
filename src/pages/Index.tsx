@@ -32,7 +32,10 @@ const Index = () => {
     joinGame,
     startGame,
     rollDice: onlineRollDice,
-    endTurn: onlineEndTurn
+    endTurn: onlineEndTurn,
+    tryReconnectToStoredGame,
+    clearStoredGameId,
+    getStoredGameId
   } = useGameDatabase();
   
   // Local game state
@@ -56,6 +59,17 @@ const Index = () => {
   // Check if we have a saved local game
   const hasExistingLocalGame = localStorage.getItem('localGameState') !== null;
 
+  // Try to reconnect to stored online game on component mount
+  useEffect(() => {
+    if (user && !gameMode && !onlineGameState.game) {
+      tryReconnectToStoredGame().then((reconnected) => {
+        if (reconnected) {
+          setGameMode('online');
+        }
+      });
+    }
+  }, [user, gameMode, onlineGameState.game, tryReconnectToStoredGame]);
+
   // Check for win condition after each turn
   useEffect(() => {
     if (localGameState.gameStarted && localGameState.players.length > 1) {
@@ -68,7 +82,30 @@ const Index = () => {
 
   // Show game mode selector if no mode selected
   if (!gameMode) {
-    return <GameModeSelector onSelectMode={setGameMode} />;
+    return (
+      <div className="space-y-4">
+        <GameModeSelector onSelectMode={setGameMode} />
+        {user && getStoredGameId() && (
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground mb-2">
+              You have an online game in progress
+            </p>
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                tryReconnectToStoredGame().then((reconnected) => {
+                  if (reconnected) {
+                    setGameMode('online');
+                  }
+                });
+              }}
+            >
+              Return to Game
+            </Button>
+          </div>
+        )}
+      </div>
+    );
   }
 
 
@@ -134,6 +171,10 @@ const Index = () => {
         onCreateGame={createGame}
         onJoinGame={joinGame}
         onStartGame={startGame}
+        onLeaveGame={() => {
+          clearStoredGameId();
+          setGameMode(null);
+        }}
       />
     );
   }

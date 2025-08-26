@@ -25,6 +25,21 @@ export const useGameDatabase = () => {
   });
   const [loading, setLoading] = useState(false);
 
+  // Store game ID in localStorage for persistence
+  const storeGameId = useCallback((gameId: string) => {
+    localStorage.setItem('currentOnlineGameId', gameId);
+  }, []);
+
+  // Clear stored game ID
+  const clearStoredGameId = useCallback(() => {
+    localStorage.removeItem('currentOnlineGameId');
+  }, []);
+
+  // Get stored game ID
+  const getStoredGameId = useCallback(() => {
+    return localStorage.getItem('currentOnlineGameId');
+  }, []);
+
   // Load game data and set up real-time subscriptions
   const loadGame = useCallback(async (gameId: string) => {
     if (!user) return;
@@ -107,6 +122,37 @@ export const useGameDatabase = () => {
       setLoading(false);
     }
   }, [user]);
+
+  // Try to reconnect to stored game
+  const tryReconnectToStoredGame = useCallback(async () => {
+    if (!user) return false;
+    
+    const storedGameId = getStoredGameId();
+    if (!storedGameId) return false;
+
+    try {
+      // Check if user is still a member of this game
+      const { data: gameMember } = await (supabase as any)
+        .from('game_members')
+        .select('*')
+        .eq('game_id', storedGameId)
+        .eq('user_id', user.id)
+        .single();
+
+      if (gameMember) {
+        await loadGame(storedGameId);
+        return true;
+      } else {
+        // User is no longer in this game, clear stored ID
+        clearStoredGameId();
+        return false;
+      }
+    } catch (error) {
+      console.log('Could not reconnect to stored game:', error);
+      clearStoredGameId();
+      return false;
+    }
+  }, [user, getStoredGameId, loadGame, clearStoredGameId]);
 
   // Create a new game
   const createGame = useCallback(async (playerName: string, characterName: string) => {
@@ -192,6 +238,9 @@ export const useGameDatabase = () => {
       }
 
       console.log('Player created successfully');
+
+      // Store game ID for persistence
+      storeGameId(newGameId);
 
       // Load the created game and set up real-time subscriptions
       await loadGame(newGameId);
@@ -284,6 +333,7 @@ export const useGameDatabase = () => {
         .single();
 
       if (existingMember) {
+        storeGameId(gameId);
         await loadGame(gameId);
         return true;
       }
@@ -312,6 +362,9 @@ export const useGameDatabase = () => {
         });
 
       if (playerError) throw playerError;
+
+      // Store game ID for persistence
+      storeGameId(gameId);
 
       await loadGame(gameId);
 
@@ -738,5 +791,8 @@ export const useGameDatabase = () => {
     rollDice,
     endTurn,
     getGameLocations,
+    tryReconnectToStoredGame,
+    clearStoredGameId,
+    getStoredGameId,
   };
 };

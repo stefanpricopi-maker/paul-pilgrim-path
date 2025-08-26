@@ -15,9 +15,10 @@ interface GameLobbyProps {
   onCreateGame: (playerName: string, characterName: string) => Promise<string | null>;
   onJoinGame: (gameId: string, playerName: string, characterName: string) => Promise<boolean>;
   onStartGame: () => Promise<void>;
+  onLeaveGame?: () => void;
 }
 
-const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }: GameLobbyProps) => {
+const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame, onLeaveGame }: GameLobbyProps) => {
   const [activeTab, setActiveTab] = useState('create');
   const [playerName, setPlayerName] = useState('');
   const [selectedCharacter, setSelectedCharacter] = useState(BIBLICAL_CHARACTERS[0].name);
@@ -155,6 +156,18 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame }
               <p className="text-center text-muted-foreground text-sm">
                 Waiting for the host to start the journey...
               </p>
+            )}
+
+            {/* Leave Game Button */}
+            {onLeaveGame && (
+              <Button 
+                onClick={onLeaveGame}
+                variant="outline"
+                size="sm"
+                className="w-full text-muted-foreground hover:text-destructive hover:border-destructive"
+              >
+                Leave Game
+              </Button>
             )}
           </div>
         </Card>
