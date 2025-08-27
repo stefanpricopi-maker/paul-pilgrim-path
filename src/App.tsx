@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "./components/auth/ProtectedRoute";
 import AdminRoute from "./components/admin/AdminRoute";
-import OnlineGameBoardWrapper from "@/components/OnlineGameBoardWrapper";
+import OnlineGameBoardWrapper from "@/pages/OnlineGameBoardWrapper";
 
 
 // Lazy load pages to reduce initial bundle size
