@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Card as UICard } from '@/components/ui/card';
 import { useGameDatabase } from '@/hooks/useGameDatabase';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import GameBoard from './GameBoard';
 import WinModal from './WinModal';
+import Dice from './Dice';
+import PlayerCard from './PlayerCard';
+import PlayerOrderPanel from './PlayerOrderPanel';
+import PlayerStatsPanel from './PlayerStatsPanel';
 import { toast } from 'sonner';
 import { GAME_LOCATIONS } from '@/data/locations';
+import { MapPin, ArrowRight } from 'lucide-react';
 
 interface OnlineGameBoardProps {
   gameId: string;
@@ -88,6 +94,10 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
     );
   }
 
+  const currentPlayer = gameState.players[gameState.currentPlayerIndex] || gameState.players[0];
+  const currentLocation = GAME_LOCATIONS[currentPlayer?.position] || null;
+  const isMyTurn = gameState.isMyTurn && user?.id === currentPlayer?.user_id;
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto p-4">
@@ -98,28 +108,167 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
           </Button>
         </div>
 
-        <GameBoard
-          locations={GAME_LOCATIONS}
-          players={gameState.players.map(p => ({
-            id: p.id,
-            name: p.name,
-            position: p.position,
-            money: p.coins,
-            character: { name: p.character_name || 'Unknown', description: '', specialAbility: '', avatar: '' },
-            properties: [],
-            propertyVisits: {},
-            color: '#3B82F6',
-            inJail: p.in_jail,
-            jailTurns: p.jail_turns,
-            hasGetOutOfJailCard: p.has_get_out_of_jail_card,
-            immunityUntil: p.immunity_until,
-            skipNextTurn: p.skip_next_turn || false,
-            consecutiveDoubles: p.consecutive_doubles || 0,
-            hasRolled: false
-          }))}
-          onLocationClick={handleLocationClick}
-          gameLog={gameState.gameLog.map(log => log.description || 'Game event')}
-        />
+        {/* Main Game Layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 mb-6">
+          {/* Game Board */}
+          <div className="xl:col-span-3">
+            <GameBoard
+              locations={GAME_LOCATIONS}
+              players={gameState.players.map(p => ({
+                id: p.id,
+                name: p.name,
+                position: p.position,
+                money: p.coins,
+                character: { name: p.character_name || 'Unknown', description: '', specialAbility: '', avatar: '' },
+                properties: [],
+                propertyVisits: {},
+                color: '#3B82F6',
+                inJail: p.in_jail,
+                jailTurns: p.jail_turns,
+                hasGetOutOfJailCard: p.has_get_out_of_jail_card,
+                immunityUntil: p.immunity_until,
+                skipNextTurn: p.skip_next_turn || false,
+                consecutiveDoubles: p.consecutive_doubles || 0,
+                hasRolled: false
+              }))}
+              onLocationClick={handleLocationClick}
+              gameLog={gameState.gameLog.map(log => log.description || 'Game event')}
+            />
+          </div>
+
+          {/* Right Sidebar */}
+          <div className="space-y-6">
+            {/* Dice */}
+            <Dice
+              dice1={gameState.dice1}
+              dice2={gameState.dice2}
+              isRolling={gameState.isRolling}
+              onRoll={rollDice}
+            />
+
+            {/* Current Location Info */}
+            <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
+              <h3 className="font-bold text-primary ancient-text mb-3 flex items-center">
+                <MapPin className="w-4 h-4 mr-2" />
+                Current Location
+              </h3>
+              <div className="space-y-3">
+                {currentLocation ? (
+                  <div>
+                    <h4 className="font-bold text-accent">{currentLocation.name}</h4>
+                    <p className="text-xs text-muted-foreground">{currentLocation.description}</p>
+                  </div>
+                ) : (
+                  <div>
+                    <h4 className="font-bold text-accent">Unknown Location</h4>
+                    <p className="text-xs text-muted-foreground">Position data not available</p>
+                  </div>
+                )}
+                
+                {currentLocation?.owner && (
+                  <div className="text-xs text-muted-foreground">
+                    Owned by: {gameState.players.find(p => p.id === currentLocation.owner)?.name}
+                  </div>
+                )}
+                
+                {/* Action Buttons */}
+                <div className="space-y-2">
+                  {/* End Turn Button - only show for current player */}
+                  {isMyTurn && (
+                    <Button 
+                      onClick={endTurn}
+                      className="w-full text-sm"
+                      variant="secondary"
+                    >
+                      <ArrowRight className="w-3 h-3 mr-1" />
+                      End Turn
+                    </Button>
+                  )}
+                  
+                  {!isMyTurn && (
+                    <p className="text-sm text-muted-foreground text-center">
+                      Waiting for {currentPlayer?.name}'s turn...
+                    </p>
+                  )}
+                </div>
+              </div>
+            </UICard>
+
+            {/* Player Order Panel */}
+            <PlayerOrderPanel 
+              players={gameState.players.map(p => ({
+                id: p.id,
+                name: p.name,
+                position: p.position,
+                money: p.coins,
+                character: { name: p.character_name || 'Unknown', description: '', specialAbility: '', avatar: '' },
+                properties: [],
+                propertyVisits: {},
+                color: '#3B82F6',
+                inJail: p.in_jail,
+                jailTurns: p.jail_turns,
+                hasGetOutOfJailCard: p.has_get_out_of_jail_card,
+                immunityUntil: p.immunity_until,
+                skipNextTurn: p.skip_next_turn || false,
+                consecutiveDoubles: p.consecutive_doubles || 0,
+                hasRolled: false
+              }))}
+              currentPlayerIndex={gameState.currentPlayerIndex}
+            />
+
+            {/* Player Statistics Panel */}
+            <PlayerStatsPanel 
+              players={gameState.players.map(p => ({
+                id: p.id,
+                name: p.name,
+                position: p.position,
+                money: p.coins,
+                character: { name: p.character_name || 'Unknown', description: '', specialAbility: '', avatar: '' },
+                properties: [],
+                propertyVisits: {},
+                color: '#3B82F6',
+                inJail: p.in_jail,
+                jailTurns: p.jail_turns,
+                hasGetOutOfJailCard: p.has_get_out_of_jail_card,
+                immunityUntil: p.immunity_until,
+                skipNextTurn: p.skip_next_turn || false,
+                consecutiveDoubles: p.consecutive_doubles || 0,
+                hasRolled: false
+              }))}
+              locations={GAME_LOCATIONS}
+            />
+          </div>
+        </div>
+
+        {/* Players Panel - Bottom */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+          {gameState.players.map((player, index) => (
+            <PlayerCard
+              key={player.id}
+              player={{
+                id: player.id,
+                name: player.name,
+                position: player.position,
+                money: player.coins,
+                character: { name: player.character_name || 'Unknown', description: '', specialAbility: '', avatar: '' },
+                properties: [],
+                propertyVisits: {},
+                color: '#3B82F6',
+                inJail: player.in_jail,
+                jailTurns: player.jail_turns,
+                hasGetOutOfJailCard: player.has_get_out_of_jail_card,
+                immunityUntil: player.immunity_until,
+                skipNextTurn: player.skip_next_turn || false,
+                consecutiveDoubles: player.consecutive_doubles || 0,
+                hasRolled: false
+              }}
+              isCurrentPlayer={index === gameState.currentPlayerIndex}
+              canBuild={false}
+              onBuildChurch={() => {/* Handled via current location actions */}}
+              onBuildSynagogue={() => {/* Handled via current location actions */}}
+            />
+          ))}
+        </div>
 
         {showWinModal && winner && (
           <WinModal
