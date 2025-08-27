@@ -18,6 +18,7 @@ import CharacterEditor from "@/components/admin/CharacterEditor";
 import BuildingEditor from "@/components/admin/BuildingEditor";
 import CardEditor from "@/components/admin/CardEditor";
 import PlayerManagement from "@/components/admin/PlayerManagement";
+import Analytics from "@/components/admin/Analytics";
 
 const Admin = () => {
   return (
