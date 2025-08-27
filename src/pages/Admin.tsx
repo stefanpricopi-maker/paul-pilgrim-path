@@ -34,39 +34,39 @@ const Admin = () => {
         </div>
 
         {/* Admin Tabs */}
-        <Tabs defaultValue="games" className="space-y-6">
-            <TabsList className="flex flex-wrap gap-2 justify-center">
-              <TabsTrigger value="games" className="flex items-center gap-2 px-4 py-2">
-                <Gamepad2 className="w-4 h-4" />
-                <span>Games</span>
-              </TabsTrigger>
-              <TabsTrigger value="winning" className="flex items-center gap-2 px-4 py-2">
-                <Trophy className="w-4 h-4" />
-                <span>Win Conditions</span>
-              </TabsTrigger>
-              <TabsTrigger value="tiles" className="flex items-center gap-2 px-4 py-2">
-                <MapPin className="w-4 h-4" />
-                <span>Tiles</span>
-              </TabsTrigger>
-              <TabsTrigger value="characters" className="flex items-center gap-2 px-4 py-2">
-                <Users className="w-4 h-4" />
-                <span>Characters</span>
-              </TabsTrigger>
-              <TabsTrigger value="buildings" className="flex items-center gap-2 px-4 py-2">
-                <Building2 className="w-4 h-4" />
-                <span>Buildings</span>
-              </TabsTrigger>
-              <TabsTrigger value="cards" className="flex items-center gap-2 px-4 py-2">
-                <CreditCard className="w-4 h-4" />
-                <span>Cards</span>
-              </TabsTrigger>
-              <TabsTrigger value="players" className="flex items-center gap-2 px-4 py-2">
-                <Users className="w-4 h-4" />
-                <span>Players</span>
-              </TabsTrigger>
-            </TabsList>
+        <Tabs defaultValue="games" className="space-y-4">
+          <TabsList className="flex flex-wrap gap-2 justify-center md:justify-start">
+            <TabsTrigger value="games" className="flex flex-col items-center gap-1 p-3">
+              <Gamepad2 className="w-5 h-5" />
+              <span className="text-xs">Games</span>
+            </TabsTrigger>
+            <TabsTrigger value="winning" className="flex flex-col items-center gap-1 p-3">
+              <Trophy className="w-5 h-5" />
+              <span className="text-xs">Win</span>
+            </TabsTrigger>
+            <TabsTrigger value="tiles" className="flex flex-col items-center gap-1 p-3">
+              <MapPin className="w-5 h-5" />
+              <span className="text-xs">Tiles</span>
+            </TabsTrigger>
+            <TabsTrigger value="characters" className="flex flex-col items-center gap-1 p-3">
+              <Users className="w-5 h-5" />
+              <span className="text-xs">Chars</span>
+            </TabsTrigger>
+            <TabsTrigger value="buildings" className="flex flex-col items-center gap-1 p-3">
+              <Building2 className="w-5 h-5" />
+              <span className="text-xs">Buildings</span>
+            </TabsTrigger>
+            <TabsTrigger value="cards" className="flex flex-col items-center gap-1 p-3">
+              <CreditCard className="w-5 h-5" />
+              <span className="text-xs">Cards</span>
+            </TabsTrigger>
+            <TabsTrigger value="players" className="flex flex-col items-center gap-1 p-3">
+              <Users className="w-5 h-5" />
+              <span className="text-xs">Players</span>
+            </TabsTrigger>
+          </TabsList>
 
-
+          {/* Content Sections */}
           <TabsContent value="games">
             <CurrentGamesOverview />
           </TabsContent>
@@ -82,7 +82,7 @@ const Admin = () => {
           <TabsContent value="tiles">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center gap-2">
                   <MapPin className="w-5 h-5" />
                   <span>Tile Management</span>
                 </CardTitle>
@@ -96,7 +96,7 @@ const Admin = () => {
           <TabsContent value="characters">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center gap-2">
                   <Users className="w-5 h-5" />
                   <span>Character Management</span>
                 </CardTitle>
@@ -110,7 +110,7 @@ const Admin = () => {
           <TabsContent value="buildings">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center gap-2">
                   <Building2 className="w-5 h-5" />
                   <span>Building Management</span>
                 </CardTitle>
@@ -124,7 +124,7 @@ const Admin = () => {
           <TabsContent value="cards">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center gap-2">
                   <CreditCard className="w-5 h-5" />
                   <span>Card Management</span>
                 </CardTitle>
