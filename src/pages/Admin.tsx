@@ -109,9 +109,18 @@ const Admin = () => {
                 <Users className="w-5 h-5" />
                 <span className="text-xs">Players</span>
               </TabsTrigger>
-              <TabsTrigger value="analytics" className="flex items-center space-x-2">
-                <Trophy className="w-4 h-4" /> Analytics
+              
+              <TabsTrigger 
+                value="analytics" 
+                className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-200
+                         data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
+                         data-[state=active]:scale-105 data-[state=active]:shadow-lg
+                         hover:bg-accent hover:text-accent-foreground"
+                >
+                <Trophy className="w-5 h-5" /> 
+                <span className="text-xs">Analytics</span>
               </TabsTrigger>
+              
             </TabsList>
 
             <TabsContent value="games">
