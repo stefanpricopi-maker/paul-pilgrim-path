@@ -629,7 +629,7 @@ export const useGameDatabase = () => {
           .from('game_log')
           .insert({
             game_id: gameState.game.id,
-            player_id: currentPlayer.id,
+            player_id: user?.id,
             action: 'dice_roll',
             description: logMessage,
             round: Math.floor(gameState.currentPlayerIndex / gameState.players.length) + 1
