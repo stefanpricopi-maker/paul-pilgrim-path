@@ -108,6 +108,9 @@ const Admin = () => {
                 <Users className="w-5 h-5" />
                 <span className="text-xs">Players</span>
               </TabsTrigger>
+              <TabsTrigger value="analytics" className="flex items-center space-x-2">
+                <Trophy className="w-4 h-4" /> Analytics
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="games">
@@ -136,6 +139,10 @@ const Admin = () => {
 
             <TabsContent value="players">
               <PlayerManagement />
+            </TabsContent>
+
+            <TabsContent value="analytics">
+              <Analytics />
             </TabsContent>
           </Tabs>
         </CardContent>
