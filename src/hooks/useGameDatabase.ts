@@ -598,8 +598,15 @@ export const useGameDatabase = () => {
       }
 
       try {
+        console.log('Attempting to update player:', {
+          playerId: currentPlayer.id,
+          newPosition,
+          coins: updatedPlayer.coins,
+          userId: user?.id
+        });
+
         // Update player in database
-        const { error: playerError } = await (supabase as any)
+        const { error: playerError } = await supabase
           .from('players')
           .update({ 
             position: newPosition, 
@@ -610,18 +617,30 @@ export const useGameDatabase = () => {
           })
           .eq('id', currentPlayer.id);
 
-        if (playerError) throw playerError;
+        if (playerError) {
+          console.error('Player update error:', playerError);
+          throw playerError;
+        }
+
+        console.log('Player updated successfully, logging move...');
 
         // Log the move
-        await (supabase as any)
+        const { error: logError } = await supabase
           .from('game_log')
           .insert({
             game_id: gameState.game.id,
-            player_id: user?.id,
+            player_id: currentPlayer.id,
             action: 'dice_roll',
             description: logMessage,
             round: Math.floor(gameState.currentPlayerIndex / gameState.players.length) + 1
           });
+
+        if (logError) {
+          console.error('Game log error:', logError);
+          // Don't throw on log error, just log it
+        }
+
+        console.log('Dice roll completed successfully');
 
         setGameState(prev => ({
           ...prev,
@@ -632,6 +651,7 @@ export const useGameDatabase = () => {
         }));
 
       } catch (error) {
+        console.error('Dice roll error:', error);
         toast({
           title: "Error Rolling Dice",
           description: error instanceof Error ? error.message : "Failed to roll dice",

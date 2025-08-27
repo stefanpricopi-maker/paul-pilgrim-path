@@ -96,7 +96,16 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
 
   const currentPlayer = gameState.players[gameState.currentPlayerIndex] || gameState.players[0];
   const currentLocation = GAME_LOCATIONS[currentPlayer?.position] || null;
-  const isMyTurn = gameState.isMyTurn && user?.id === currentPlayer?.user_id;
+  const isMyTurn = gameState.isMyTurn;
+
+  console.log('OnlineGameBoard state:', {
+    gameStateIsMyTurn: gameState.isMyTurn,
+    currentPlayerIndex: gameState.currentPlayerIndex,
+    currentPlayerUserId: currentPlayer?.user_id,
+    userUserId: user?.id,
+    playersLength: gameState.players.length,
+    hasCurrentPlayer: !!currentPlayer
+  });
 
   return (
     <div className="min-h-screen bg-background">
