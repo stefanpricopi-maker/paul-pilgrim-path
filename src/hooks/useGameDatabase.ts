@@ -897,7 +897,7 @@ export const useGameDatabase = () => {
 
       toast({
         title: "Land Purchased!",
-        description: `You now own ${location.name}`,
+        description: `You now own land in ${location.name}`,
       });
 
     } catch (error) {
@@ -909,6 +909,15 @@ export const useGameDatabase = () => {
       });
     }
   }, [gameState.game, gameState.isMyTurn, gameState.players, gameState.currentPlayerIndex, gameState.tiles, user]);
+
+
+  // leave game
+  const leaveGame = async (gameId: string, userId: string) => {
+  const gameRef = doc(db, "games", gameId);
+  await updateDoc(gameRef, {
+    players: arrayRemove(userId) // or set disconnected flag
+  });
+};
 
   return {
     gameState,
