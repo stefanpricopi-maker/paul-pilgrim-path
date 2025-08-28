@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/src/integrations/supabase/client"; // adjust path
+import { supabase } from "@/integrations/supabase/client"; // adjust path
 
 type ReconnectStatus = "idle" | "checking" | "success" | "failed";
 
