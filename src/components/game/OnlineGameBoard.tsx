@@ -145,7 +145,18 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
       <div className="container mx-auto p-4">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-2xl font-bold text-primary">Online Game</h1>
-          <Button variant="outline" onClick={() => navigate('/')}>
+          <Button variant="outline" onClick={async () => {
+                                              if (user && gameId) {
+                                                try {
+                                                  await leaveGame(gameId, user.id);
+                                                  toast.success("You have left the game.");
+                                                } catch (err) {
+                                                  toast.error("Failed to leave game.");
+                                                  console.error(err);
+                                                }
+                                              }
+                                              navigate('/');
+                                            }}>
             Leave Game
           </Button>
         </div>
