@@ -910,15 +910,6 @@ export const useGameDatabase = () => {
     }
   }, [gameState.game, gameState.isMyTurn, gameState.players, gameState.currentPlayerIndex, gameState.tiles, user]);
 
-
-  // leave game
-  const leaveGame = async (gameId: string, userId: string) => {
-  const gameRef = doc(db, "games", gameId);
-  await updateDoc(gameRef, {
-    players: arrayRemove(userId) // or set disconnected flag
-  });
-};
-
   return {
     gameState,
     loading,
