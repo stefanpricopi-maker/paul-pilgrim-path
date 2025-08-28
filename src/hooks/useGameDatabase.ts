@@ -832,6 +832,84 @@ export const useGameDatabase = () => {
     });
   }, [gameState.tiles]);
 
+  // Buy land functionality
+  const buyLand = useCallback(async (locationId: string) => {
+    if (!gameState.game || !gameState.isMyTurn || !user) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (!currentPlayer) return;
+
+    // Find the tile by location index
+    const locationIndex = GAME_LOCATIONS.findIndex(loc => loc.id === locationId);
+    if (locationIndex === -1) return;
+
+    const tile = gameState.tiles.find(t => t.tile_index === locationIndex);
+    if (!tile) return;
+
+    // Check if tile is already owned
+    if (tile.owner_id) {
+      toast({
+        title: "Cannot Purchase",
+        description: "This land is already owned!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const location = GAME_LOCATIONS[locationIndex];
+    
+    // Check if player has enough money
+    if (currentPlayer.coins < location.price) {
+      toast({
+        title: "Insufficient Funds",
+        description: `You need ${location.price} denarii to purchase this land`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Update tile ownership
+      const { error: tileError } = await (supabase as any)
+        .from('tiles')
+        .update({ owner_id: currentPlayer.id })
+        .eq('id', tile.id);
+
+      if (tileError) throw tileError;
+
+      // Deduct money from player
+      const { error: playerError } = await (supabase as any)
+        .from('players')
+        .update({ coins: currentPlayer.coins - location.price })
+        .eq('id', currentPlayer.id);
+
+      if (playerError) throw playerError;
+
+      // Add game log entry
+      await (supabase as any)
+        .from('game_log')
+        .insert({
+          game_id: gameState.game.id,
+          player_id: currentPlayer.id,
+          action: 'buy_land',
+          description: `${currentPlayer.name} purchased ${location.name} for ${location.price} denarii`
+        });
+
+      toast({
+        title: "Land Purchased!",
+        description: `You now own ${location.name}`,
+      });
+
+    } catch (error) {
+      console.error('Error buying land:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to purchase land",
+        variant: "destructive"
+      });
+    }
+  }, [gameState.game, gameState.isMyTurn, gameState.players, gameState.currentPlayerIndex, gameState.tiles, user]);
+
   return {
     gameState,
     loading,
@@ -841,6 +919,7 @@ export const useGameDatabase = () => {
     startGame,
     rollDice,
     endTurn,
+    buyLand,
     getGameLocations,
     tryReconnectToStoredGame,
     clearStoredGameId,

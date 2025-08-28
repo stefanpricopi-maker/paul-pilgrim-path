@@ -28,6 +28,7 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
     loading,
     rollDice,
     endTurn,
+    buyLand,
     loadGame
   } = useGameDatabase();
 
@@ -259,10 +260,7 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
                   consecutiveDoubles: currentPlayer.consecutive_doubles || 0,
                   hasRolled: false
                 }}
-                onBuyLand={(locationId) => {
-                  // TODO: Implement buy land functionality
-                  toast.info('Buy land functionality coming soon!');
-                }}
+                onBuyLand={buyLand}
                 onBuildChurch={() => toast.info('Build church functionality coming soon!')}
                 onBuildSynagogue={() => toast.info('Build synagogue functionality coming soon!')}
                 onPayRent={() => toast.info('Pay rent functionality coming soon!')}
