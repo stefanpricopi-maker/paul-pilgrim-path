@@ -897,7 +897,7 @@ export const useGameDatabase = () => {
 
       toast({
         title: "Land Purchased!",
-        description: `You now own land in ${location.name}`,
+        description: `You now own ${location.name}`,
       });
 
     } catch (error) {

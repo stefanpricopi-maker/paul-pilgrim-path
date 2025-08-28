@@ -75,24 +75,24 @@ export const BIBLICAL_CHARACTERS: BiblicalCharacter[] = [
     name: "Timothy",
     description: "The young disciple",
     specialAbility: "Pays 50% less for building churches",
-    avatar: "/timothy_small.png"
+    avatar: "👨‍🎓"
   },
   {
     name: "Luke",
     description: "The physician and historian",
     specialAbility: "Heals from negative effects faster",
-    avatar: "luke_small.png"
+    avatar: "👨‍⚕️"
   },
   {
     name: "Aquila",
     description: "The tentmaker and teacher",
     specialAbility: "Earns extra money when passing GO",
-    avatar: "aquila_small.png"
+    avatar: "👨‍🏭"
   },
   {
     name: "Priscilla",
     description: "The wise teacher and leader",
     specialAbility: "Can negotiate better property prices",
-    avatar: "priscilla_small.png"
+    avatar: "👸🏽"
   }
 ];
