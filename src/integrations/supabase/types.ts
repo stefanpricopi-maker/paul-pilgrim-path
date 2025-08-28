@@ -309,6 +309,7 @@ export type Database = {
           avatar_url: string | null
           character_name: string | null
           coins: number | null
+          consecutive_doubles: number
           created_at: string | null
           game_id: string | null
           has_get_out_of_jail_card: boolean | null
@@ -318,12 +319,14 @@ export type Database = {
           jail_turns: number | null
           name: string
           position: number | null
+          skip_next_turn: boolean
           user_id: string | null
         }
         Insert: {
           avatar_url?: string | null
           character_name?: string | null
           coins?: number | null
+          consecutive_doubles?: number
           created_at?: string | null
           game_id?: string | null
           has_get_out_of_jail_card?: boolean | null
@@ -333,12 +336,14 @@ export type Database = {
           jail_turns?: number | null
           name: string
           position?: number | null
+          skip_next_turn?: boolean
           user_id?: string | null
         }
         Update: {
           avatar_url?: string | null
           character_name?: string | null
           coins?: number | null
+          consecutive_doubles?: number
           created_at?: string | null
           game_id?: string | null
           has_get_out_of_jail_card?: boolean | null
@@ -348,6 +353,7 @@ export type Database = {
           jail_turns?: number | null
           name?: string
           position?: number | null
+          skip_next_turn?: boolean
           user_id?: string | null
         }
         Relationships: [
