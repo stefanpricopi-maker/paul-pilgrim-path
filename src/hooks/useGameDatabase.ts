@@ -937,5 +937,8 @@ export const useGameDatabase = () => {
     tryReconnectToStoredGame,
     clearStoredGameId,
     getStoredGameId,
+    gameSettings,
+    loadSettings,
+    updateGameSettings,
   };
 };
