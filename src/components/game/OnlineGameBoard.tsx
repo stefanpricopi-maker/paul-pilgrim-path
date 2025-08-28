@@ -33,6 +33,11 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
   const [showWinModal, setShowWinModal] = useState(false);
   const [winner, setWinner] = useState<any>(null);
   const [winReason, setWinReason] = useState('');
+  
+  // Animation state
+  const [animatingPlayer, setAnimatingPlayer] = useState<string | undefined>(undefined);
+  const [targetPosition, setTargetPosition] = useState<number | undefined>(undefined);
+  const [previousPositions, setPreviousPositions] = useState<Record<string, number>>({});
 
   useEffect(() => {
     if (gameId && user) {
@@ -56,6 +61,32 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
       }
     }
   }, [gameState, showWinModal]);
+
+  // Track player position changes for animations
+  useEffect(() => {
+    if (gameState && gameState.players.length > 0) {
+      gameState.players.forEach(player => {
+        const prevPosition = previousPositions[player.id];
+        if (prevPosition !== undefined && prevPosition !== player.position) {
+          // Player moved, trigger animation
+          setAnimatingPlayer(player.id);
+          setTargetPosition(player.position);
+        }
+      });
+      
+      // Update previous positions
+      const newPositions: Record<string, number> = {};
+      gameState.players.forEach(player => {
+        newPositions[player.id] = player.position;
+      });
+      setPreviousPositions(newPositions);
+    }
+  }, [gameState?.players, previousPositions]);
+
+  const handleAnimationComplete = () => {
+    setAnimatingPlayer(undefined);
+    setTargetPosition(undefined);
+  };
 
   const handleLocationClick = (location: any) => {
     // Handle location click logic here
@@ -141,6 +172,9 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
                 hasRolled: false
               }))}
               onLocationClick={handleLocationClick}
+              animatingPlayer={animatingPlayer}
+              targetPosition={targetPosition}
+              onAnimationComplete={handleAnimationComplete}
               gameLog={gameState.gameLog.map(log => log.description || 'Game event')}
             />
           </div>
