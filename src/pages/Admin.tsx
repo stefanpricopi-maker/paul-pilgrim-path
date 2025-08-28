@@ -7,8 +7,7 @@ import {
   MapPin, 
   Users, 
   Building2, 
-  CreditCard, 
-  Settings 
+  CreditCard 
 } from "lucide-react";
 
 // Import admin components
@@ -168,17 +167,7 @@ const Admin = () => {
             </TabsContent>
 
             <TabsContent value="settings">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Settings className="w-5 h-5" />
-                    <span>Game Settings</span>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
                   <GameSettingsEditor />
-                </CardContent>
-              </Card>
             </TabsContent>
 
             
