@@ -120,6 +120,17 @@ const Admin = () => {
                 <Trophy className="w-5 h-5" /> 
                 <span className="text-xs">Analytics</span>
               </TabsTrigger>
+
+              <TabsTrigger 
+                value="settings" 
+                className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-200
+                         data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
+                         data-[state=active]:scale-105 data-[state=active]:shadow-lg
+                         hover:bg-accent hover:text-accent-foreground"
+                >
+                <Settings className="w-5 h-5" />
+                <span className="text-xs">Settings</span>
+              </TabsTrigger>
               
             </TabsList>
 
@@ -154,6 +165,22 @@ const Admin = () => {
             <TabsContent value="analytics">
               <Analytics />
             </TabsContent>
+
+            <TabsContent value="settings">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Settings className="w-5 h-5" />
+                    <span>Game Settings</span>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <GameSettingsEditor />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            
           </Tabs>
         </CardContent>
       </Card>

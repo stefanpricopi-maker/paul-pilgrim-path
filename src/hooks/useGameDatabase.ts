@@ -910,6 +910,19 @@ export const useGameDatabase = () => {
     }
   }, [gameState.game, gameState.isMyTurn, gameState.players, gameState.currentPlayerIndex, gameState.tiles, user]);
 
+    const [gameSettings, setGameSettings] = useState<any>(null);
+    const loadSettings = async () => 
+      {
+        const { data } = await supabase.from('game_settings').select('*').single();
+        setGameSettings(data);
+      };
+
+    const updateGameSettings = async (settings: any) => 
+      {
+        await supabase.from('game_settings').upsert(settings);
+        setGameSettings(settings);
+      };
+  
   return {
     gameState,
     loading,
