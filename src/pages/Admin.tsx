@@ -7,7 +7,8 @@ import {
   MapPin, 
   Users, 
   Building2, 
-  CreditCard 
+  CreditCard,
+  Settings
 } from "lucide-react";
 
 // Import admin components
