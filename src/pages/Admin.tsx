@@ -7,7 +7,8 @@ import {
   MapPin, 
   Users, 
   Building2, 
-  CreditCard 
+  CreditCard, 
+  Settings 
 } from "lucide-react";
 
 // Import admin components
@@ -19,7 +20,6 @@ import BuildingEditor from "@/components/admin/BuildingEditor";
 import CardEditor from "@/components/admin/CardEditor";
 import PlayerManagement from "@/components/admin/PlayerManagement";
 import Analytics from "@/components/admin/Analytics";
-import GameSettingsEditor from "@/components/admin/GameSettingsEditor";
 
 const Admin = () => {
   return (
