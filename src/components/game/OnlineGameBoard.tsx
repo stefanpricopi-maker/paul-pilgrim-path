@@ -11,6 +11,7 @@ import Dice from './Dice';
 import PlayerCard from './PlayerCard';
 import PlayerOrderPanel from './PlayerOrderPanel';
 import PlayerStatsPanel from './PlayerStatsPanel';
+import PropertyActions from './PropertyActions';
 import { toast } from 'sonner';
 import { GAME_LOCATIONS } from '@/data/locations';
 import { MapPin, ArrowRight } from 'lucide-react';
@@ -161,7 +162,7 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
                 money: p.coins,
                 character: { name: p.character_name || 'Unknown', description: '', specialAbility: '', avatar: '' },
                 properties: [],
-                propertyVisits: {},
+                propertyVisits: { [p.position]: 5 }, // Give default visits to allow building
                 color: '#3B82F6',
                 inJail: p.in_jail,
                 jailTurns: p.jail_turns,
@@ -236,6 +237,57 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
                 </div>
               </div>
             </UICard>
+
+            {/* Property Actions */}
+            {currentLocation && isMyTurn && currentLocation.type === 'city' && (
+              <PropertyActions
+                location={currentLocation}
+                currentPlayer={{
+                  id: currentPlayer.id,
+                  name: currentPlayer.name,
+                  money: currentPlayer.coins,
+                  position: currentPlayer.position,
+                  character: { name: currentPlayer.character_name || 'Unknown', description: '', specialAbility: '', avatar: '' },
+                  properties: [],
+                  propertyVisits: { [currentPlayer.position]: 5 },
+                  color: '#3B82F6',
+                  inJail: currentPlayer.in_jail,
+                  jailTurns: currentPlayer.jail_turns,
+                  hasGetOutOfJailCard: currentPlayer.has_get_out_of_jail_card,
+                  immunityUntil: currentPlayer.immunity_until,
+                  skipNextTurn: currentPlayer.skip_next_turn || false,
+                  consecutiveDoubles: currentPlayer.consecutive_doubles || 0,
+                  hasRolled: false
+                }}
+                onBuyLand={(locationId) => {
+                  // TODO: Implement buy land functionality
+                  toast.info('Buy land functionality coming soon!');
+                }}
+                onBuildChurch={() => toast.info('Build church functionality coming soon!')}
+                onBuildSynagogue={() => toast.info('Build synagogue functionality coming soon!')}
+                onPayRent={() => toast.info('Pay rent functionality coming soon!')}
+                onEndTurn={endTurn}
+                isCurrentPlayerLocation={true}
+                allPlayers={gameState.players.map(p => ({
+                  id: p.id,
+                  name: p.name,
+                  money: p.coins,
+                  position: p.position,
+                  character: { name: p.character_name || 'Unknown', description: '', specialAbility: '', avatar: '' },
+                  properties: [],
+                  propertyVisits: {},
+                  color: '#3B82F6',
+                  inJail: p.in_jail,
+                  jailTurns: p.jail_turns,
+                  hasGetOutOfJailCard: p.has_get_out_of_jail_card,
+                  immunityUntil: p.immunity_until,
+                  skipNextTurn: p.skip_next_turn || false,
+                  consecutiveDoubles: p.consecutive_doubles || 0,
+                  hasRolled: false
+                }))}
+                rentPaidThisTurn={{}}
+              />
+            )}
 
             {/* Player Order Panel */}
             <PlayerOrderPanel 
