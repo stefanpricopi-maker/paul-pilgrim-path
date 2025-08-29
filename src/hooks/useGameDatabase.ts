@@ -1,13 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { useCards } from '@/hooks/useCards';
 import { toast } from '@/hooks/use-toast';
 import { GameState, Game, Player, GameMember, GameLog, Tile } from '@/types/database';
 import { BIBLICAL_CHARACTERS, GameLocation } from '@/types/game';
+import { Card } from '@/types/cards';
 import { GAME_LOCATIONS } from '@/data/locations';
 
 export const useGameDatabase = () => {
   const { user } = useAuth();
+  const { loadCards, drawCommunityCard, drawChanceCard, processCardAction } = useCards();
   const [gameState, setGameState] = useState<GameState>({
     game: null,
     players: [],
@@ -24,6 +27,8 @@ export const useGameDatabase = () => {
     isMyTurn: false,
   });
   const [loading, setLoading] = useState(false);
+  const [drawnCard, setDrawnCard] = useState<Card | null>(null);
+  const [cardType, setCardType] = useState<'community' | 'chance' | null>(null);
 
   // Store game ID in localStorage for persistence
   const storeGameId = useCallback((gameId: string) => {
@@ -276,6 +281,9 @@ export const useGameDatabase = () => {
       // Load the created game and set up real-time subscriptions
       await loadGame(newGameId);
 
+      // Load cards for game functionality
+      await loadCards();
+
       console.log('Game created successfully, setting up real-time listeners');
 
       toast({
@@ -398,6 +406,9 @@ export const useGameDatabase = () => {
       storeGameId(gameId);
 
       await loadGame(gameId);
+
+      // Load cards for game functionality
+      await loadCards();
 
       console.log('Player joined game successfully, real-time subscriptions should update host');
 
@@ -534,10 +545,11 @@ export const useGameDatabase = () => {
       // Handle special tiles
       const currentLocation = GAME_LOCATIONS[newPosition];
       let logMessage = `${currentPlayer.name} rolled ${dice1}+${dice2}=${diceValue}`;
+      let additionalCoins = 0;
 
       // Check if passed GO (Antiochia)
       if (currentPlayer.position + diceValue >= 40) {
-        updatedPlayer.coins += 200;
+        additionalCoins += 200;
         logMessage += ` and passed Antiochia, receiving 200 denarii`;
       }
 
@@ -550,40 +562,6 @@ export const useGameDatabase = () => {
           }
           break;
         
-        case 'prison':
-          if (currentLocation.id === 'sabat') {
-            // Skip next turn
-            const { error: skipError } = await (supabase as any)
-              .from('players')
-              .update({ skip_next_turn: true })
-              .eq('id', currentPlayer.id);
-            
-            if (!skipError) {
-              logMessage += ` and must skip their next turn`;
-            }
-          }
-          break;
-
-        case 'port':
-          // Teleport to next PORT
-          const ports = GAME_LOCATIONS.filter(loc => loc.type === 'port');
-          const currentPortIndex = ports.findIndex(port => port.id === currentLocation.id);
-          const nextPortIndex = (currentPortIndex + 1) % ports.length;
-          const nextPort = ports[nextPortIndex];
-          const nextPortPosition = GAME_LOCATIONS.findIndex(loc => loc.id === nextPort.id);
-          
-          if (nextPortPosition !== -1) {
-            newPosition = nextPortPosition;
-            logMessage += ` and teleported to ${nextPort.name}`;
-          }
-          break;
-
-        case 'go-to-prison':
-          newPosition = 10; // Prison position
-          updatedPlayer.in_jail = true;
-          logMessage += ` and goes to prison`;
-          break;
-
         case 'sacrifice':
           // Pay sacrifice tax (unless immune)
           const currentRound = Math.floor(gameState.currentPlayerIndex / gameState.players.length) + 1;
@@ -595,7 +573,69 @@ export const useGameDatabase = () => {
             logMessage += ` but is immune to sacrifice`;
           }
           break;
+
+        case 'go-to-prison':
+          newPosition = 10; // Prison position
+          updatedPlayer.in_jail = true;
+          updatedPlayer.jail_turns = 0;
+          updatedPlayer.consecutive_doubles = 0;
+          logMessage += ` and goes directly to prison`;
+          break;
+
+        case 'prison':
+          if (currentLocation.id === 'sabat') {
+            // Skip next turn
+            const { error: skipError } = await (supabase as any)
+              .from('players')
+              .update({ skip_next_turn: true })
+              .eq('id', currentPlayer.id);
+            
+            if (!skipError) {
+              logMessage += ` and must skip their next turn (SABAT)`;
+            }
+          }
+          break;
+
+        case 'port':
+          // Teleport to next PORT in clockwise order
+          const ports = GAME_LOCATIONS.filter(loc => loc.type === 'port');
+          const currentPortIndex = ports.findIndex(port => port.id === currentLocation.id);
+          
+          if (ports.length > 1 && currentPortIndex !== -1) {
+            const nextPortIndex = (currentPortIndex + 1) % ports.length;
+            const nextPort = ports[nextPortIndex];
+            const nextPortPosition = GAME_LOCATIONS.findIndex(loc => loc.id === nextPort.id);
+            
+            if (nextPortPosition !== -1) {
+              newPosition = nextPortPosition;
+              logMessage += ` and teleported from ${currentLocation.name} to ${nextPort.name}`;
+            }
+          }
+          break;
+
+        case 'community-chest':
+          // Draw community card
+          const communityCard = drawCommunityCard();
+          if (communityCard) {
+            setDrawnCard(communityCard);
+            setCardType('community');
+            logMessage += ` and draws a Community card: ${communityCard.text_en}`;
+          }
+          break;
+
+        case 'chance':
+          // Draw chance card
+          const chanceCard = drawChanceCard();
+          if (chanceCard) {
+            setDrawnCard(chanceCard);
+            setCardType('chance');
+            logMessage += ` and draws a Chance card: ${chanceCard.text_en}`;
+          }
+          break;
       }
+
+      // Add any additional coins from bonuses
+      updatedPlayer.coins += additionalCoins;
 
       try {
         console.log('Attempting to update player:', {
@@ -923,6 +963,328 @@ export const useGameDatabase = () => {
         setGameSettings(settings);
       };
   
+  // Build church on owned property
+  const buildChurch = useCallback(async (locationId: string) => {
+    if (!gameState.game || !gameState.isMyTurn || !user) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (!currentPlayer) return;
+
+    // Find the tile by location index
+    const locationIndex = GAME_LOCATIONS.findIndex(loc => loc.id === locationId);
+    if (locationIndex === -1) return;
+
+    const tile = gameState.tiles.find(t => t.tile_index === locationIndex);
+    if (!tile) return;
+
+    // Check if player owns this tile
+    if (tile.owner_id !== currentPlayer.id) {
+      toast({
+        title: "Cannot Build",
+        description: "You must own this property to build on it",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const location = GAME_LOCATIONS[locationIndex];
+    
+    // Check if player has enough money
+    if (currentPlayer.coins < location.churchCost) {
+      toast({
+        title: "Insufficient Funds",
+        description: `You need ${location.churchCost} denarii to build a church`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // For online game, we need to track property visits differently
+    // For now, allow building after owning (simplified version)
+    try {
+      // Increment building count in database
+      const { error: buildingError } = await (supabase as any)
+        .rpc('increment_building_count', {
+          p_tile_id: tile.id,
+          p_building_type: 'church'
+        });
+
+      if (buildingError) throw buildingError;
+
+      // Deduct money from player
+      const { error: playerError } = await (supabase as any)
+        .from('players')
+        .update({ coins: currentPlayer.coins - location.churchCost })
+        .eq('id', currentPlayer.id);
+
+      if (playerError) throw playerError;
+
+      // Add game log entry
+      await (supabase as any)
+        .from('game_log')
+        .insert({
+          game_id: gameState.game.id,
+          player_id: currentPlayer.id,
+          action: 'build_church',
+          description: `${currentPlayer.name} built a church in ${location.name} for ${location.churchCost} denarii`
+        });
+
+      toast({
+        title: "Church Built!",
+        description: `Built a church in ${location.name}`,
+      });
+
+    } catch (error) {
+      console.error('Error building church:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to build church",
+        variant: "destructive"
+      });
+    }
+  }, [gameState.game, gameState.isMyTurn, gameState.players, gameState.currentPlayerIndex, gameState.tiles, user]);
+
+  // Build synagogue on owned property
+  const buildSynagogue = useCallback(async (locationId: string) => {
+    if (!gameState.game || !gameState.isMyTurn || !user) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (!currentPlayer) return;
+
+    // Find the tile by location index
+    const locationIndex = GAME_LOCATIONS.findIndex(loc => loc.id === locationId);
+    if (locationIndex === -1) return;
+
+    const tile = gameState.tiles.find(t => t.tile_index === locationIndex);
+    if (!tile) return;
+
+    // Check if player owns this tile
+    if (tile.owner_id !== currentPlayer.id) {
+      toast({
+        title: "Cannot Build",
+        description: "You must own this property to build on it",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const location = GAME_LOCATIONS[locationIndex];
+    
+    // Check if player has enough money
+    if (currentPlayer.coins < location.synagogueCost) {
+      toast({
+        title: "Insufficient Funds",
+        description: `You need ${location.synagogueCost} denarii to build a synagogue`,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Increment building count in database
+      const { error: buildingError } = await (supabase as any)
+        .rpc('increment_building_count', {
+          p_tile_id: tile.id,
+          p_building_type: 'synagogue'
+        });
+
+      if (buildingError) throw buildingError;
+
+      // Deduct money from player
+      const { error: playerError } = await (supabase as any)
+        .from('players')
+        .update({ coins: currentPlayer.coins - location.synagogueCost })
+        .eq('id', currentPlayer.id);
+
+      if (playerError) throw playerError;
+
+      // Add game log entry
+      await (supabase as any)
+        .from('game_log')
+        .insert({
+          game_id: gameState.game.id,
+          player_id: currentPlayer.id,
+          action: 'build_synagogue',
+          description: `${currentPlayer.name} built a synagogue in ${location.name} for ${location.synagogueCost} denarii`
+        });
+
+      toast({
+        title: "Synagogue Built!",
+        description: `Built a synagogue in ${location.name}`,
+      });
+
+    } catch (error) {
+      console.error('Error building synagogue:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to build synagogue",
+        variant: "destructive"
+      });
+    }
+  }, [gameState.game, gameState.isMyTurn, gameState.players, gameState.currentPlayerIndex, gameState.tiles, user]);
+
+  // Pay rent to property owner
+  const payRent = useCallback(async (locationId: string) => {
+    if (!gameState.game || !gameState.isMyTurn || !user) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (!currentPlayer) return;
+
+    // Find the tile by location index
+    const locationIndex = GAME_LOCATIONS.findIndex(loc => loc.id === locationId);
+    if (locationIndex === -1) return;
+
+    const tile = gameState.tiles.find(t => t.tile_index === locationIndex);
+    if (!tile || !tile.owner_id) return;
+
+    // Can't pay rent to yourself
+    if (tile.owner_id === currentPlayer.id) {
+      toast({
+        title: "Cannot Pay Rent",
+        description: "You own this property!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Find the owner
+    const owner = gameState.players.find(p => p.id === tile.owner_id);
+    if (!owner) return;
+
+    const location = GAME_LOCATIONS[locationIndex];
+    let rentAmount = location.rent;
+
+    // Calculate rent based on buildings (if any)
+    try {
+      // Get building counts for this tile
+      const { data: buildings, error: buildingError } = await (supabase as any)
+        .from('property_buildings')
+        .select('building_type, count')
+        .eq('tile_id', tile.id);
+
+      if (!buildingError && buildings) {
+        // Add rent for buildings
+        const churches = buildings.find((b: any) => b.building_type === 'church')?.count || 0;
+        const synagogues = buildings.find((b: any) => b.building_type === 'synagogue')?.count || 0;
+        
+        rentAmount += churches * 50; // Churches add 50 denarii rent each
+        rentAmount += synagogues * 25; // Synagogues add 25 denarii rent each
+      }
+
+      // Calculate actual payment amount (can't pay more than player has)
+      const actualPayment = Math.min(rentAmount, currentPlayer.coins);
+
+      // Update both players' coins
+      const { error: payerError } = await (supabase as any)
+        .from('players')
+        .update({ coins: currentPlayer.coins - actualPayment })
+        .eq('id', currentPlayer.id);
+
+      if (payerError) throw payerError;
+
+      const { error: ownerError } = await (supabase as any)
+        .from('players')
+        .update({ coins: owner.coins + actualPayment })
+        .eq('id', owner.id);
+
+      if (ownerError) throw ownerError;
+
+      // Add game log entry
+      await (supabase as any)
+        .from('game_log')
+        .insert({
+          game_id: gameState.game.id,
+          player_id: currentPlayer.id,
+          action: 'pay_rent',
+          description: `${currentPlayer.name} paid ${actualPayment} denarii rent to ${owner.name} for ${location.name}`
+        });
+
+      toast({
+        title: "Rent Paid!",
+        description: `Paid ${actualPayment} denarii to ${owner.name}`,
+      });
+
+    } catch (error) {
+      console.error('Error paying rent:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to pay rent",
+        variant: "destructive"
+      });
+    }
+  }, [gameState.game, gameState.isMyTurn, gameState.players, gameState.currentPlayerIndex, gameState.tiles, user]);
+
+  // Handle card action after player clicks OK on card modal
+  const handleCardAction = useCallback(async (card: Card) => {
+    if (!gameState.game || !user) return;
+
+    const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    if (!currentPlayer) return;
+
+    try {
+      // Process the card action
+      const cardResult = processCardAction(card, currentPlayer.position, 40);
+      
+      let updatedPlayer = { ...currentPlayer };
+      let finalPosition = currentPlayer.position;
+
+      // Handle money changes
+      if (cardResult.moneyChange !== 0) {
+        updatedPlayer.coins = Math.max(0, updatedPlayer.coins + cardResult.moneyChange);
+      }
+
+      // Handle position changes
+      if (cardResult.newPosition !== currentPlayer.position) {
+        finalPosition = cardResult.newPosition;
+      }
+
+      // Handle special card effects
+      if (card.action_type === 'get_out_of_jail') {
+        updatedPlayer.has_get_out_of_jail_card = true;
+      } else if (card.action_type === 'go_to_jail') {
+        updatedPlayer.in_jail = true;
+        updatedPlayer.jail_turns = 0;
+        finalPosition = 10; // Prison position
+      }
+
+      // Update player in database
+      const { error: playerError } = await (supabase as any)
+        .from('players')
+        .update({
+          position: finalPosition,
+          coins: updatedPlayer.coins,
+          in_jail: updatedPlayer.in_jail,
+          jail_turns: updatedPlayer.jail_turns,
+          has_get_out_of_jail_card: updatedPlayer.has_get_out_of_jail_card
+        })
+        .eq('id', currentPlayer.id);
+
+      if (playerError) throw playerError;
+
+      // Log the card action
+      await (supabase as any)
+        .from('game_log')
+        .insert({
+          game_id: gameState.game.id,
+          player_id: currentPlayer.id,
+          action: 'card_drawn',
+          description: `${currentPlayer.name}: ${cardResult.description}`
+        });
+
+      // Clear the card modal
+      setDrawnCard(null);
+      setCardType(null);
+
+    } catch (error) {
+      console.error('Error handling card action:', error);
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to process card",
+        variant: "destructive"
+      });
+    }
+  }, [gameState.game, gameState.players, gameState.currentPlayerIndex, user, processCardAction]);
+
   return {
     gameState,
     loading,
@@ -933,6 +1295,12 @@ export const useGameDatabase = () => {
     rollDice,
     endTurn,
     buyLand,
+    buildChurch,
+    buildSynagogue,
+    payRent,
+    handleCardAction,
+    drawnCard,
+    cardType,
     getGameLocations,
     tryReconnectToStoredGame,
     clearStoredGameId,

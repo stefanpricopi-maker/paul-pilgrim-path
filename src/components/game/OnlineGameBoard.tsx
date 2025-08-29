@@ -7,6 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import GameBoard from './GameBoard';
 import WinModal from './WinModal';
+import CardModal from './CardModal';
 import Dice from './Dice';
 import PlayerCard from './PlayerCard';
 import PlayerOrderPanel from './PlayerOrderPanel';
@@ -29,6 +30,12 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
     rollDice,
     endTurn,
     buyLand,
+    buildChurch,
+    buildSynagogue,
+    payRent,
+    handleCardAction,
+    drawnCard,
+    cardType,
     loadGame
   } = useGameDatabase();
 
@@ -150,6 +157,39 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
           </Button>
         </div>
 
+        {/* Current Player Turn Banner */}
+        <UICard className="p-4 bg-accent/10 border-2 border-accent mb-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center overflow-hidden">
+                {currentPlayer?.character_name ? (
+                  <span className="text-2xl">👤</span>
+                ) : (
+                  '👤'
+                )}
+              </div>
+              <div>
+                <h3 className="font-bold text-lg">
+                  {isMyTurn 
+                    ? "Your Turn" 
+                    : `${currentPlayer?.name || 'Unknown Player'}'s Turn`
+                  }
+                </h3>
+                <p className="text-sm text-muted-foreground">
+                  {currentPlayer ? `${currentPlayer.coins} denarii` : '0 denarii'}
+                  {gameState.players.length > 0 && ` • ${gameState.players.length} players`}
+                </p>
+              </div>
+            </div>
+            {isMyTurn && (
+              <div className="text-right">
+                <p className="text-sm font-bold text-accent">It's your turn!</p>
+                <p className="text-xs text-muted-foreground">Roll the dice to continue</p>
+              </div>
+            )}
+          </div>
+        </UICard>
+
         {/* Main Game Layout */}
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6 mb-6">
           {/* Game Board */}
@@ -261,9 +301,9 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
                   hasRolled: false
                 }}
                 onBuyLand={buyLand}
-                onBuildChurch={() => toast.info('Build church functionality coming soon!')}
-                onBuildSynagogue={() => toast.info('Build synagogue functionality coming soon!')}
-                onPayRent={() => toast.info('Pay rent functionality coming soon!')}
+                onBuildChurch={buildChurch}
+                onBuildSynagogue={buildSynagogue}
+                onPayRent={payRent}
                 onEndTurn={endTurn}
                 isCurrentPlayerLocation={true}
                 allPlayers={gameState.players.map(p => ({
@@ -370,6 +410,17 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
             reason={winReason}
             onPlayAgain={handlePlayAgain}
             onClose={handleClose}
+          />
+        )}
+
+        {/* Card Modal */}
+        {drawnCard && (
+          <CardModal
+            isOpen={!!drawnCard}
+            onClose={() => handleCardAction(drawnCard)}
+            card={drawnCard}
+            cardType={cardType || 'community'}
+            language="en"
           />
         )}
       </div>

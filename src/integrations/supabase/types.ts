@@ -265,6 +265,33 @@ export type Database = {
           },
         ]
       }
+      game_settings: {
+        Row: {
+          created_at: string | null
+          enable_special_buildings: boolean
+          id: string
+          max_players: number
+          starting_coins: number
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          enable_special_buildings?: boolean
+          id?: string
+          max_players?: number
+          starting_coins?: number
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          enable_special_buildings?: boolean
+          id?: string
+          max_players?: number
+          starting_coins?: number
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       games: {
         Row: {
           church_goal: number | null
@@ -393,6 +420,41 @@ export type Database = {
         }
         Relationships: []
       }
+      property_buildings: {
+        Row: {
+          building_type: string
+          count: number
+          created_at: string | null
+          id: number
+          tile_id: number
+          updated_at: string | null
+        }
+        Insert: {
+          building_type: string
+          count?: number
+          created_at?: string | null
+          id?: number
+          tile_id: number
+          updated_at?: string | null
+        }
+        Update: {
+          building_type?: string
+          count?: number
+          created_at?: string | null
+          id?: number
+          tile_id?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "property_buildings_tile_id_fkey"
+            columns: ["tile_id"]
+            isOneToOne: false
+            referencedRelation: "tiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tiles: {
         Row: {
           building_type: string | null
@@ -477,6 +539,10 @@ export type Database = {
         Returns: {
           is_admin: boolean
         }[]
+      }
+      increment_building_count: {
+        Args: { p_building_type: string; p_tile_id: number }
+        Returns: undefined
       }
       is_member_of_game: {
         Args: { target_game_id: string }
