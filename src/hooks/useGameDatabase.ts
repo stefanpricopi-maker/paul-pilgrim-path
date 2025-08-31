@@ -844,7 +844,7 @@ export const useGameDatabase = () => {
       if (pollInterval) window.clearInterval(pollInterval);
       supabase.removeChannel(gameChannel);
     };
-  }, [gameState.game?.id, gameState.game?.status, user, loadGame]);
+  }, [gameState.game?.id, gameState.game?.status, user]);
 
   // Update isMyTurn when players or current turn changes
   useEffect(() => {
