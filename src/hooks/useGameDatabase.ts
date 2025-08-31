@@ -29,6 +29,7 @@ export const useGameDatabase = () => {
   const [loading, setLoading] = useState(false);
   const [drawnCard, setDrawnCard] = useState<Card | null>(null);
   const [cardType, setCardType] = useState<'community' | 'chance' | null>(null);
+  const [gameSettings, setGameSettings] = useState<any>(null);
 
   // Store game ID in localStorage for persistence
   const storeGameId = useCallback((gameId: string) => {
@@ -466,6 +467,60 @@ export const useGameDatabase = () => {
       });
     }
   }, [gameState.game, gameState.isHost, gameState.players.length, user]);
+
+  // Function to leave game
+  const leaveGame = useCallback(async () => {
+    if (!user || !gameState.game) return false;
+
+    try {
+      // Remove player from players table
+      const { error: playerError } = await (supabase as any)
+        .from('players')
+        .delete()
+        .eq('game_id', gameState.game.id)
+        .eq('user_id', user.id);
+
+      if (playerError) throw playerError;
+
+      // Remove user from game_members table
+      const { error: memberError } = await (supabase as any)
+        .from('game_members')
+        .delete()
+        .eq('game_id', gameState.game.id)
+        .eq('user_id', user.id);
+
+      if (memberError) throw memberError;
+
+      // Clear stored game ID and reset state
+      clearStoredGameId();
+      setGameState(prev => ({
+        ...prev,
+        game: null,
+        players: [],
+        gameMembers: [],
+        tiles: [],
+        gameLog: [],
+        gameStarted: false,
+        isHost: false,
+        currentPlayerIndex: 0,
+      }));
+
+      toast({
+        title: "Left Game",
+        description: "You have successfully left the game.",
+      });
+
+      return true;
+    } catch (error) {
+      console.error('Failed to leave game:', error);
+      toast({
+        title: "Error",
+        description: "Failed to leave the game. Please try again.",
+        variant: "destructive"
+      });
+      return false;
+    }
+  }, [user, gameState.game, clearStoredGameId]);
 
   // Roll dice with special tile logic
   const rollDice = useCallback(async () => {
@@ -950,19 +1005,6 @@ export const useGameDatabase = () => {
     }
   }, [gameState.game, gameState.isMyTurn, gameState.players, gameState.currentPlayerIndex, gameState.tiles, user]);
 
-    const [gameSettings, setGameSettings] = useState<any>(null);
-    const loadSettings = async () => 
-      {
-        const { data } = await supabase.from('game_settings').select('*').single();
-        setGameSettings(data);
-      };
-
-    const updateGameSettings = async (settings: any) => 
-      {
-        await supabase.from('game_settings').upsert(settings);
-        setGameSettings(settings);
-      };
-  
   // Build church on owned property
   const buildChurch = useCallback(async (locationId: string) => {
     if (!gameState.game || !gameState.isMyTurn || !user) return;
@@ -1285,6 +1327,43 @@ export const useGameDatabase = () => {
     }
   }, [gameState.game, gameState.players, gameState.currentPlayerIndex, user, processCardAction]);
 
+  // Function to load settings
+  const loadSettings = useCallback(async () => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('game_settings')
+        .select('*')
+        .single();
+      
+      if (error) throw error;
+      
+      setGameSettings(data);
+      return data;
+    } catch (error) {
+      console.error('Failed to load settings:', error);
+      return null;
+    }
+  }, []);
+
+  // Function to update settings
+  const updateGameSettings = useCallback(async (settings: any) => {
+    try {
+      const { data, error } = await (supabase as any)
+        .from('game_settings')
+        .upsert(settings)
+        .select()
+        .single();
+      
+      if (error) throw error;
+      
+      setGameSettings(data);
+      return data;
+    } catch (error) {
+      console.error('Failed to update settings:', error);
+      return null;
+    }
+  }, []);
+
   return {
     gameState,
     loading,
@@ -1308,5 +1387,6 @@ export const useGameDatabase = () => {
     gameSettings,
     loadSettings,
     updateGameSettings,
+    leaveGame,
   };
 };

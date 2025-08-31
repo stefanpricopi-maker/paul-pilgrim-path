@@ -35,7 +35,8 @@ const Index = () => {
     endTurn: onlineEndTurn,
     tryReconnectToStoredGame,
     clearStoredGameId,
-    getStoredGameId
+    getStoredGameId,
+    leaveGame
   } = useGameDatabase();
   
   // Local game state
