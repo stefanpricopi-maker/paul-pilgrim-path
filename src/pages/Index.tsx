@@ -173,7 +173,7 @@ const Index = () => {
         onJoinGame={joinGame}
         onStartGame={startGame}
         onLeaveGame={() => {
-          clearStoredGameId();
+          leaveGame();
           setGameMode(null);
         }}
       />
