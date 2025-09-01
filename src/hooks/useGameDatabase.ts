@@ -923,9 +923,20 @@ export const useGameDatabase = () => {
     if (!user || !gameState.players.length) return;
     
     const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+    const isMyTurn = currentPlayer?.user_id === user.id;
+    
+    console.log('isMyTurn calculation:', {
+      currentPlayerIndex: gameState.currentPlayerIndex,
+      currentPlayer,
+      currentPlayerUserId: currentPlayer?.user_id,
+      userUserId: user.id,
+      isMyTurn,
+      allPlayers: gameState.players.map(p => ({ id: p.id, name: p.name, user_id: p.user_id }))
+    });
+    
     setGameState(prev => ({
       ...prev,
-      isMyTurn: currentPlayer?.user_id === user.id
+      isMyTurn
     }));
   }, [user, gameState.players, gameState.currentPlayerIndex]);
 
