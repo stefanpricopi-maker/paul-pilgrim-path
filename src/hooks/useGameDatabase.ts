@@ -737,13 +737,30 @@ export const useGameDatabase = () => {
 
         console.log('Dice roll completed successfully');
 
-        setGameState(prev => ({
-          ...prev,
-          diceValue,
-          dice1,
-          dice2,
-          isRolling: false
-        }));
+        // Update local state immediately for responsive UI
+        setGameState(prev => {
+          const updatedPlayers = [...prev.players];
+          const playerIndex = updatedPlayers.findIndex(p => p.id === currentPlayer.id);
+          if (playerIndex !== -1) {
+            updatedPlayers[playerIndex] = {
+              ...updatedPlayers[playerIndex],
+              position: newPosition,
+              coins: updatedPlayer.coins,
+              in_jail: updatedPlayer.in_jail,
+              immunity_until: updatedPlayer.immunity_until,
+              consecutive_doubles: updatedPlayer.consecutive_doubles || 0
+            };
+          }
+          
+          return {
+            ...prev,
+            diceValue,
+            dice1,
+            dice2,
+            isRolling: false,
+            players: updatedPlayers
+          };
+        });
 
       } catch (error) {
         console.error('Dice roll error:', error);
