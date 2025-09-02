@@ -916,7 +916,7 @@ export const useGameDatabase = () => {
       if (pollInterval) window.clearInterval(pollInterval);
       supabase.removeChannel(gameChannel);
     };
-  }, [gameState.game?.id, gameState.game?.status, user]);
+}, [gameState.game?.id, user]);
 
   // Update isMyTurn when players or current turn changes
   useEffect(() => {
@@ -934,10 +934,12 @@ export const useGameDatabase = () => {
       allPlayers: gameState.players.map(p => ({ id: p.id, name: p.name, user_id: p.user_id }))
     });
     
-    setGameState(prev => ({
-      ...prev,
-      isMyTurn
-    }));
+if (gameState.isMyTurn !== isMyTurn) {
+  setGameState(prev => ({
+    ...prev,
+    isMyTurn
+  }));
+}
   }, [user, gameState.players, gameState.currentPlayerIndex]);
 
   // Convert tiles to game locations for rendering

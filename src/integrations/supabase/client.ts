@@ -20,10 +20,8 @@
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/types/supabase";
 
-// Use Lovable/Vite environment variables
-// Make sure these are set in Project Settings → Environment Variables
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
+const SUPABASE_URL = "https://plqbgrotkqedpeabhbdb.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBscWJncm90a3FlZHBlYWJoYmRiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ0Njg4MTEsImV4cCI6MjA3MDA0NDgxMX0.3vozT1w3yfDUNtqyLEKhk24dA67w2_Y0mPGXtnl_Axk";
 
 export const supabase = createClient<Database>(
   SUPABASE_URL,
