@@ -220,7 +220,30 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
               animatingPlayer={animatingPlayer}
               targetPosition={targetPosition}
               onAnimationComplete={handleAnimationComplete}
-              gameLog={gameState.gameLog.map(log => log.description || 'Game event')}
+              gameLog={gameState.gameLog.map(log => {
+                if (log.description) {
+                  return log.description;
+                }
+                
+                // Fallback descriptions based on action type
+                const playerName = gameState.players.find(p => p.id === log.player_id)?.name || 'Player';
+                switch (log.action) {
+                  case 'buy_land':
+                    return `${playerName} purchased land`;
+                  case 'build_church':
+                    return `${playerName} built a church`;
+                  case 'build_synagogue':
+                    return `${playerName} built a synagogue`;
+                  case 'pay_rent':
+                    return `${playerName} paid rent`;
+                  case 'move':
+                    return `${playerName} moved`;
+                  case 'roll_dice':
+                    return `${playerName} rolled the dice`;
+                  default:
+                    return `${playerName} performed an action`;
+                }
+              }).filter(entry => entry && entry.trim() !== '')}
             />
           </div>
 
