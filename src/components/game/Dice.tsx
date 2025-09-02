@@ -6,10 +6,12 @@ const Dice = ({
   dice1,
   dice2,
   isRolling,
-  onRoll
+  onRoll,
+  canRoll = true,
 }: DiceProps) => {
   const [animationKey, setAnimationKey] = useState(0);
   const handleRoll = () => {
+    if (!canRoll) return;
     setAnimationKey(prev => prev + 1);
     onRoll();
   };
@@ -97,8 +99,8 @@ const Dice = ({
           </div>
         )}
         
-        <Button onClick={handleRoll} disabled={isRolling} variant="default" className="w-full font-cinzel font-bold hover:shadow-glow transition-all duration-300">
-          {isRolling ? 'Rolling...' : 'Roll Dice'}
+        <Button onClick={handleRoll} disabled={isRolling || canRoll === false} variant="default" className="w-full font-cinzel font-bold hover:shadow-glow transition-all duration-300">
+          {isRolling ? 'Rolling...' : (canRoll === false ? 'Wait for your turn' : 'Roll Dice')}
         </Button>
       </div>
     </Card>;

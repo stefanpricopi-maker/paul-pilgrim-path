@@ -232,6 +232,7 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
               dice2={gameState.dice2}
               isRolling={gameState.isRolling}
               onRoll={rollDice}
+              canRoll={isMyTurn}
             />
 
             {/* Current Location Info */}

@@ -56,6 +56,7 @@ export interface DiceProps {
   dice2: number;
   isRolling: boolean;
   onRoll: () => void;
+  canRoll?: boolean; // optional: controls whether the user can roll now
 }
 
 export const BIBLICAL_CHARACTERS: BiblicalCharacter[] = [
