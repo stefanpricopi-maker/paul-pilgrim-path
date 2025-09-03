@@ -156,7 +156,7 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
           <Button variant="outline" onClick={() => { 
             leaveGame().then(() => navigate('/'));
           }}>
-            Return to Menu
+            Leave Game
           </Button>
         </div>
 
