@@ -37,7 +37,8 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
     drawnCard,
     cardType,
     loadGame,
-    leaveGame
+    leaveGame,
+    clearStoredGameId
   } = useGameDatabase();
 
   const [showWinModal, setShowWinModal] = useState(false);
@@ -129,7 +130,7 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
         <Card className="p-6 text-center">
           <h1 className="text-xl font-bold text-destructive mb-4">Game not found</h1>
           <p className="text-muted-foreground mb-4">The game you're looking for doesn't exist or you don't have access to it.</p>
-          <Button onClick={() => navigate('/')}>Return to Menu</Button>
+          <Button onClick={() => { clearStoredGameId(); navigate('/', { replace: true }); }}>Return to Menu</Button>
         </Card>
       </div>
     );
