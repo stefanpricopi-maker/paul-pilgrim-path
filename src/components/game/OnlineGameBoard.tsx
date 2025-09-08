@@ -170,10 +170,14 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center overflow-hidden">
-                {currentPlayer?.character_name ? (
-                  <span className="text-2xl">👤</span>
+                {currentPlayer?.avatar_url ? (
+                  <img
+                    src={currentPlayer.avatar_url}
+                    alt={currentPlayer.name}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
-                  '👤'
+                  <span className="text-2xl">👤</span>
                 )}
               </div>
               <div>
