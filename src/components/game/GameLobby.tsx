@@ -353,7 +353,17 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame, 
                       onClick={() => setSelectedCharacter(character.name)}
                     >
                       <div className="text-center space-y-2">
-                        <div className="text-2xl">{character.avatar}</div>
+                        <div className="text-2xl flex justify-center">
+                          {character.avatar.startsWith('/') ? (
+                            <img 
+                              src={character.avatar} 
+                              alt={character.name}
+                              className="w-12 h-12 object-cover rounded-full"
+                            />
+                          ) : (
+                            character.avatar
+                          )}
+                        </div>
                         <h4 className="font-bold text-sm">{character.name}</h4>
                         <p className="text-xs text-muted-foreground">{character.description}</p>
                         <Badge variant="outline" className="text-xs">
