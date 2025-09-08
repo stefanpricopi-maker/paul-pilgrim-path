@@ -1,6 +1,8 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { 
   Gamepad2, 
   Trophy, 
@@ -8,7 +10,8 @@ import {
   Users, 
   Building2, 
   CreditCard,
-  Settings
+  Settings,
+  ArrowLeft
 } from "lucide-react";
 
 // Import admin components
@@ -23,14 +26,28 @@ import Analytics from "@/components/admin/Analytics";
 import GameSettingsEditor from "@/components/admin/GameSettingsEditor";
 
 const Admin = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="container mx-auto p-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl font-bold">Admin Dashboard</CardTitle>
-          <CardDescription>
-            Manage game settings, players, and content
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="text-3xl font-bold">Admin Dashboard</CardTitle>
+              <CardDescription>
+                Manage game settings, players, and content
+              </CardDescription>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Back to Game
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="games" className="space-y-6">
