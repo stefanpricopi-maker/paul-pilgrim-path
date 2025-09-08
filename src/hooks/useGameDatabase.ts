@@ -719,14 +719,25 @@ export const useGameDatabase = () => {
 
         console.log('Player updated successfully, logging move...');
 
-        // Log the move
+        // Log the dice roll and movement
         const { error: logError } = await supabase
           .from('game_log')
           .insert({
             game_id: gameState.game.id,
-            player_id: user?.id,
-            action: 'dice_roll',
+            player_id: currentPlayer.id, // Use currentPlayer.id instead of user?.id
+            action: 'move',
             description: logMessage,
+            round: Math.floor(gameState.currentPlayerIndex / gameState.players.length) + 1
+          });
+
+        // Also log the movement specifically
+        const { error: moveLogError } = await supabase
+          .from('game_log')
+          .insert({
+            game_id: gameState.game.id,
+            player_id: currentPlayer.id,
+            action: 'move',
+            description: `${currentPlayer.name} moved to ${currentLocation.name}`,
             round: Math.floor(gameState.currentPlayerIndex / gameState.players.length) + 1
           });
 
@@ -795,7 +806,7 @@ export const useGameDatabase = () => {
           .from('game_log')
           .insert({
             game_id: gameState.game.id,
-            player_id: user?.id,
+            player_id: nextPlayer.id, // Use nextPlayer.id instead of user?.id
             action: 'skip_turn',
             description: `${nextPlayer.name} skips their turn due to Sabat`,
             round: Math.floor(nextPlayerIndex / gameState.players.length) + 1
