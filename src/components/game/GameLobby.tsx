@@ -110,8 +110,20 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame, 
                     return (
                       <div key={member.id} className="flex items-center justify-between p-2 bg-background rounded">
                         <div className="flex items-center space-x-3">
-                          <div className="text-lg">
-                            {player ? (BIBLICAL_CHARACTERS.find(c => c.name === player.character_name)?.avatar || '👤') : '👤'}
+                          <div className="text-lg flex justify-center">
+                            {player ? (
+                              (() => {
+                                const character = BIBLICAL_CHARACTERS.find(c => c.name === player.character_name);
+                                const avatar = character?.avatar || '👤';
+                                return avatar.startsWith('/') ? (
+                                  <img 
+                                    src={avatar} 
+                                    alt={character?.name || 'Player'}
+                                    className="w-8 h-8 object-cover rounded-full"
+                                  />
+                                ) : avatar;
+                              })()
+                            ) : '👤'}
                           </div>
                           <div>
                             <p className="font-semibold">{player?.name || 'Joining…'}</p>
