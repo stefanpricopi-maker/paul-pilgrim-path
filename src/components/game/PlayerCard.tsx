@@ -41,8 +41,14 @@ const PlayerCard = ({
   <div className="flex items-stretch gap-3">
     {/* Avatar column (full height) */}
     <div className="relative w-20 sm:w-24 md:w-28 flex-shrink-0 self-stretch rounded-xl overflow-hidden border-2 border-primary/30">
-      {typeof player.character.avatar === 'string' &&
-      /\.(png|jpe?g|gif|webp|svg)$/i.test(player.character.avatar) ? (
+      {(player as any).avatar_url ? (
+        <img
+          src={(player as any).avatar_url}
+          alt={player.name}
+          className="h-full w-full object-cover object-top"
+        />
+      ) : typeof player.character.avatar === 'string' &&
+        /\.(png|jpe?g|gif|webp|svg)$/i.test(player.character.avatar) ? (
         <img
           src={player.character.avatar.startsWith('/') ? player.character.avatar : `/${player.character.avatar}`}
           alt={player.character.name || 'Avatar'}
