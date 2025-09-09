@@ -225,24 +225,27 @@ const GameBoard = ({
                             ) : (
                               <div 
                                 key={player.id} 
-                                className="player-piece text-sm bg-white rounded-full w-5 h-5 flex items-center justify-center border transition-all duration-200 flex-shrink-0"
+                                className="player-piece text-sm bg-white rounded-full w-5 h-5 flex items-center justify-center border transition-all duration-200 flex-shrink-0 overflow-hidden"
                                 style={{
                                   borderColor: player.color,
                                   filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))'
                                 }}
                               >
-                                {typeof player.character.avatar === 'string' && player.character.avatar.startsWith('/')
-                                  ? (
-                                          <img
-                                            src={player.character.avatar}
-                                            alt={player.character.name}
-                                            className="w-full h-full object-cover"
-                                            />
-                                    )
-                                  : (
-                                      <span className="text-sm">{player.character.avatar}</span>
-                                      )
-                                } 
+                                {(player as any).avatar_url ? (
+                                  <img
+                                    src={(player as any).avatar_url}
+                                    alt={player.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : typeof player.character.avatar === 'string' && player.character.avatar.startsWith('/') ? (
+                                  <img
+                                    src={player.character.avatar}
+                                    alt={player.character.name}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <span className="text-sm">{player.character.avatar}</span>
+                                )} 
                               </div>
                             );
                           })}
