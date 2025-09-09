@@ -106,10 +106,18 @@ export const useGameDatabase = () => {
         membersCount: gameMembers?.length || 0
       });
 
+      // Ensure consistent player ordering across all clients (created_at, then id)
+      const sortedPlayers = (players || []).slice().sort((a: any, b: any) => {
+        const ca = a.created_at || '';
+        const cb = b.created_at || '';
+        const cmp = ca.localeCompare(cb);
+        return cmp !== 0 ? cmp : (a.id || '').localeCompare(b.id || '');
+      });
+
       setGameState(prev => ({
         ...prev,
         game,
-        players: players || [],
+        players: sortedPlayers,
         gameMembers: gameMembers || [],
         tiles: tiles || [],
         gameLog: gameLogs || [],
