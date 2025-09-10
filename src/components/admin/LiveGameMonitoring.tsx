@@ -52,6 +52,7 @@ export default function LiveGameMonitoring() {
   }, []);
 
   const fetchActiveGames = async () => {
+    setLoading(true);
     try {
       const { data: gamesData, error: gamesError } = await supabase
         .from("games")
@@ -208,8 +209,10 @@ export default function LiveGameMonitoring() {
               onClick={fetchActiveGames} 
               variant="outline" 
               size="sm"
+              disabled={loading}
               className="ml-auto"
             >
+              {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
               Refresh
             </Button>
           </div>
