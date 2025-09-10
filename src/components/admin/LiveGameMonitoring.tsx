@@ -133,13 +133,23 @@ export default function LiveGameMonitoring() {
   };
 
   const handleForceEndGame = async (gameId: string) => {
+    console.log("Force ending game:", gameId);
+    
     try {
+      // Add confirmation
+      if (!confirm("Are you sure you want to force-end this game? This action cannot be undone.")) {
+        return;
+      }
+
       const { error } = await supabase
         .from("games")
         .update({ status: "cancelled" })
         .eq("id", gameId);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
       
       // Log the admin action
       await logAdminAction(
@@ -154,7 +164,7 @@ export default function LiveGameMonitoring() {
       fetchActiveGames();
     } catch (error) {
       console.error("Error force-ending game:", error);
-      toast.error("Failed to force-end game");
+      toast.error("Failed to force-end game: " + (error as Error).message);
     }
   };
 
