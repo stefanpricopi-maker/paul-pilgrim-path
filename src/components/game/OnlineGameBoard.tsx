@@ -4,7 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Card as UICard } from '@/components/ui/card';
 import { useGameDatabase } from '@/hooks/useGameDatabase';
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import GameBoard from './GameBoard';
 import WinModal from './WinModal';
 import CardModal from './CardModal';
@@ -130,7 +130,9 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
         <Card className="p-6 text-center">
           <h1 className="text-xl font-bold text-destructive mb-4">Game not found</h1>
           <p className="text-muted-foreground mb-4">The game you're looking for doesn't exist or you don't have access to it.</p>
-          <Button onClick={() => { clearStoredGameId(); navigate('/', { replace: true }); }}>Return to Menu</Button>
+          <Button asChild onClick={() => { clearStoredGameId(); }}>
+            <Link to="/" replace aria-label="Return to main menu">Return to Menu</Link>
+          </Button>
         </Card>
       </div>
     );
