@@ -176,6 +176,7 @@ const Index = () => {
           leaveGame();
           setGameMode(null);
         }}
+        onGoBack={() => setGameMode(null)}
       />
     );
   }

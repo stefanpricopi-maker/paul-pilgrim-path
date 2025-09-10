@@ -16,9 +16,10 @@ interface GameLobbyProps {
   onJoinGame: (gameId: string, playerName: string, characterName: string) => Promise<boolean>;
   onStartGame: () => Promise<void>;
   onLeaveGame?: () => void;
+  onGoBack?: () => void;
 }
 
-const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame, onLeaveGame }: GameLobbyProps) => {
+const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame, onLeaveGame, onGoBack }: GameLobbyProps) => {
   const [activeTab, setActiveTab] = useState('create');
   const [playerName, setPlayerName] = useState('');
   const [selectedCharacter, setSelectedCharacter] = useState(BIBLICAL_CHARACTERS[0].name);
@@ -239,6 +240,19 @@ const GameLobby = ({ gameState, loading, onCreateGame, onJoinGame, onStartGame, 
             Gather your team and spread the Gospel throughout the ancient world
           </p>
         </div>
+
+        {onGoBack && (
+          <div className="mb-6">
+            <Button 
+              onClick={onGoBack}
+              variant="outline"
+              size="sm"
+              className="text-muted-foreground hover:text-foreground"
+            >
+              ← Back to Game Mode
+            </Button>
+          </div>
+        )}
 
         {gameId && !gameState.game && (
           <Card className="p-4 bg-card/50 mb-4">
