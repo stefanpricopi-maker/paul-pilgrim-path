@@ -1,17 +1,32 @@
 // src/components/admin/PlayerManagement.tsx
 import { usePlayers } from "@/hooks/usePlayers";
-import { Loader2, Shield, UserX } from "lucide-react";
+import { Loader2, Shield, UserX, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function PlayerManagement() {
-  const { players, loading } = usePlayers();
+  const { players, loading, error } = usePlayers();
 
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-[200px]">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
       </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="p-4 shadow-md">
+        <h2 className="text-xl font-bold mb-4">Player Management</h2>
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            {error}
+          </AlertDescription>
+        </Alert>
+      </Card>
     );
   }
 

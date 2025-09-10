@@ -534,6 +534,15 @@ export type Database = {
         Args: { user_id: string }
         Returns: undefined
       }
+      get_players_for_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          created_at: string
+          id: string
+          is_admin: boolean
+          username: string
+        }[]
+      }
       get_profile_admin_status: {
         Args: { user_id: string }
         Returns: {
