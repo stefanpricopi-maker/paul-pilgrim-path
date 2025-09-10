@@ -13,6 +13,7 @@ interface LocalGameSetupProps {
   onStartGame: (playerNames: string[], playerColors: string[], settings?: any) => void;
   onLoadGame?: () => boolean;
   hasExistingGame?: boolean;
+  onGoBack?: () => void;
 }
 
 interface PlayerSetup {
@@ -31,7 +32,7 @@ const PLAYER_COLORS = [
   { name: 'Orange', value: 'hsl(30, 70%, 50%)' },
 ];
 
-export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGame }: LocalGameSetupProps) {
+export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGame, onGoBack }: LocalGameSetupProps) {
   const [players, setPlayers] = useState<PlayerSetup[]>([
     { name: '', color: PLAYER_COLORS[0].value, isAI: false },
     { name: '', color: PLAYER_COLORS[1].value, isAI: false },
@@ -130,6 +131,19 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
         </CardHeader>
         
         <CardContent className="space-y-6">
+          {onGoBack && (
+            <div>
+              <Button 
+                onClick={onGoBack}
+                variant="outline"
+                size="sm"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                ← Back to Game Mode
+              </Button>
+            </div>
+          )}
+          
           {hasExistingGame && (
             <Card className="p-4 bg-accent/10 border border-accent/30">
               <div className="flex items-center justify-between">

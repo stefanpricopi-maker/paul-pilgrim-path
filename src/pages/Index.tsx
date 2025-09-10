@@ -121,6 +121,7 @@ const Index = () => {
           }}
           onLoadGame={loadLocalGame}
           hasExistingGame={hasExistingLocalGame}
+          onGoBack={() => setGameMode(null)}
         />
       );
     }
