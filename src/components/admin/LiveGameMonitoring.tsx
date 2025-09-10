@@ -14,6 +14,7 @@ import {
   Loader2
 } from "lucide-react";
 import { toast } from "sonner";
+import { useAuditLog } from "@/hooks/useAuditLog";
 
 interface LiveGame {
   id: string;
@@ -37,6 +38,7 @@ export default function LiveGameMonitoring() {
   const [games, setGames] = useState<LiveGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeChannel, setActiveChannel] = useState<any>(null);
+  const { logAdminAction } = useAuditLog();
 
   useEffect(() => {
     fetchActiveGames();
@@ -138,6 +140,15 @@ export default function LiveGameMonitoring() {
         .eq("id", gameId);
 
       if (error) throw error;
+      
+      // Log the admin action
+      await logAdminAction(
+        "force_end_game",
+        `Force-ended game ${gameId}`,
+        "game",
+        gameId,
+        { reason: "admin_action", original_status: "active" }
+      );
       
       toast.success("Game force-ended successfully");
       fetchActiveGames();

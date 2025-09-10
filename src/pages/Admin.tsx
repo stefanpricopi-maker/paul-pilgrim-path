@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { useAdminAccess } from "@/hooks/useAdminAccess";
 import { 
   Gamepad2, 
   Trophy, 
@@ -11,7 +12,9 @@ import {
   Building2, 
   CreditCard,
   Settings,
-  ArrowLeft
+  ArrowLeft,
+  Activity,
+  ScrollText
 } from "lucide-react";
 
 // Import admin components
@@ -24,9 +27,14 @@ import CardEditor from "@/components/admin/CardEditor";
 import PlayerManagement from "@/components/admin/PlayerManagement";
 import Analytics from "@/components/admin/Analytics";
 import GameSettingsEditor from "@/components/admin/GameSettingsEditor";
+import LiveGameMonitoring from "@/components/admin/LiveGameMonitoring";
+import AuditTrail from "@/components/admin/AuditTrail";
 
 const Admin = () => {
   const navigate = useNavigate();
+  
+  // Log admin dashboard access
+  useAdminAccess("admin_dashboard");
 
   return (
     <div className="container mx-auto p-6">
@@ -50,8 +58,30 @@ const Admin = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="games" className="space-y-6">
+          <Tabs defaultValue="monitoring" className="space-y-6">
             <TabsList className="flex flex-wrap gap-2 justify-center md:justify-start">
+              <TabsTrigger
+                value="monitoring"
+                className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-200
+                         data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
+                         data-[state=active]:scale-105 data-[state=active]:shadow-lg
+                         hover:bg-accent hover:text-accent-foreground"
+              >
+                <Activity className="w-5 h-5" />
+                <span className="text-xs">Live Monitor</span>
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="audit"
+                className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-200
+                         data-[state=active]:bg-primary data-[state=active]:text-primary-foreground
+                         data-[state=active]:scale-105 data-[state=active]:shadow-lg
+                         hover:bg-accent hover:text-accent-foreground"
+              >
+                <ScrollText className="w-5 h-5" />
+                <span className="text-xs">Audit Trail</span>
+              </TabsTrigger>
+
               <TabsTrigger
                 value="games"
                 className="flex flex-col items-center gap-1 p-3 rounded-xl transition-all duration-200
@@ -152,6 +182,14 @@ const Admin = () => {
               </TabsTrigger>
               
             </TabsList>
+
+            <TabsContent value="monitoring">
+              <LiveGameMonitoring />
+            </TabsContent>
+
+            <TabsContent value="audit">
+              <AuditTrail />
+            </TabsContent>
 
             <TabsContent value="games">
               <CurrentGamesOverview />

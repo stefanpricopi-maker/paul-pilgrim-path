@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      audit_log: {
+        Row: {
+          action_category: string
+          action_type: string
+          created_at: string | null
+          description: string
+          details: Json | null
+          id: number
+          ip_address: string | null
+          target_id: string | null
+          target_type: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_category: string
+          action_type: string
+          created_at?: string | null
+          description: string
+          details?: Json | null
+          id?: number
+          ip_address?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_category?: string
+          action_type?: string
+          created_at?: string | null
+          description?: string
+          details?: Json | null
+          id?: number
+          ip_address?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       buildings: {
         Row: {
           cost: number
@@ -556,6 +598,17 @@ export type Database = {
       is_member_of_game: {
         Args: { target_game_id: string }
         Returns: boolean
+      }
+      log_audit_event: {
+        Args: {
+          p_action_category: string
+          p_action_type: string
+          p_description?: string
+          p_details?: Json
+          p_target_id?: string
+          p_target_type?: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
