@@ -15,6 +15,16 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useAuditLog } from "@/hooks/useAuditLog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface LiveGame {
   id: string;
@@ -38,6 +48,8 @@ export default function LiveGameMonitoring() {
   const [games, setGames] = useState<LiveGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeChannel, setActiveChannel] = useState<any>(null);
+  const [gameToEnd, setGameToEnd] = useState<string | null>(null);
+  const [isEndingGame, setIsEndingGame] = useState(false);
   const { logAdminAction } = useAuditLog();
 
   useEffect(() => {
@@ -135,13 +147,11 @@ export default function LiveGameMonitoring() {
 
   const handleForceEndGame = async (gameId: string) => {
     console.log("Force ending game:", gameId);
+    console.log("Current user:", await supabase.auth.getUser());
+    setIsEndingGame(true);
     
     try {
-      // Add confirmation
-      if (!confirm("Are you sure you want to force-end this game? This action cannot be undone.")) {
-        return;
-      }
-
+      console.log("Attempting to update game status to cancelled...");
       const { error } = await supabase
         .from("games")
         .update({ status: "cancelled" })
@@ -152,6 +162,8 @@ export default function LiveGameMonitoring() {
         throw error;
       }
       
+      console.log("Game status updated successfully");
+      
       // Log the admin action
       await logAdminAction(
         "force_end_game",
@@ -161,11 +173,20 @@ export default function LiveGameMonitoring() {
         { reason: "admin_action", original_status: "active" }
       );
       
+      console.log("Admin action logged successfully");
+      
       toast.success("Game force-ended successfully");
-      fetchActiveGames();
+      
+      // Force refresh the games list
+      console.log("Refreshing games list...");
+      await fetchActiveGames();
+      
     } catch (error) {
       console.error("Error force-ending game:", error);
       toast.error("Failed to force-end game: " + (error as Error).message);
+    } finally {
+      setIsEndingGame(false);
+      setGameToEnd(null);
     }
   };
 
@@ -287,9 +308,10 @@ export default function LiveGameMonitoring() {
                       <Button 
                         size="sm" 
                         variant="destructive" 
-                        onClick={() => handleForceEndGame(game.id)}
+                        onClick={() => setGameToEnd(game.id)}
+                        disabled={isEndingGame}
                       >
-                        <Square className="w-4 h-4 mr-1" />
+                        {isEndingGame ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Square className="w-4 h-4 mr-1" />}
                         End
                       </Button>
                     </div>
@@ -300,6 +322,42 @@ export default function LiveGameMonitoring() {
           )}
         </CardContent>
       </Card>
+
+      {/* Confirmation Dialog */}
+      <AlertDialog open={gameToEnd !== null} onOpenChange={() => setGameToEnd(null)}>
+        <AlertDialogContent className="bg-gradient-parchment border-2 border-primary/30">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-primary ancient-text">
+              <AlertTriangle className="w-5 h-5 text-destructive" />
+              Force End Game
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <p>Are you sure you want to force-end this game?</p>
+              <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3">
+                <p className="text-destructive text-sm font-semibold">
+                  ⚠️ This action cannot be undone and will immediately cancel the game for all players.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel 
+              className="ancient-text"
+              disabled={isEndingGame}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => gameToEnd && handleForceEndGame(gameToEnd)}
+              disabled={isEndingGame}
+              className="ancient-text bg-destructive hover:bg-destructive/90"
+            >
+              {isEndingGame ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Force End Game
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
