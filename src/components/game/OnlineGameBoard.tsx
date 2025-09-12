@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Card as UICard } from '@/components/ui/card';
-import { useGameDatabase } from '@/hooks/useGameDatabase';
+import { useSecureGameDatabase } from '@/hooks/useSecureGameDatabase';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, Link } from 'react-router-dom';
 import GameBoard from './GameBoard';
@@ -39,7 +39,7 @@ export default function OnlineGameBoard({ gameId }: OnlineGameBoardProps) {
     loadGame,
     leaveGame,
     clearStoredGameId
-  } = useGameDatabase();
+  } = useSecureGameDatabase();
 
   const [showWinModal, setShowWinModal] = useState(false);
   const [winner, setWinner] = useState<any>(null);
