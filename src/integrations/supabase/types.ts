@@ -497,6 +497,30 @@ export type Database = {
           },
         ]
       }
+      rate_limits: {
+        Row: {
+          action_type: string
+          created_at: string | null
+          game_id: string | null
+          id: number
+          user_id: string
+        }
+        Insert: {
+          action_type: string
+          created_at?: string | null
+          game_id?: string | null
+          id?: number
+          user_id: string
+        }
+        Update: {
+          action_type?: string
+          created_at?: string | null
+          game_id?: string | null
+          id?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       tiles: {
         Row: {
           building_type: string | null
@@ -550,6 +574,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_rate_limit: {
+        Args: {
+          p_action_type: string
+          p_game_id?: string
+          p_limit_count?: number
+          p_time_window?: unknown
+        }
+        Returns: boolean
+      }
       cleanup_old_games: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -609,6 +642,30 @@ export type Database = {
           p_target_type?: string
         }
         Returns: undefined
+      }
+      secure_build_structure: {
+        Args: { p_building_type: string; p_game_id: string; p_tile_id: number }
+        Returns: Json
+      }
+      secure_buy_property: {
+        Args: { p_game_id: string; p_tile_id: number }
+        Returns: Json
+      }
+      secure_end_turn: {
+        Args: { p_game_id: string }
+        Returns: Json
+      }
+      secure_pay_rent: {
+        Args: { p_game_id: string; p_tile_id: number }
+        Returns: Json
+      }
+      secure_roll_dice: {
+        Args: { p_expected_turn?: number; p_game_id: string }
+        Returns: Json
+      }
+      validate_game_membership: {
+        Args: { p_game_id: string; p_user_id?: string }
+        Returns: boolean
       }
     }
     Enums: {
