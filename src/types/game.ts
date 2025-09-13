@@ -66,41 +66,36 @@ export const BIBLICAL_CHARACTERS: BiblicalCharacter[] = [
     description: "The encourager and Paul's trusted companion",
     specialAbility: "Receives 10% more income from properties",
     avatar: "/barnabas_small.png",
-    avatar_face: "/Barnabas_face.png"
+    avatar_face: "/barnabas_face.png"
   },
   {
     name: "Silas",
     description: "The faithful missionary partner",
     specialAbility: "Can move an extra space once per turn",
-    avatar: "/silas_small.png",
-    avatar_face: "/silas_small.png"
+    avatar: "/silas_small.png"
   },
   {
     name: "Timothy",
     description: "The young disciple",
     specialAbility: "Pays 50% less for building churches",
-    avatar: "👨‍🎓",
-    avatar_face: "👨‍🎓"
+    avatar: "👨‍🎓"
   },
   {
     name: "Luke",
     description: "The physician and historian",
     specialAbility: "Heals from negative effects faster",
-    avatar: "👨‍⚕️",
-    avatar_face: "👨‍⚕️"
+    avatar: "👨‍⚕️"
   },
   {
     name: "Aquila",
     description: "The tentmaker and teacher",
     specialAbility: "Earns extra money when passing GO",
-    avatar: "👨‍🏭",
-    avatar_face: "👨‍🏭"
+    avatar: "👨‍🏭"
   },
   {
     name: "Priscilla",
     description: "The wise teacher and leader",
     specialAbility: "Can negotiate better property prices",
-    avatar: "👸🏽",
-    avatar_face: "👸🏽"
+    avatar: "👸🏽"
   }
 ];
