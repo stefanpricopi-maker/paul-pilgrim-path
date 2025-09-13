@@ -42,6 +42,8 @@ const Index = () => {
   // Local game state
   const {
     gameState: localGameState,
+    gameSpeed,
+    setGameSpeed,
     createLocalGame,
     loadLocalGame,
     rollDice: localRollDice,

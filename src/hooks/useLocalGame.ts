@@ -71,6 +71,14 @@ export const useLocalGame = () => {
     isAIThinking: false,
   }));
 
+  const [gameSpeed, setGameSpeed] = useState({
+    diceSpeed: 1,
+    playerMoveSpeed: 1,
+    aiThinkingSpeed: 1,
+    cardDisplayTime: 1,
+    animationsEnabled: true,
+  });
+
   // Removed currentPlayerPrivate - always show UI
 
   // Load cards only when game starts (deferred loading for performance)
@@ -1082,6 +1090,8 @@ export const useLocalGame = () => {
 
   return {
     gameState,
+    gameSpeed,
+    setGameSpeed,
     createLocalGame,
     loadLocalGame,
     rollDice,

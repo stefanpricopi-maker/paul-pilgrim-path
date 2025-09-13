@@ -11,7 +11,10 @@ import { Card as GameCard } from '@/types/cards';
 import { AIPlayer } from '@/types/ai';
 import CardModal from './CardModal';
 import GameSpeedControls, { GameSpeed } from './GameSpeedControls';
-import { Church, Building2, Coins, MapPin, RotateCcw, Eye, EyeOff, ArrowRight, Menu, Users, BarChart3 } from 'lucide-react';
+import TurnTransition from './TurnTransition';
+import ActionFeedback, { ActionFeedbackData } from './ActionFeedback';
+import PlayerActionIndicator from './PlayerActionIndicator';
+import { Church, Building2, Coins, MapPin, RotateCcw, ArrowRight, Users } from 'lucide-react';
 import PlayerOrderPanel from './PlayerOrderPanel';
 import PlayerStatsPanel from './PlayerStatsPanel';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -60,6 +63,9 @@ export default function LocalGameBoard({
   onSpeedChange,
 }: LocalGameBoardProps) {
   const [selectedLocation, setSelectedLocation] = useState<GameLocation | null>(null);
+  const [showTurnTransition, setShowTurnTransition] = useState(false);
+  const [actionFeedback, setActionFeedback] = useState<ActionFeedbackData | null>(null);
+  const [privateMode, setPrivateMode] = useState(false);
   const isMobile = useIsMobile();
 
   // Default speed settings
@@ -72,14 +78,26 @@ export default function LocalGameBoard({
   };
 
   const currentSpeed = gameSpeed || defaultSpeed;
-
   const currentPlayer = gameState.players[gameState.currentPlayerIndex];
+  const nextPlayer = gameState.players[(gameState.currentPlayerIndex + 1) % gameState.players.length];
   const currentLocation = gameState.locations[currentPlayer?.position] || null;
   
   const canBuyLand = currentLocation && !currentLocation.owner && currentLocation.type === 'city' && currentPlayer?.money >= currentLocation.price;
   const canBuildOnCurrentLocation = currentLocation && currentLocation.owner === currentPlayer?.id && currentLocation.type === 'city';
   const hasAlreadyPaidRent = currentLocation ? gameState.rentPaidThisTurn[currentLocation.id] || false : false;
   const needsToPayRent = currentLocation && currentLocation.owner && currentLocation.owner !== currentPlayer?.id && currentLocation.rent > 0 && !hasAlreadyPaidRent;
+
+  // Helper function to show action feedback
+  const showActionFeedback = (feedback: ActionFeedbackData) => {
+    setActionFeedback(feedback);
+  };
+
+  // Determine current player action state
+  const getPlayerActionState = () => {
+    if (gameState.isRolling) return 'rolling';
+    if (gameState.isAIThinking) return 'thinking';
+    return null;
+  };
 
   const handleLocationClick = (location: GameLocation) => {
     setSelectedLocation(location);
@@ -88,25 +106,63 @@ export default function LocalGameBoard({
   const handleBuyLand = () => {
     if (currentLocation && onBuyLand && currentPlayer?.id) {
       onBuyLand(currentPlayer.id, currentLocation.id);
+      showActionFeedback({
+        type: 'success',
+        action: 'buy_land',
+        title: 'Land Purchased!',
+        description: `You bought ${currentLocation.name}`,
+        amount: -currentLocation.price,
+        location: currentLocation.name,
+      });
     }
   };
 
   const handleBuildChurch = () => {
     if (currentLocation && onBuildChurch && currentPlayer?.id) {
       onBuildChurch(currentPlayer.id, currentLocation.id);
+      showActionFeedback({
+        type: 'success',
+        action: 'build_church',
+        title: 'Church Built!',
+        description: `Built a church on ${currentLocation.name}`,
+        amount: -currentLocation.churchCost,
+        location: currentLocation.name,
+      });
     }
   };
 
   const handleBuildSynagogue = () => {
     if (currentLocation && onBuildSynagogue && currentPlayer?.id) {
       onBuildSynagogue(currentPlayer.id, currentLocation.id);
+      showActionFeedback({
+        type: 'success',
+        action: 'build_synagogue',
+        title: 'Synagogue Built!',
+        description: `Built a synagogue on ${currentLocation.name}`,
+        amount: -currentLocation.synagogueCost,
+        location: currentLocation.name,
+      });
     }
   };
 
   const handlePayRent = () => {
     if (currentLocation && onPayRent && currentPlayer?.id) {
+      const owner = gameState.players.find(p => p.id === currentLocation.owner);
       onPayRent(currentPlayer.id, currentLocation.id);
+      showActionFeedback({
+        type: 'info',
+        action: 'pay_rent',
+        title: 'Rent Paid',
+        description: `Paid rent to ${owner?.name || 'Unknown'} for ${currentLocation.name}`,
+        amount: -currentLocation.rent,
+        location: currentLocation.name,
+      });
     }
+  };
+
+  const handleEndTurn = () => {
+    setShowTurnTransition(true);
+    onEndTurn();
   };
 
   const MobilePlayerSheet = () => (
@@ -191,10 +247,19 @@ export default function LocalGameBoard({
               </div>
               <div>
                 <h3 className="font-bold text-base md:text-lg">{currentPlayer?.name || 'Unknown Player'}'s Turn</h3>
-                <p className="text-xs md:text-sm text-muted-foreground">
-                  {currentPlayer ? `${currentPlayer.money} denarii` : '0 denarii'}
-                  {gameState.round > 1 && ` • Round ${gameState.round}`}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs md:text-sm text-muted-foreground">
+                    {currentPlayer ? `${currentPlayer.money} denarii` : '0 denarii'}
+                    {gameState.round > 1 && ` • Round ${gameState.round}`}
+                  </p>
+                  <PlayerActionIndicator 
+                    player={currentPlayer}
+                    action={getPlayerActionState()}
+                    isCurrentPlayer={true}
+                    showPrivateMode={privateMode}
+                    onTogglePrivateMode={() => setPrivateMode(!privateMode)}
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -309,7 +374,7 @@ export default function LocalGameBoard({
               
               {/* End Turn Button */}
               <Button 
-                onClick={onEndTurn}
+                onClick={handleEndTurn}
                 className="w-full text-sm h-12"
                 variant="secondary"
               >
@@ -416,7 +481,7 @@ export default function LocalGameBoard({
                       
                       {/* End Turn Button */}
                       <Button 
-                        onClick={onEndTurn}
+                        onClick={handleEndTurn}
                         className="w-full text-sm"
                         variant="secondary"
                       >
@@ -445,17 +510,42 @@ export default function LocalGameBoard({
         {/* Players Panel - Bottom - Hidden on mobile (accessible via sheet) */}
         <div className={`${isMobile ? 'hidden' : 'grid'} grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4`}>
           {gameState.players.map((player, index) => (
-            <PlayerCard
-              key={player.id}
-              player={player}
-              isCurrentPlayer={index === gameState.currentPlayerIndex}
-              onBuildChurch={() => {/* Handled via current location actions */}}
-              onBuildSynagogue={() => {/* Handled via current location actions */}}
-              canBuild={false}
-            />
+            <div key={player.id} className="relative">
+              <PlayerCard
+                player={player}
+                isCurrentPlayer={index === gameState.currentPlayerIndex}
+                onBuildChurch={() => {/* Handled via current location actions */}}
+                onBuildSynagogue={() => {/* Handled via current location actions */}}
+                canBuild={false}
+              />
+              <div className="absolute -top-2 -right-2">
+                <PlayerActionIndicator 
+                  player={player}
+                  action={index === gameState.currentPlayerIndex ? getPlayerActionState() : null}
+                  isCurrentPlayer={index === gameState.currentPlayerIndex}
+                  className="scale-75"
+                />
+              </div>
+            </div>
           ))}
         </div>
       </div>
+
+      {/* Turn Transition */}
+      <TurnTransition
+        currentPlayer={currentPlayer}
+        nextPlayer={nextPlayer}
+        isVisible={showTurnTransition}
+        onComplete={() => setShowTurnTransition(false)}
+        speed={currentSpeed.playerMoveSpeed}
+      />
+
+      {/* Action Feedback */}
+      <ActionFeedback
+        feedback={actionFeedback}
+        onComplete={() => setActionFeedback(null)}
+        speed={currentSpeed.cardDisplayTime}
+      />
 
       {/* Card Modal */}
       <CardModal
