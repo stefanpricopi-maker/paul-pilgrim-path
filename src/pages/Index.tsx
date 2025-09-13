@@ -142,6 +142,8 @@ const Index = () => {
           onBuildSynagogue={buildSynagogue}
           onPayRent={payRent}
           onCardAction={handleCardAction}
+          gameSpeed={gameSpeed}
+          onSpeedChange={setGameSpeed}
         />
         
         {winner && (
