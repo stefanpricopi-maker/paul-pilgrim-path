@@ -65,16 +65,16 @@ const AnimatedPlayerPiece = ({
 
 
       
-     {typeof player.character.avatar === 'string' && player.character.avatar.startsWith('/')
+     {typeof player.character.avatar_face === 'string' && player.character.avatar_face.startsWith('/')
     ? (
         <img
-          src={player.character.avatar}
+          src={player.character.avatar_face}
           alt={player.character.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover rounded-full"
         />
       )
     : (
-        <span className="text-sm">{player.character.avatar}</span>
+        <span className="text-xs">{player.character.avatar_face}</span>
       )
   }
     

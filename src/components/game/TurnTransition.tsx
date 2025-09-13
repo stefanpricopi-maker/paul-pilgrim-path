@@ -53,17 +53,17 @@ export default function TurnTransition({
   if (!isVisible) return null;
 
   const getPlayerAvatar = (player: Player | AIPlayer) => {
-    if (player.character?.avatar) {
-      if (typeof player.character.avatar === "string" && player.character.avatar.endsWith(".png")) {
+    if (player.character?.avatar_face) {
+      if (typeof player.character.avatar_face === "string" && player.character.avatar_face.endsWith(".png")) {
         return (
           <img
-            src={player.character.avatar}
+            src={player.character.avatar_face}
             alt={player.character.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-full"
           />
         );
       }
-      return player.character.avatar;
+      return player.character.avatar_face;
     }
     return <User className="w-6 h-6" />;
   };
