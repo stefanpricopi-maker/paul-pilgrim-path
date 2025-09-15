@@ -240,11 +240,15 @@ export default function LocalGameBoard({
                   <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border-3 border-accent player-avatar-active flex items-center justify-center overflow-hidden bg-gradient-to-br from-accent/20 to-primary/20 backdrop-blur-sm">
                     {currentPlayer?.character?.avatar_face ? (
                       typeof currentPlayer.character.avatar_face === "string" &&
-                      currentPlayer.character.avatar_face.endsWith(".png") ? (
+                      (currentPlayer.character.avatar_face.endsWith(".png") || currentPlayer.character.avatar_face.startsWith("/")) ? (
                         <img
                           src={currentPlayer.character.avatar_face}
                           alt={currentPlayer.character.name}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-cover rounded-full"
+                          onError={(e) => {
+                            e.currentTarget.style.display = 'none';
+                            e.currentTarget.nextElementSibling?.setAttribute('style', 'display: flex');
+                          }}
                         />
                       ) : (
                         <span className="text-lg md:text-xl">{currentPlayer.character.avatar_face}</span>
@@ -252,6 +256,9 @@ export default function LocalGameBoard({
                     ) : (
                       <span className="text-lg md:text-xl">👤</span>
                     )}
+                    <span className="text-lg md:text-xl hidden items-center justify-center w-full h-full">
+                      {currentPlayer?.character?.avatar || '👤'}
+                    </span>
                   </div>
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-pulse border-2 border-background" />
                 </div>
