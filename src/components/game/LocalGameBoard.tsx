@@ -194,249 +194,272 @@ export default function LocalGameBoard({
   );
 
   return (
-    <div className="min-h-screen bg-background p-2 md:p-4">
-      <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
-        
-        {/* Game Header */}
-        <UICard className="p-4 md:p-6 bg-gradient-parchment border-2 border-accent/30">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="text-center flex-1">
-              <h1 className="text-xl md:text-3xl font-bold text-primary ancient-title mb-2">
-                Paul's Missionary Journeys - Local Game
-              </h1>
-              <p className="text-sm md:text-base text-muted-foreground">
-                Round {gameState.round} • {gameState.players.length} Players
-              </p>
-            </div>
-            <div className="flex items-center space-x-2 md:space-x-3">
-              {isMobile && <MobilePlayerSheet />}
-              {onSpeedChange && (
-                <GameSpeedControls
-                  speed={currentSpeed}
-                  onChange={onSpeedChange}
-                  className="hidden md:flex"
-                />
-              )}
-              <Button onClick={onResetGame} variant="outline" size="sm">
-                <RotateCcw className="w-4 h-4 mr-1" />
-                {isMobile ? 'Reset' : 'Reset Game'}
-              </Button>
-            </div>
-          </div>
-        </UICard>
-
-        {/* Current Player Turn Banner */}
-        <UICard className="p-3 md:p-4 bg-accent/10 border-2 border-accent">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 md:gap-4">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border-2 border-primary flex items-center justify-center overflow-hidden">
-                {currentPlayer?.character?.avatar ? (
-                  typeof currentPlayer.character.avatar === "string" &&
-                  currentPlayer.character.avatar.endsWith(".png") ? (
-                    <img
-                      src={currentPlayer.character.avatar}
-                      alt={currentPlayer.character.name}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    currentPlayer.character.avatar // emoji or JSX
-                  )
-                ) : (
-                  '👤'
-                )}
-              </div>
-              <div>
-                <h3 className="font-bold text-base md:text-lg">{currentPlayer?.name || 'Unknown Player'}'s Turn</h3>
-                <div className="flex items-center gap-2">
-                  <p className="text-xs md:text-sm text-muted-foreground">
-                    {currentPlayer ? `${currentPlayer.money} denarii` : '0 denarii'}
-                    {gameState.round > 1 && ` • Round ${gameState.round}`}
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Particle Background */}
+      <div className="particle-bg" />
+      
+      <div className="relative z-10 p-2 md:p-4">
+        <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
+          
+          {/* Enhanced Game Header */}
+          <div className="game-header rounded-2xl p-4 md:p-6 animate-fade-in">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+              <div className="text-center flex-1">
+                <h1 className="text-xl md:text-3xl font-bold text-primary ancient-title mb-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                  Paul's Missionary Journeys
+                </h1>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent/10 border border-accent/20">
+                  <div className="w-2 h-2 bg-accent rounded-full animate-pulse" />
+                  <p className="text-sm md:text-base text-accent font-medium">
+                    Round {gameState.round} • {gameState.players.length} Players
                   </p>
-                  <PlayerActionIndicator 
-                    player={currentPlayer}
-                    action={getPlayerActionState()}
-                    isCurrentPlayer={true}
-                    showPrivateMode={privateMode}
-                    onTogglePrivateMode={() => setPrivateMode(!privateMode)}
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 md:space-x-3">
+                {isMobile && <MobilePlayerSheet />}
+                {onSpeedChange && (
+                  <GameSpeedControls
+                    speed={currentSpeed}
+                    onChange={onSpeedChange}
+                    className="hidden md:flex"
                   />
+                )}
+                <Button onClick={onResetGame} variant="outline" size="sm" className="hover:scale-105 transition-all duration-200">
+                  <RotateCcw className="w-4 h-4 mr-1" />
+                  {isMobile ? 'Reset' : 'Reset Game'}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Enhanced Current Player Turn Banner */}
+          <div className="current-player-banner rounded-2xl p-4 md:p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 md:gap-4">
+                <div className="relative">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border-3 border-accent player-avatar-active flex items-center justify-center overflow-hidden bg-gradient-to-br from-accent/20 to-primary/20 backdrop-blur-sm">
+                    {currentPlayer?.character?.avatar_face ? (
+                      typeof currentPlayer.character.avatar_face === "string" &&
+                      currentPlayer.character.avatar_face.endsWith(".png") ? (
+                        <img
+                          src={currentPlayer.character.avatar_face}
+                          alt={currentPlayer.character.name}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-lg md:text-xl">{currentPlayer.character.avatar_face}</span>
+                      )
+                    ) : (
+                      <span className="text-lg md:text-xl">👤</span>
+                    )}
+                  </div>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-pulse border-2 border-background" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-lg md:text-xl text-accent ancient-text mb-1">
+                    {currentPlayer?.name || 'Unknown Player'}'s Turn
+                  </h3>
+                  <div className="flex items-center gap-3">
+                    <div className="money-display px-3 py-1 rounded-full">
+                      <span className="text-sm md:text-base font-semibold text-accent flex items-center gap-1">
+                        <Coins className="w-4 h-4" />
+                        {currentPlayer ? currentPlayer.money : 0} denarii
+                      </span>
+                    </div>
+                    <PlayerActionIndicator 
+                      player={currentPlayer}
+                      action={getPlayerActionState()}
+                      isCurrentPlayer={true}
+                      showPrivateMode={privateMode}
+                      onTogglePrivateMode={() => setPrivateMode(!privateMode)}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </UICard>
 
-        {isMobile ? (
-          /* Mobile Layout */
-          <div className="space-y-4">
-            {/* Game Board */}
-            <GameBoard 
-              locations={gameState.locations}
-              players={gameState.players}
-              onLocationClick={handleLocationClick}
-              gameLog={gameState.gameLog}
-            />
-            
-            {/* Mobile Control Panel */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Dice */}
-              <div className="order-1">
-                <Dice
-                  dice1={gameState.dice1}
-                  dice2={gameState.dice2}
-                  isRolling={gameState.isRolling}
-                  onRoll={onRollDice}
-                />
-              </div>
-
-              {/* Current Location Info */}
-              <UICard className="p-3 bg-gradient-parchment border-2 border-primary/30 order-2">
-                <h3 className="font-bold text-primary ancient-text mb-2 flex items-center text-sm">
-                  <MapPin className="w-3 h-3 mr-1" />
-                  Current Location
-                </h3>
-                <div className="space-y-2">
-                  {currentLocation ? (
-                    <div>
-                      <h4 className="font-bold text-accent text-sm">{currentLocation.name}</h4>
-                      <p className="text-xs text-muted-foreground line-clamp-2">{currentLocation.description}</p>
-                    </div>
-                  ) : (
-                    <div>
-                      <h4 className="font-bold text-accent text-sm">Unknown Location</h4>
-                      <p className="text-xs text-muted-foreground">Position data not available</p>
-                    </div>
-                  )}
-                  
-                  {currentLocation?.owner && (
-                    <div className="text-xs text-muted-foreground">
-                      Owned by: {gameState.players.find(p => p.id === currentLocation.owner)?.name}
-                    </div>
-                  )}
-                </div>
-              </UICard>
-            </div>
-
-            {/* Mobile Action Buttons */}
-            <div className="grid grid-cols-1 gap-2">
-              {onSpeedChange && (
-                <GameSpeedControls
-                  speed={currentSpeed}
-                  onChange={onSpeedChange}
-                  className="w-full justify-center"
-                />
-              )}
-              
-              {(needsToPayRent || hasAlreadyPaidRent) && (
-                <Button 
-                  onClick={handlePayRent}
-                  className="w-full text-sm h-12"
-                  variant={hasAlreadyPaidRent ? "outline" : "destructive"}
-                  disabled={hasAlreadyPaidRent}
-                >
-                  <Coins className="w-4 h-4 mr-2" />
-                  {hasAlreadyPaidRent ? "Rent Paid ✓" : `Pay Rent (${currentLocation?.rent} denarii)`}
-                </Button>
-              )}
-
-              {canBuyLand && (
-                <Button 
-                  onClick={handleBuyLand}
-                  className="w-full text-sm h-12"
-                  variant="default"
-                >
-                  <Coins className="w-4 h-4 mr-2" />
-                  Buy Land ({currentLocation?.price} denarii)
-                </Button>
-              )}
-              
-              {canBuildOnCurrentLocation && (
-                <div className="grid grid-cols-2 gap-2">
-                  <Button 
-                    onClick={handleBuildChurch}
-                    className="w-full text-xs h-12"
-                    variant="outline"
-                    disabled={currentPlayer.money < (currentLocation?.churchCost || 0)}
-                  >
-                    <Church className="w-3 h-3 mr-1" />
-                    Church ({currentLocation?.churchCost})
-                  </Button>
-                  <Button 
-                    onClick={handleBuildSynagogue}
-                    className="w-full text-xs h-12"
-                    variant="outline"
-                    disabled={currentPlayer.money < (currentLocation?.synagogueCost || 0)}
-                  >
-                    <Building2 className="w-3 h-3 mr-1" />
-                    Synagogue ({currentLocation?.synagogueCost})
-                  </Button>
-                </div>
-              )}
-              
-              {/* End Turn Button */}
-              <Button 
-                onClick={handleEndTurn}
-                className="w-full text-sm h-12"
-                variant="secondary"
-              >
-                <ArrowRight className="w-4 h-4 mr-2" />
-                End Turn
-              </Button>
-            </div>
-          </div>
-        ) : (
-          /* Desktop Layout */
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            
-            {/* Game Board and Journey Log - Large Center Area */}
-            <div className="lg:col-span-3 space-y-6">
+          {isMobile ? (
+            /* Mobile Layout */
+            <div className="space-y-4">
+              {/* Game Board */}
               <GameBoard 
                 locations={gameState.locations}
                 players={gameState.players}
                 onLocationClick={handleLocationClick}
                 gameLog={gameState.gameLog}
               />
+              
+              {/* Enhanced Mobile Control Panel */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Enhanced Dice */}
+                <div className="order-1">
+                  <div className="game-card-enhanced rounded-2xl p-4">
+                    <Dice
+                      dice1={gameState.dice1}
+                      dice2={gameState.dice2}
+                      isRolling={gameState.isRolling}
+                      onRoll={onRollDice}
+                    />
+                  </div>
+                </div>
+
+                {/* Enhanced Current Location Info */}
+                <div className="location-info-card rounded-2xl p-4 order-2">
+                  <h3 className="font-bold text-primary ancient-text mb-3 flex items-center text-sm">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Current Location
+                  </h3>
+                  <div className="space-y-3">
+                    {currentLocation ? (
+                      <div>
+                        <h4 className="font-bold text-accent text-sm">{currentLocation.name}</h4>
+                        <p className="text-xs text-muted-foreground line-clamp-2">{currentLocation.description}</p>
+                      </div>
+                    ) : (
+                      <div>
+                        <h4 className="font-bold text-accent text-sm">Unknown Location</h4>
+                        <p className="text-xs text-muted-foreground">Position data not available</p>
+                      </div>
+                    )}
+                    
+                    {currentLocation?.owner && (
+                      <div className="text-xs text-accent bg-accent/10 px-2 py-1 rounded-full inline-block">
+                        Owned by: {gameState.players.find(p => p.id === currentLocation.owner)?.name}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Enhanced Mobile Action Buttons */}
+              <div className="grid grid-cols-1 gap-3">
+                {onSpeedChange && (
+                  <div className="floating-ui rounded-xl p-3">
+                    <GameSpeedControls
+                      speed={currentSpeed}
+                      onChange={onSpeedChange}
+                      className="w-full justify-center"
+                    />
+                  </div>
+                )}
+                
+                {(needsToPayRent || hasAlreadyPaidRent) && (
+                  <Button 
+                    onClick={handlePayRent}
+                    className={`action-button w-full text-sm h-12 rounded-xl ${hasAlreadyPaidRent ? 'opacity-50' : ''}`}
+                    variant={hasAlreadyPaidRent ? "outline" : "destructive"}
+                    disabled={hasAlreadyPaidRent}
+                  >
+                    <Coins className="w-4 h-4 mr-2" />
+                    {hasAlreadyPaidRent ? "Rent Paid ✓" : `Pay Rent (${currentLocation?.rent} denarii)`}
+                  </Button>
+                )}
+
+                {canBuyLand && (
+                  <Button 
+                    onClick={handleBuyLand}
+                    className="action-button w-full text-sm h-12 rounded-xl"
+                    variant="default"
+                  >
+                    <Coins className="w-4 h-4 mr-2" />
+                    Buy Land ({currentLocation?.price} denarii)
+                  </Button>
+                )}
+                
+                {canBuildOnCurrentLocation && (
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button 
+                      onClick={handleBuildChurch}
+                      className="action-button w-full text-xs h-12 rounded-xl"
+                      variant="outline"
+                      disabled={currentPlayer.money < (currentLocation?.churchCost || 0)}
+                    >
+                      <Church className="w-3 h-3 mr-1" />
+                      Church ({currentLocation?.churchCost})
+                    </Button>
+                    <Button 
+                      onClick={handleBuildSynagogue}
+                      className="action-button w-full text-xs h-12 rounded-xl"
+                      variant="outline"
+                      disabled={currentPlayer.money < (currentLocation?.synagogueCost || 0)}
+                    >
+                      <Building2 className="w-3 h-3 mr-1" />
+                      Synagogue ({currentLocation?.synagogueCost})
+                    </Button>
+                  </div>
+                )}
+                
+                {/* Enhanced End Turn Button */}
+                <Button 
+                  onClick={handleEndTurn}
+                  className="action-button w-full text-sm h-12 rounded-xl bg-gradient-to-r from-accent to-accent/80 hover:from-accent hover:to-accent"
+                  variant="secondary"
+                >
+                  <ArrowRight className="w-4 h-4 mr-2" />
+                  End Turn
+                </Button>
+              </div>
             </div>
+          ) : (
+            /* Enhanced Desktop Layout */
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              
+              {/* Game Board and Journey Log - Large Center Area */}
+              <div className="lg:col-span-3 space-y-6">
+                <div className="game-card-enhanced rounded-2xl p-4">
+                  <GameBoard 
+                    locations={gameState.locations}
+                    players={gameState.players}
+                    onLocationClick={handleLocationClick}
+                    gameLog={gameState.gameLog}
+                  />
+                </div>
+              </div>
 
-            {/* Right Sidebar */}
-            <div className="space-y-6">
-              {/* Dice */}
-              <Dice
-                  dice1={gameState.dice1}
-                  dice2={gameState.dice2}
-                  isRolling={gameState.isRolling}
-                onRoll={onRollDice}
-              />
+              {/* Enhanced Right Sidebar */}
+              <div className="space-y-6">
+                {/* Enhanced Dice */}
+                <div className="game-card-enhanced rounded-2xl p-4">
+                  <Dice
+                    dice1={gameState.dice1}
+                    dice2={gameState.dice2}
+                    isRolling={gameState.isRolling}
+                    onRoll={onRollDice}
+                  />
+                </div>
 
-              {/* Current Location Info */}
-              <UICard className="p-4 bg-gradient-parchment border-2 border-primary/30">
-                <h3 className="font-bold text-primary ancient-text mb-3 flex items-center">
-                  <MapPin className="w-4 h-4 mr-2" />
-                  Current Location
-                </h3>
-                <div className="space-y-3">
-                  {currentLocation ? (
-                    <div>
-                      <h4 className="font-bold text-accent">{currentLocation.name}</h4>
-                      <p className="text-xs text-muted-foreground">{currentLocation.description}</p>
-                    </div>
-                  ) : (
-                    <div>
-                      <h4 className="font-bold text-accent">Unknown Location</h4>
-                      <p className="text-xs text-muted-foreground">Position data not available</p>
-                    </div>
-                  )}
-                  
-                  {currentLocation?.owner && (
-                    <div className="text-xs text-muted-foreground">
-                      Owned by: {gameState.players.find(p => p.id === currentLocation.owner)?.name}
-                    </div>
-                  )}
-                   {/* Action Buttons */}
-                  <div className="space-y-2">
-                       {(needsToPayRent || hasAlreadyPaidRent) && (
+                {/* Enhanced Current Location Info */}
+                <div className="location-info-card rounded-2xl p-4">
+                  <h3 className="font-bold text-primary ancient-text mb-3 flex items-center">
+                    <MapPin className="w-4 h-4 mr-2" />
+                    Current Location
+                  </h3>
+                  <div className="space-y-3">
+                    {currentLocation ? (
+                      <div>
+                        <h4 className="font-bold text-accent">{currentLocation.name}</h4>
+                        <p className="text-xs text-muted-foreground">{currentLocation.description}</p>
+                      </div>
+                    ) : (
+                      <div>
+                        <h4 className="font-bold text-accent">Unknown Location</h4>
+                        <p className="text-xs text-muted-foreground">Position data not available</p>
+                      </div>
+                    )}
+                    
+                    {currentLocation?.owner && (
+                      <div className="text-xs text-accent bg-accent/10 px-2 py-1 rounded-full inline-block">
+                        Owned by: {gameState.players.find(p => p.id === currentLocation.owner)?.name}
+                      </div>
+                    )}
+                    
+                    {/* Enhanced Action Buttons */}
+                    <div className="space-y-3">
+                      {(needsToPayRent || hasAlreadyPaidRent) && (
                         <Button 
                           onClick={handlePayRent}
-                          className="w-full text-sm"
+                          className={`action-button w-full text-sm rounded-xl ${hasAlreadyPaidRent ? 'opacity-50' : ''}`}
                           variant={hasAlreadyPaidRent ? "outline" : "destructive"}
                           disabled={hasAlreadyPaidRent}
                         >
@@ -448,7 +471,7 @@ export default function LocalGameBoard({
                       {canBuyLand && (
                         <Button 
                           onClick={handleBuyLand}
-                          className="w-full text-sm"
+                          className="action-button w-full text-sm rounded-xl"
                           variant="default"
                         >
                           <Coins className="w-3 h-3 mr-1" />
@@ -457,97 +480,97 @@ export default function LocalGameBoard({
                       )}
                       
                       {canBuildOnCurrentLocation && (
-                        <>
+                        <div className="grid grid-cols-1 gap-2">
                           <Button 
                             onClick={handleBuildChurch}
-                            className="w-full text-sm"
+                            className="action-button w-full text-xs rounded-xl"
                             variant="outline"
-                            disabled={currentPlayer.money < currentLocation.churchCost}
+                            disabled={currentPlayer.money < (currentLocation.churchCost || 0)}
                           >
                             <Church className="w-3 h-3 mr-1" />
-                            Build Church ({currentLocation.churchCost} denarii)
+                            Church ({currentLocation.churchCost})
                           </Button>
                           <Button 
                             onClick={handleBuildSynagogue}
-                            className="w-full text-sm"
+                            className="action-button w-full text-xs rounded-xl"
                             variant="outline"
-                            disabled={currentPlayer.money < currentLocation.synagogueCost}
+                            disabled={currentPlayer.money < (currentLocation.synagogueCost || 0)}
                           >
                             <Building2 className="w-3 h-3 mr-1" />
-                            Build Synagogue ({currentLocation.synagogueCost} denarii)
+                            Synagogue ({currentLocation.synagogueCost})
                           </Button>
-                        </>
+                        </div>
                       )}
                       
-                      {/* End Turn Button */}
+                      {/* Enhanced End Turn Button */}
                       <Button 
                         onClick={handleEndTurn}
-                        className="w-full text-sm"
+                        className="action-button w-full text-sm rounded-xl bg-gradient-to-r from-accent to-accent/80 hover:from-accent hover:to-accent"
                         variant="secondary"
                       >
                         <ArrowRight className="w-3 h-3 mr-1" />
                         End Turn
                       </Button>
+                    </div>
                   </div>
                 </div>
-              </UICard>
-              
-              {/* Player Order Panel */}
-              <PlayerOrderPanel 
-                players={gameState.players}
-                currentPlayerIndex={gameState.currentPlayerIndex}
-              />
 
-              {/* Player Statistics Panel */}
-              <PlayerStatsPanel 
-                players={gameState.players}
-                locations={gameState.locations}
-              />
-            </div>
-          </div>
-        )}
+                {/* Enhanced Player Order Panel */}
+                <div className="floating-ui rounded-2xl p-4">
+                  <PlayerOrderPanel 
+                    players={gameState.players}
+                    currentPlayerIndex={gameState.currentPlayerIndex}
+                  />
+                </div>
 
-        {/* Players Panel - Bottom - Hidden on mobile (accessible via sheet) */}
-        <div className={`${isMobile ? 'hidden' : 'grid'} grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4`}>
-          {gameState.players.map((player, index) => (
-            <div key={player.id} className="relative">
-              <PlayerCard
-                player={player}
-                isCurrentPlayer={index === gameState.currentPlayerIndex}
-                onBuildChurch={() => {/* Handled via current location actions */}}
-                onBuildSynagogue={() => {/* Handled via current location actions */}}
-                canBuild={false}
-              />
-              <div className="absolute -top-2 -right-2">
-                <PlayerActionIndicator 
-                  player={player}
-                  action={index === gameState.currentPlayerIndex ? getPlayerActionState() : null}
-                  isCurrentPlayer={index === gameState.currentPlayerIndex}
-                  className="scale-75"
-                />
+                {/* Enhanced Player Stats Panel */}
+                <div className="floating-ui rounded-2xl p-4">
+                  <PlayerStatsPanel 
+                    players={gameState.players}
+                    locations={gameState.locations}
+                  />
+                </div>
               </div>
             </div>
-          ))}
+          )}
+
+          {/* Enhanced Player Cards */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold text-primary ancient-text flex items-center">
+              <Users className="w-5 h-5 mr-2" />
+              All Players
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {gameState.players.map((player, index) => (
+                <div key={player.id} className="game-card-enhanced rounded-xl animate-fade-in">
+                  <PlayerCard
+                    player={player}
+                    isCurrentPlayer={index === gameState.currentPlayerIndex}
+                    canBuild={canBuildOnCurrentLocation && index === gameState.currentPlayerIndex}
+                    onBuildChurch={() => handleBuildChurch()}
+                    onBuildSynagogue={() => handleBuildSynagogue()}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Turn Transition */}
+      {/* Enhanced Game Components */}
       <TurnTransition
         currentPlayer={currentPlayer}
         nextPlayer={nextPlayer}
         isVisible={showTurnTransition}
         onComplete={() => setShowTurnTransition(false)}
-        speed={currentSpeed.playerMoveSpeed}
+        speed={currentSpeed.animationsEnabled ? currentSpeed.playerMoveSpeed : 0}
       />
-
-      {/* Action Feedback */}
+      
       <ActionFeedback
         feedback={actionFeedback}
         onComplete={() => setActionFeedback(null)}
-        speed={currentSpeed.cardDisplayTime}
       />
 
-      {/* Card Modal */}
       <CardModal
         isOpen={!!gameState.drawnCard}
         onClose={() => onCardAction && gameState.drawnCard && onCardAction(gameState.drawnCard)}
