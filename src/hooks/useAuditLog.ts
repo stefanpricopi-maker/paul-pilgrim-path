@@ -33,15 +33,37 @@ export function useAuditLog() {
   };
 
   // Helper methods for common audit events
-  const logAdminAction = (actionType: string, description: string, targetType?: string, targetId?: string, details?: Record<string, any>) => {
-    return logAction({
-      actionType,
-      actionCategory: 'admin',
-      targetType,
-      targetId,
-      description,
-      details
-    });
+  const logAdminAction = async (actionType: string, description: string, targetType?: string, targetId?: string, details?: Record<string, any>) => {
+    try {
+      // Check rate limit before performing admin action
+      const { data: rateLimitOk, error: rateLimitError } = await supabase.rpc('check_admin_rate_limit');
+      
+      if (rateLimitError) {
+        console.error("Rate limit check failed:", rateLimitError);
+        toast.error("Admin action rate limit check failed");
+        return false;
+      }
+      
+      if (!rateLimitOk) {
+        toast.error("Admin action rate limit exceeded. Please wait before trying again.");
+        return false;
+      }
+
+      await logAction({
+        actionType,
+        actionCategory: 'admin',
+        targetType,
+        targetId,
+        description,
+        details
+      });
+      
+      return true;
+    } catch (error) {
+      console.error("Admin action logging failed:", error);
+      toast.error("Admin action could not be logged");
+      return false;
+    }
   };
 
   const logGameAction = (actionType: string, description: string, gameId?: string, details?: Record<string, any>) => {
