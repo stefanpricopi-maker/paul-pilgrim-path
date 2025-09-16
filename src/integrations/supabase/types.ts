@@ -583,6 +583,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      cleanup_old_audit_logs: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
       cleanup_old_games: {
         Args: Record<PropertyKey, never>
         Returns: {
