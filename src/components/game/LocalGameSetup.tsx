@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Trash2, Plus, Users, Play, Bot } from 'lucide-react';
 import { AI_PERSONALITIES, AI_NAMES } from '@/types/ai';
+import { BIBLICAL_CHARACTERS, BiblicalCharacter } from '@/types/game';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LocalGameSetupProps {
@@ -21,6 +22,7 @@ interface LocalGameSetupProps {
 interface PlayerSetup {
   name: string;
   color: string;
+  character?: BiblicalCharacter;
   isAI: boolean;
   aiPersonality?: number;
 }
@@ -37,15 +39,21 @@ const PLAYER_COLORS = [
 export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGame, onGoBack }: LocalGameSetupProps) {
   const isMobile = useIsMobile();
   const [players, setPlayers] = useState<PlayerSetup[]>([
-    { name: '', color: PLAYER_COLORS[0].value, isAI: false },
-    { name: '', color: PLAYER_COLORS[1].value, isAI: false },
+    { name: '', color: PLAYER_COLORS[0].value, character: BIBLICAL_CHARACTERS[0], isAI: false },
+    { name: '', color: PLAYER_COLORS[1].value, character: BIBLICAL_CHARACTERS[1], isAI: false },
   ]);
 
   const addPlayer = () => {
     if (players.length < 6) {
+      const usedCharacters = players.map(p => p.character?.name).filter(Boolean);
+      const availableCharacter = BIBLICAL_CHARACTERS.find(
+        char => !usedCharacters.includes(char.name)
+      );
+      
       setPlayers([...players, { 
         name: '', 
         color: PLAYER_COLORS[players.length].value,
+        character: availableCharacter || BIBLICAL_CHARACTERS[0],
         isAI: false
       }]);
     }
@@ -89,6 +97,18 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
     setPlayers(updatedPlayers);
   };
 
+  const selectCharacter = (playerIndex: number, character: BiblicalCharacter) => {
+    const updatedPlayers = [...players];
+    updatedPlayers[playerIndex].character = character;
+    setPlayers(updatedPlayers);
+  };
+
+  const isCharacterTaken = (character: BiblicalCharacter, currentPlayerIndex: number) => {
+    return players.some((player, index) => 
+      index !== currentPlayerIndex && player.character?.name === character.name
+    );
+  };
+
   const canStartGame = players.length >= 2 && players.every(p => p.name.trim().length > 0);
   const hasUniqueNames = new Set(players.map(p => p.name.trim().toLowerCase())).size === players.length;
 
@@ -102,6 +122,7 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
         players: players.map(p => ({
           name: p.name.trim(),
           color: p.color,
+          character: p.character,
           isAI: p.isAI,
           aiPersonality: p.aiPersonality
         }))
@@ -209,22 +230,62 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                               />
                             </div>
                             
-                            <div className="flex justify-between items-center">
-                              <Label className="text-sm font-medium">Color</Label>
-                              <div className="flex gap-2">
-                                {PLAYER_COLORS.map((color) => (
-                                  <button
-                                    key={color.name}
-                                    onClick={() => updatePlayerColor(index, color.value)}
-                                    className={`w-8 h-8 rounded-full border-2 ${
-                                      player.color === color.value ? 'border-primary' : 'border-muted'
-                                    }`}
-                                    style={{ backgroundColor: color.value }}
-                                    title={color.name}
-                                  />
-                                ))}
-                              </div>
-                            </div>
+                             <div className="flex justify-between items-center">
+                               <Label className="text-sm font-medium">Color</Label>
+                               <div className="flex gap-2">
+                                 {PLAYER_COLORS.map((color) => (
+                                   <button
+                                     key={color.name}
+                                     onClick={() => updatePlayerColor(index, color.value)}
+                                     className={`w-8 h-8 rounded-full border-2 ${
+                                       player.color === color.value ? 'border-primary' : 'border-muted'
+                                     }`}
+                                     style={{ backgroundColor: color.value }}
+                                     title={color.name}
+                                   />
+                                 ))}
+                               </div>
+                             </div>
+
+                             {/* Character Selection */}
+                             <div>
+                               <Label className="text-sm font-medium">Character</Label>
+                               <div className="grid grid-cols-3 gap-2 mt-2">
+                                 {BIBLICAL_CHARACTERS.slice(0, 6).map((character) => {
+                                   const isSelected = player.character?.name === character.name;
+                                   const isTaken = isCharacterTaken(character, index);
+                                   
+                                   return (
+                                     <Card
+                                       key={character.name}
+                                       className={`p-2 cursor-pointer transition-all ${
+                                         isSelected 
+                                           ? 'ring-2 ring-accent bg-accent/20 border-accent' 
+                                           : isTaken 
+                                             ? 'opacity-50 cursor-not-allowed bg-muted' 
+                                             : 'hover:bg-accent/10 border-border'
+                                       }`}
+                                       onClick={() => !isTaken && selectCharacter(index, character)}
+                                     >
+                                       <div className="text-center space-y-1">
+                                         <div className="text-lg">
+                                           {character.avatar_face?.startsWith('/') ? (
+                                             <img 
+                                               src={character.avatar_face} 
+                                               alt={character.name}
+                                               className="w-8 h-8 mx-auto rounded-full object-cover"
+                                             />
+                                           ) : (
+                                             <span>{character.avatar_face}</span>
+                                           )}
+                                         </div>
+                                         <h4 className="font-bold text-xs ancient-text">{character.name}</h4>
+                                       </div>
+                                     </Card>
+                                   );
+                                 })}
+                               </div>
+                             </div>
 
                             {players.length > 2 && (
                               <Button
@@ -356,43 +417,92 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                           </div>
                         </div>
 
-                        <div className="flex items-center space-x-3">
-                          <div className="flex-1">
-                            <Input
-                              placeholder={player.isAI ? "AI Player Name" : "Enter player name"}
-                              value={player.name}
-                              onChange={(e) => updatePlayerName(index, e.target.value)}
-                            />
-                          </div>
-                          
-                          <div className="space-y-1">
-                            <Label className="text-sm font-medium">Color</Label>
-                            <div className="flex flex-wrap gap-1">
-                              {PLAYER_COLORS.map((color) => (
-                                <button
-                                  key={color.name}
-                                  onClick={() => updatePlayerColor(index, color.value)}
-                                  className={`w-6 h-6 rounded-full border-2 ${
-                                    player.color === color.value ? 'border-primary' : 'border-muted'
-                                  }`}
-                                  style={{ backgroundColor: color.value }}
-                                  title={color.name}
-                                />
-                              ))}
-                            </div>
-                          </div>
+                         <div className="flex items-center space-x-3">
+                           <div className="flex-1">
+                             <Input
+                               placeholder={player.isAI ? "AI Player Name" : "Enter player name"}
+                               value={player.name}
+                               onChange={(e) => updatePlayerName(index, e.target.value)}
+                             />
+                           </div>
+                           
+                           <div className="space-y-1">
+                             <Label className="text-sm font-medium">Color</Label>
+                             <div className="flex flex-wrap gap-1">
+                               {PLAYER_COLORS.map((color) => (
+                                 <button
+                                   key={color.name}
+                                   onClick={() => updatePlayerColor(index, color.value)}
+                                   className={`w-6 h-6 rounded-full border-2 ${
+                                     player.color === color.value ? 'border-primary' : 'border-muted'
+                                   }`}
+                                   style={{ backgroundColor: color.value }}
+                                   title={color.name}
+                                 />
+                               ))}
+                             </div>
+                           </div>
 
-                          {players.length > 2 && (
-                            <Button
-                              onClick={() => removePlayer(index)}
-                              variant="outline"
-                              size="sm"
-                              className="text-destructive"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </Button>
-                          )}
-                        </div>
+                           {players.length > 2 && (
+                             <Button
+                               onClick={() => removePlayer(index)}
+                               variant="outline"
+                               size="sm"
+                               className="text-destructive"
+                             >
+                               <Trash2 className="w-4 h-4" />
+                             </Button>
+                           )}
+                         </div>
+
+                         {/* Character Selection - Desktop */}
+                         <div className="space-y-2">
+                           <Label className="text-sm font-medium">Choose Character</Label>
+                           <div className="grid grid-cols-3 gap-3">
+                             {BIBLICAL_CHARACTERS.map((character) => {
+                               const isSelected = player.character?.name === character.name;
+                               const isTaken = isCharacterTaken(character, index);
+                               
+                               return (
+                                 <Card
+                                   key={character.name}
+                                   className={`p-3 cursor-pointer transition-all hover:scale-105 ${
+                                     isSelected 
+                                       ? 'ring-2 ring-accent bg-accent/20 border-accent' 
+                                       : isTaken 
+                                         ? 'opacity-50 cursor-not-allowed bg-muted' 
+                                         : 'hover:bg-accent/10 border-border'
+                                   }`}
+                                   onClick={() => !isTaken && selectCharacter(index, character)}
+                                 >
+                                   <div className="text-center space-y-2">
+                                     <div className="text-2xl">
+                                       {character.avatar_face?.startsWith('/') ? (
+                                         <img 
+                                           src={character.avatar_face} 
+                                           alt={character.name}
+                                           className="w-12 h-12 mx-auto rounded-full object-cover"
+                                         />
+                                       ) : (
+                                         <span>{character.avatar_face}</span>
+                                       )}
+                                     </div>
+                                     <h4 className="font-bold text-sm ancient-text">{character.name}</h4>
+                                     <p className="text-xs text-muted-foreground line-clamp-2">{character.description}</p>
+                                     <Badge variant="outline" className="text-xs">
+                                       {character.specialAbility}
+                                     </Badge>
+                                     {isTaken && (
+                                       <Badge variant="destructive" className="text-xs">
+                                         Taken
+                                       </Badge>
+                                     )}
+                                   </div>
+                                 </Card>
+                               );
+                             })}
+                           </div>
+                         </div>
 
                         {player.isAI && (
                           <div>

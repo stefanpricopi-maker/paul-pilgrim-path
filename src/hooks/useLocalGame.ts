@@ -97,7 +97,7 @@ export const useLocalGame = () => {
     
     const players: (Player | AIPlayer)[] = playerNames.map((name, index) => {
       const playerSetup = settings?.players?.[index];
-      const character = BIBLICAL_CHARACTERS[index % BIBLICAL_CHARACTERS.length];
+      const character = playerSetup?.character || BIBLICAL_CHARACTERS[index % BIBLICAL_CHARACTERS.length];
       
       if (playerSetup?.isAI) {
         return createAIPlayer(
