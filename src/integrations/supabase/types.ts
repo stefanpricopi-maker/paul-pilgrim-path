@@ -628,9 +628,17 @@ export type Database = {
           is_admin: boolean
         }[]
       }
+      get_user_role: {
+        Args: { user_id: string }
+        Returns: boolean
+      }
       increment_building_count: {
         Args: { p_building_type: string; p_tile_id: number }
         Returns: undefined
+      }
+      is_current_user_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
       is_member_of_game: {
         Args: { target_game_id: string }
