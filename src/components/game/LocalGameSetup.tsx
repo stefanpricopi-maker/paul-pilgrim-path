@@ -109,6 +109,11 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
     );
   };
 
+  const getCharacterOwner = (character: BiblicalCharacter) => {
+    const playerIndex = players.findIndex(player => player.character?.name === character.name);
+    return playerIndex >= 0 ? playerIndex : null;
+  };
+
   const canStartGame = players.length >= 2 && players.every(p => p.name.trim().length > 0);
   const hasUniqueNames = new Set(players.map(p => p.name.trim().toLowerCase())).size === players.length;
 
@@ -221,15 +226,15 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                             </div>
                           </div>
 
-                          <div className="flex flex-col space-y-3">
-                            <div className="flex-1">
-                              <Input
-                                placeholder={player.isAI ? "AI Player Name" : "Enter player name"}
-                                value={player.name}
-                                onChange={(e) => updatePlayerName(index, e.target.value)}
-                              />
-                            </div>
-                            
+                           <div className="flex flex-col space-y-3">
+                             <div className="flex-1">
+                               <Input
+                                 placeholder={player.isAI ? "AI Player Name" : "Enter player name"}
+                                 value={player.name}
+                                 onChange={(e) => updatePlayerName(index, e.target.value)}
+                               />
+                             </div>
+                             
                              <div className="flex justify-between items-center">
                                <Label className="text-sm font-medium">Color</Label>
                                <div className="flex gap-2">
@@ -247,57 +252,38 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                                </div>
                              </div>
 
-                             {/* Character Selection */}
-                             <div>
-                               <Label className="text-sm font-medium">Character</Label>
-                               <div className="grid grid-cols-3 gap-2 mt-2">
-                                 {BIBLICAL_CHARACTERS.slice(0, 6).map((character) => {
-                                   const isSelected = player.character?.name === character.name;
-                                   const isTaken = isCharacterTaken(character, index);
-                                   
-                                   return (
-                                     <Card
-                                       key={character.name}
-                                       className={`p-2 cursor-pointer transition-all ${
-                                         isSelected 
-                                           ? 'ring-2 ring-accent bg-accent/20 border-accent' 
-                                           : isTaken 
-                                             ? 'opacity-50 cursor-not-allowed bg-muted' 
-                                             : 'hover:bg-accent/10 border-border'
-                                       }`}
-                                       onClick={() => !isTaken && selectCharacter(index, character)}
-                                     >
-                                       <div className="text-center space-y-1">
-                                         <div className="text-lg">
-                                           {character.avatar_face?.startsWith('/') ? (
-                                             <img 
-                                               src={character.avatar_face} 
-                                               alt={character.name}
-                                               className="w-8 h-8 mx-auto rounded-full object-cover"
-                                             />
-                                           ) : (
-                                             <span>{character.avatar_face}</span>
-                                           )}
-                                         </div>
-                                         <h4 className="font-bold text-xs ancient-text">{character.name}</h4>
-                                       </div>
-                                     </Card>
-                                   );
-                                 })}
+                             {/* Selected Character Display */}
+                             {player.character && (
+                               <div className="flex items-center gap-3 p-2 bg-accent/10 rounded-md">
+                                 <div className="text-lg">
+                                   {player.character.avatar_face?.startsWith('/') ? (
+                                     <img 
+                                       src={player.character.avatar_face} 
+                                       alt={player.character.name}
+                                       className="w-8 h-8 rounded-full object-cover"
+                                     />
+                                   ) : (
+                                     <span>{player.character.avatar_face}</span>
+                                   )}
+                                 </div>
+                                 <div className="flex-1">
+                                   <p className="font-medium text-sm">{player.character.name}</p>
+                                   <p className="text-xs text-muted-foreground">{player.character.description}</p>
+                                 </div>
                                </div>
-                             </div>
+                             )}
 
-                            {players.length > 2 && (
-                              <Button
-                                onClick={() => removePlayer(index)}
-                                variant="outline"
-                                size="sm"
-                                className="text-destructive self-end"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </Button>
-                            )}
-                          </div>
+                             {players.length > 2 && (
+                               <Button
+                                 onClick={() => removePlayer(index)}
+                                 variant="outline"
+                                 size="sm"
+                                 className="text-destructive self-end"
+                               >
+                                 <Trash2 className="w-4 h-4" />
+                               </Button>
+                             )}
+                           </div>
 
                           {player.isAI && (
                             <div>
@@ -332,6 +318,69 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                       All player names must be unique
                     </div>
                   )}
+                </div>
+
+                {/* Character Selection Section */}
+                <div className="space-y-3">
+                  <h3 className="text-lg font-bold text-primary">Choose Characters</h3>
+                  <div className="grid grid-cols-2 gap-3">
+                    {BIBLICAL_CHARACTERS.map((character) => {
+                      const ownerIndex = getCharacterOwner(character);
+                      const isSelected = ownerIndex !== null;
+                      
+                      return (
+                        <Card
+                          key={character.name}
+                          className={`p-3 cursor-pointer transition-all hover:scale-105 ${
+                            isSelected 
+                              ? `ring-2 border-accent` 
+                              : 'hover:bg-accent/10 border-border'
+                          }`}
+                          style={isSelected ? { borderColor: players[ownerIndex].color, backgroundColor: `${players[ownerIndex].color}15` } : {}}
+                          onClick={() => {
+                            // Find first player without character or allow reassignment
+                            const availablePlayerIndex = players.findIndex(p => !p.character);
+                            if (availablePlayerIndex >= 0) {
+                              selectCharacter(availablePlayerIndex, character);
+                            }
+                          }}
+                        >
+                          <div className="text-center space-y-2">
+                            <div className="text-2xl">
+                              {character.avatar_face?.startsWith('/') ? (
+                                <img 
+                                  src={character.avatar_face} 
+                                  alt={character.name}
+                                  className="w-12 h-12 mx-auto rounded-full object-cover"
+                                />
+                              ) : (
+                                <span>{character.avatar_face}</span>
+                              )}
+                            </div>
+                            <div>
+                              <h4 className="font-bold text-sm ancient-text">{character.name}</h4>
+                              <p className="text-xs text-muted-foreground line-clamp-2">{character.description}</p>
+                              <Badge variant="outline" className="text-xs mt-1">
+                                {character.specialAbility}
+                              </Badge>
+                              {isSelected && (
+                                <div className="flex items-center justify-center gap-1 mt-2">
+                                  <div 
+                                    className="w-3 h-3 rounded-full" 
+                                    style={{ backgroundColor: players[ownerIndex].color }}
+                                  />
+                                  <span className="text-xs font-medium">Player {ownerIndex + 1}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    Tap a character to assign it to the next available player, or click on a player's selected character to change it.
+                  </p>
                 </div>
 
                 <div className="pt-4 border-t">
@@ -455,54 +504,29 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                            )}
                          </div>
 
-                         {/* Character Selection - Desktop */}
-                         <div className="space-y-2">
-                           <Label className="text-sm font-medium">Choose Character</Label>
-                           <div className="grid grid-cols-3 gap-3">
-                             {BIBLICAL_CHARACTERS.map((character) => {
-                               const isSelected = player.character?.name === character.name;
-                               const isTaken = isCharacterTaken(character, index);
-                               
-                               return (
-                                 <Card
-                                   key={character.name}
-                                   className={`p-3 cursor-pointer transition-all hover:scale-105 ${
-                                     isSelected 
-                                       ? 'ring-2 ring-accent bg-accent/20 border-accent' 
-                                       : isTaken 
-                                         ? 'opacity-50 cursor-not-allowed bg-muted' 
-                                         : 'hover:bg-accent/10 border-border'
-                                   }`}
-                                   onClick={() => !isTaken && selectCharacter(index, character)}
-                                 >
-                                   <div className="text-center space-y-2">
-                                     <div className="text-2xl">
-                                       {character.avatar_face?.startsWith('/') ? (
-                                         <img 
-                                           src={character.avatar_face} 
-                                           alt={character.name}
-                                           className="w-12 h-12 mx-auto rounded-full object-cover"
-                                         />
-                                       ) : (
-                                         <span>{character.avatar_face}</span>
-                                       )}
-                                     </div>
-                                     <h4 className="font-bold text-sm ancient-text">{character.name}</h4>
-                                     <p className="text-xs text-muted-foreground line-clamp-2">{character.description}</p>
-                                     <Badge variant="outline" className="text-xs">
-                                       {character.specialAbility}
-                                     </Badge>
-                                     {isTaken && (
-                                       <Badge variant="destructive" className="text-xs">
-                                         Taken
-                                       </Badge>
-                                     )}
-                                   </div>
-                                 </Card>
-                               );
-                             })}
-                           </div>
-                         </div>
+                          {/* Selected Character Display - Desktop */}
+                          {player.character && (
+                            <div className="flex items-center gap-3 p-3 bg-accent/10 rounded-md">
+                              <div className="text-xl">
+                                {player.character.avatar_face?.startsWith('/') ? (
+                                  <img 
+                                    src={player.character.avatar_face} 
+                                    alt={player.character.name}
+                                    className="w-10 h-10 rounded-full object-cover"
+                                  />
+                                ) : (
+                                  <span>{player.character.avatar_face}</span>
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <p className="font-medium">{player.character.name}</p>
+                                <p className="text-sm text-muted-foreground">{player.character.description}</p>
+                                <Badge variant="outline" className="text-xs mt-1">
+                                  {player.character.specialAbility}
+                                </Badge>
+                              </div>
+                            </div>
+                          )}
 
                         {player.isAI && (
                           <div>
@@ -537,6 +561,69 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                     All player names must be unique
                   </div>
                 )}
+              </div>
+
+              {/* Character Selection Section - Desktop */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-bold text-primary">Choose Characters</h3>
+                <div className="grid grid-cols-3 gap-4">
+                  {BIBLICAL_CHARACTERS.map((character) => {
+                    const ownerIndex = getCharacterOwner(character);
+                    const isSelected = ownerIndex !== null;
+                    
+                    return (
+                      <Card
+                        key={character.name}
+                        className={`p-4 cursor-pointer transition-all hover:scale-105 ${
+                          isSelected 
+                            ? `ring-2 border-accent` 
+                            : 'hover:bg-accent/10 border-border'
+                        }`}
+                        style={isSelected ? { borderColor: players[ownerIndex].color, backgroundColor: `${players[ownerIndex].color}15` } : {}}
+                        onClick={() => {
+                          // Find first player without character or allow reassignment
+                          const availablePlayerIndex = players.findIndex(p => !p.character);
+                          if (availablePlayerIndex >= 0) {
+                            selectCharacter(availablePlayerIndex, character);
+                          }
+                        }}
+                      >
+                        <div className="text-center space-y-3">
+                          <div className="text-3xl">
+                            {character.avatar_face?.startsWith('/') ? (
+                              <img 
+                                src={character.avatar_face} 
+                                alt={character.name}
+                                className="w-16 h-16 mx-auto rounded-full object-cover"
+                              />
+                            ) : (
+                              <span>{character.avatar_face}</span>
+                            )}
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-lg ancient-text">{character.name}</h4>
+                            <p className="text-sm text-muted-foreground line-clamp-2">{character.description}</p>
+                            <Badge variant="outline" className="text-sm mt-2">
+                              {character.specialAbility}
+                            </Badge>
+                            {isSelected && (
+                              <div className="flex items-center justify-center gap-2 mt-3">
+                                <div 
+                                  className="w-4 h-4 rounded-full" 
+                                  style={{ backgroundColor: players[ownerIndex].color }}
+                                />
+                                <span className="text-sm font-medium">Player {ownerIndex + 1}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </Card>
+                    );
+                  })}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Click on a character to assign it to the next available player. Characters show which player has selected them.
+                </p>
               </div>
 
               <div className="pt-4 border-t">
