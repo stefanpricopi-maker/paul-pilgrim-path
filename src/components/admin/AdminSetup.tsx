@@ -11,14 +11,22 @@ export default function AdminSetup() {
 
   const checkAdminStatus = async () => {
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Please log in first');
+        return;
+      }
+
       const { data, error } = await supabase.rpc('check_my_admin_status');
       
       if (error) {
         console.error('Error checking admin status:', error);
-        toast.error('Failed to check admin status');
+        toast.error(`Failed to check admin status: ${error.message}`);
         return;
       }
 
+      console.log('Admin status response:', data);
+      
       if (data && data[0]) {
         setAdminStatus({
           isAdmin: data[0].is_admin,
@@ -34,14 +42,22 @@ export default function AdminSetup() {
   const makeAdmin = async () => {
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        toast.error('Please log in first');
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.rpc('make_current_user_admin');
       
       if (error) {
         console.error('Error making user admin:', error);
-        toast.error('Failed to grant admin access');
+        toast.error(`Failed to grant admin access: ${error.message}`);
         return;
       }
 
+      console.log('Admin grant response:', data);
       toast.success('Admin access granted! Please refresh the page.');
       await checkAdminStatus();
     } catch (error) {
