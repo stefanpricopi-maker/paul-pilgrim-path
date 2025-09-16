@@ -489,6 +489,25 @@ const CharacterEditor = () => {
               </p>
             </div>
           )}
+
+          {characters.length > 0 && (
+            <div className="flex justify-between items-center mt-6 pt-4 border-t">
+              <div className="text-sm text-muted-foreground">
+                Images are automatically saved when uploaded
+              </div>
+              <Button 
+                onClick={() => {
+                  toast({
+                    title: "All Changes Saved",
+                    description: "Character images are automatically saved when uploaded",
+                  });
+                }}
+                className="bg-primary hover:bg-primary/90"
+              >
+                All Changes Saved ✓
+              </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
