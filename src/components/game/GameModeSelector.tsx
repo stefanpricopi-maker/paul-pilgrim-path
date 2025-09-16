@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Wifi, Monitor, Settings } from 'lucide-react';
+import { Users, Wifi, Monitor, Settings, LogOut } from 'lucide-react';
 import { useAdmin } from '@/hooks/useAdmin';
+import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 
 interface GameModeSelectorProps {
@@ -10,7 +11,16 @@ interface GameModeSelectorProps {
 
 export default function GameModeSelector({ onSelectMode }: GameModeSelectorProps) {
   const { isAdmin } = useAdmin();
+  const { user, signOut } = useAuth();
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
+  };
 
   
   //console.log('Admin status:', isAdmin); // <-- see what value isAdmin has
@@ -18,26 +28,42 @@ export default function GameModeSelector({ onSelectMode }: GameModeSelectorProps
   return (
     <div className="min-h-screen bg-background p-4 flex items-center justify-center">
       <div className="w-full max-w-4xl">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center space-x-4 mb-4">
-            <h1 className="text-4xl font-bold text-primary ancient-text">
-              Paul's Missionary Journeys
-            </h1>
-            {isAdmin && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/admin')}
-                className="flex items-center space-x-2"
-              >
-                <Settings className="w-4 h-4" />
-                <span>Admin</span>
-              </Button>
-            )}
+        {/* Header with logout button */}
+        <div className="flex justify-between items-start mb-8">
+          <div></div> {/* Spacer */}
+          <div className="text-center flex-1">
+            <div className="flex items-center justify-center space-x-4 mb-4">
+              <h1 className="text-4xl font-bold text-primary ancient-text">
+                Paul's Missionary Journeys
+              </h1>
+              {isAdmin && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => navigate('/admin')}
+                  className="flex items-center space-x-2"
+                >
+                  <Settings className="w-4 h-4" />
+                  <span>Admin</span>
+                </Button>
+              )}
+            </div>
+            <p className="text-lg text-muted-foreground">
+              Choose your game mode to begin your journey
+            </p>
           </div>
-          <p className="text-lg text-muted-foreground">
-            Choose your game mode to begin your journey
-          </p>
+          {/* Logout button */}
+          {user && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleLogout}
+              className="flex items-center space-x-2 text-muted-foreground hover:text-foreground"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout</span>
+            </Button>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
