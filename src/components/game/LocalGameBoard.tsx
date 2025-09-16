@@ -3,6 +3,7 @@ import { Card as UICard } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import GameBoard from '@/components/game/GameBoard';
 import PlayerCard from '@/components/game/PlayerCard';
 import Dice from '@/components/game/Dice';
@@ -237,29 +238,19 @@ export default function LocalGameBoard({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 md:gap-4">
                 <div className="relative">
-                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full border-3 border-accent player-avatar-active flex items-center justify-center overflow-hidden bg-gradient-to-br from-accent/20 to-primary/20 backdrop-blur-sm">
-                    {currentPlayer?.character?.avatar_face ? (
-                      typeof currentPlayer.character.avatar_face === "string" &&
-                      (currentPlayer.character.avatar_face.endsWith(".png") || currentPlayer.character.avatar_face.startsWith("/")) ? (
-                        <img
-                          src={currentPlayer.character.avatar_face}
-                          alt={currentPlayer.character.name}
-                          className="w-full h-full object-cover rounded-full"
-                          onError={(e) => {
-                            e.currentTarget.style.display = 'none';
-                            e.currentTarget.nextElementSibling?.setAttribute('style', 'display: flex');
-                          }}
-                        />
-                      ) : (
-                        <span className="text-lg md:text-xl">{currentPlayer.character.avatar_face}</span>
-                      )
-                    ) : (
-                      <span className="text-lg md:text-xl">👤</span>
-                    )}
-                    <span className="text-lg md:text-xl hidden items-center justify-center w-full h-full">
-                      {currentPlayer?.character?.avatar || '👤'}
-                    </span>
-                  </div>
+                  <Avatar className="w-12 h-12 md:w-16 md:h-16 border-3 border-accent player-avatar-active bg-gradient-to-br from-accent/20 to-primary/20 backdrop-blur-sm">
+                    <AvatarImage 
+                      src={currentPlayer?.character?.avatar_face} 
+                      alt={currentPlayer?.character?.name}
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-lg md:text-xl bg-transparent">
+                      {currentPlayer?.character?.avatar_face && !currentPlayer.character.avatar_face.includes('.png') 
+                        ? currentPlayer.character.avatar_face 
+                        : '👤'
+                      }
+                    </AvatarFallback>
+                  </Avatar>
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-pulse border-2 border-background" />
                 </div>
                 <div className="flex-1">
