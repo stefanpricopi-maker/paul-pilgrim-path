@@ -203,8 +203,8 @@ const Admin = () => {
               <TileEditor />
             </TabsContent>
 
-            <TabsContent value="characters" key="characters-tab">
-              <CharacterEditor key={`character-editor-${Date.now()}`} />
+            <TabsContent value="characters">
+              <CharacterEditor />
             </TabsContent>
 
             <TabsContent value="buildings">

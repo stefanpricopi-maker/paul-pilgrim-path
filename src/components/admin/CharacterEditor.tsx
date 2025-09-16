@@ -43,7 +43,6 @@ const CharacterEditor = () => {
   });
 
   const loadCharacters = async () => {
-    setLoading(true);
     try {
       const { data, error } = await supabase
         .from('characters')
@@ -66,27 +65,18 @@ const CharacterEditor = () => {
 
   useEffect(() => {
     loadCharacters();
-  }, []); // Remove toast dependency and keep it simple
+  }, [toast]); // Add toast to dependency array to ensure fresh data on navigation
 
-  // Force reload when component becomes active/visible
+  // Also reload characters when component becomes visible again
   useEffect(() => {
-    const handleFocus = () => {
-      loadCharacters();
-    };
-    
     const handleVisibilityChange = () => {
       if (!document.hidden) {
-        setTimeout(loadCharacters, 100); // Small delay to ensure proper mounting
+        loadCharacters();
       }
     };
 
-    window.addEventListener('focus', handleFocus);
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    return () => {
-      window.removeEventListener('focus', handleFocus);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   const handleSave = async () => {
