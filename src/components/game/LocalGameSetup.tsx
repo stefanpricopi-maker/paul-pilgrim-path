@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,8 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Trash2, Plus, Users, Play, Bot } from 'lucide-react';
 import { AI_PERSONALITIES, AI_NAMES } from '@/types/ai';
-import { BIBLICAL_CHARACTERS, BiblicalCharacter } from '@/types/game';
+import { BiblicalCharacter } from '@/types/game';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { supabase } from '@/integrations/supabase/client';
 
 interface LocalGameSetupProps {
   onStartGame: (playerNames: string[], playerColors: string[], settings?: any) => void;
@@ -38,10 +39,37 @@ const PLAYER_COLORS = [
 
 export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGame, onGoBack }: LocalGameSetupProps) {
   const isMobile = useIsMobile();
+  const [characters, setCharacters] = useState<BiblicalCharacter[]>([]);
   const [players, setPlayers] = useState<PlayerSetup[]>([
     { name: '', color: PLAYER_COLORS[0].value, character: undefined, isAI: false },
     { name: '', color: PLAYER_COLORS[1].value, character: undefined, isAI: false },
   ]);
+
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      const { data, error } = await supabase
+        .from('characters')
+        .select('*');
+      
+      if (error) {
+        console.error('Error fetching characters:', error);
+        return;
+      }
+
+      // Convert database characters to BiblicalCharacter format
+      const convertedCharacters: BiblicalCharacter[] = data.map(char => ({
+        name: char.name,
+        description: char.description_en || '',
+        specialAbility: char.ability_type || '',
+        avatar: char.full_image_url || '',
+        avatar_face: char.face_image_url || ''
+      }));
+
+      setCharacters(convertedCharacters);
+    };
+
+    fetchCharacters();
+  }, []);
 
   const addPlayer = () => {
     if (players.length < 6) {
@@ -319,7 +347,7 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                 <div className="space-y-3">
                   <h3 className="text-lg font-bold text-primary">Choose Characters</h3>
                   <div className="grid grid-cols-2 gap-3">
-                    {BIBLICAL_CHARACTERS.map((character) => {
+                    {characters.map((character) => {
                       const ownerIndex = getCharacterOwner(character);
                       const isSelected = ownerIndex !== null;
                       
@@ -569,7 +597,7 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-primary">Choose Characters</h3>
                 <div className="grid grid-cols-3 gap-4">
-                  {BIBLICAL_CHARACTERS.map((character) => {
+                  {characters.map((character) => {
                     const ownerIndex = getCharacterOwner(character);
                     const isSelected = ownerIndex !== null;
                     
