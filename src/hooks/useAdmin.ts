@@ -2,9 +2,6 @@ import { useState, useEffect } from 'react';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
 
-type AdminStatus = { is_admin: boolean };
-type AdminArgs = { user_id: string };
-
 export function useAdmin() {
   const { user } = useAuth();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -12,32 +9,42 @@ export function useAdmin() {
 
   useEffect(() => {
     const checkAdminStatus = async () => {
+      console.log('useAdmin: Starting admin check for user:', user?.id);
+      
       if (!user) {
+        console.log('useAdmin: No user, setting admin false');
         setIsAdmin(false);
         setLoading(false);
         return;
       }
 
       try {
+        console.log('useAdmin: Calling check_my_admin_status...');
         const { data, error } = await supabase.rpc('check_my_admin_status');
 
+        console.log('useAdmin: Admin status response:', { data, error });
+
         if (error) {
-          console.error('RLS or permission error checking admin status:', error);
+          console.error('useAdmin: Error checking admin status:', error);
           setIsAdmin(false);
         } else {
-          console.log('Admin status check result:', data);
-          setIsAdmin(data?.[0]?.is_admin ?? false);
+          const adminStatus = data?.[0]?.is_admin ?? false;
+          console.log('useAdmin: Setting isAdmin to:', adminStatus);
+          setIsAdmin(adminStatus);
         }
       } catch (error) {
-        console.error('Error checking admin status:', error);
+        console.error('useAdmin: Catch error checking admin status:', error);
         setIsAdmin(false);
       } finally {
+        console.log('useAdmin: Setting loading false');
         setLoading(false);
       }
     };
 
     checkAdminStatus();
-  }, [user]);
+  }, [user?.id]); // Changed dependency to user.id instead of user object
 
+  console.log('useAdmin: Current state - isAdmin:', isAdmin, 'loading:', loading);
+  
   return { isAdmin, loading };
 }
