@@ -141,8 +141,8 @@ export default function GameModeSelector({ onSelectMode }: GameModeSelectorProps
           </Card>
         </div>
 
-        {/* Admin Setup - Only show if user is not admin */}
-        {user && !isAdmin && (
+        {/* Admin Setup - Show for all authenticated users */}
+        {user && (
           <AdminSetup />
         )}
       </div>
