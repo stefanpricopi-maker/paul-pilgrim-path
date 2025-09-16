@@ -251,7 +251,7 @@ export default function LocalGameBoard({
                       />
                     ) : null}
                     <span className="text-lg md:text-xl hidden items-center justify-center w-full h-full">
-                      👤
+                      {currentPlayer?.character?.avatar_face || '👤'}
                     </span>
                   </div>
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent rounded-full animate-pulse border-2 border-background" />
