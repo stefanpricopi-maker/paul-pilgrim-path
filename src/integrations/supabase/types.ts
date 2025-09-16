@@ -149,6 +149,8 @@ export type Database = {
           ability_type: string | null
           description_en: string | null
           description_ro: string | null
+          face_image_url: string | null
+          full_image_url: string | null
           icon_url: string | null
           id: number
           name: string
@@ -158,6 +160,8 @@ export type Database = {
           ability_type?: string | null
           description_en?: string | null
           description_ro?: string | null
+          face_image_url?: string | null
+          full_image_url?: string | null
           icon_url?: string | null
           id?: number
           name: string
@@ -167,6 +171,8 @@ export type Database = {
           ability_type?: string | null
           description_en?: string | null
           description_ro?: string | null
+          face_image_url?: string | null
+          full_image_url?: string | null
           icon_url?: string | null
           id?: number
           name?: string
