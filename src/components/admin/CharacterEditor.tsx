@@ -65,6 +65,18 @@ const CharacterEditor = () => {
 
   useEffect(() => {
     loadCharacters();
+  }, [toast]); // Add toast to dependency array to ensure fresh data on navigation
+
+  // Also reload characters when component becomes visible again
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        loadCharacters();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
   const handleSave = async () => {
