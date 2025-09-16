@@ -39,21 +39,16 @@ const PLAYER_COLORS = [
 export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGame, onGoBack }: LocalGameSetupProps) {
   const isMobile = useIsMobile();
   const [players, setPlayers] = useState<PlayerSetup[]>([
-    { name: '', color: PLAYER_COLORS[0].value, character: BIBLICAL_CHARACTERS[0], isAI: false },
-    { name: '', color: PLAYER_COLORS[1].value, character: BIBLICAL_CHARACTERS[1], isAI: false },
+    { name: '', color: PLAYER_COLORS[0].value, character: undefined, isAI: false },
+    { name: '', color: PLAYER_COLORS[1].value, character: undefined, isAI: false },
   ]);
 
   const addPlayer = () => {
     if (players.length < 6) {
-      const usedCharacters = players.map(p => p.character?.name).filter(Boolean);
-      const availableCharacter = BIBLICAL_CHARACTERS.find(
-        char => !usedCharacters.includes(char.name)
-      );
-      
       setPlayers([...players, { 
         name: '', 
         color: PLAYER_COLORS[players.length].value,
-        character: availableCharacter || BIBLICAL_CHARACTERS[0],
+        character: undefined, // Start without character
         isAI: false
       }]);
     }
@@ -337,13 +332,20 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                               : 'hover:bg-accent/10 border-border'
                           }`}
                           style={isSelected ? { borderColor: players[ownerIndex].color, backgroundColor: `${players[ownerIndex].color}15` } : {}}
-                          onClick={() => {
-                            // Find first player without character or allow reassignment
+                        onClick={() => {
+                          if (isSelected) {
+                            // If character is already selected, unselect it
+                            const updatedPlayers = [...players];
+                            updatedPlayers[ownerIndex].character = undefined;
+                            setPlayers(updatedPlayers);
+                          } else {
+                            // Find first player without character
                             const availablePlayerIndex = players.findIndex(p => !p.character);
                             if (availablePlayerIndex >= 0) {
                               selectCharacter(availablePlayerIndex, character);
                             }
-                          }}
+                          }
+                        }}
                         >
                           <div className="text-center space-y-2">
                             <div className="text-2xl">
@@ -379,7 +381,7 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                     })}
                   </div>
                   <p className="text-xs text-muted-foreground">
-                    Tap a character to assign it to the next available player, or click on a player's selected character to change it.
+                    Click on any character to assign it to the next available player. Click on a selected character to unselect it.
                   </p>
                 </div>
 
@@ -581,10 +583,17 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                         }`}
                         style={isSelected ? { borderColor: players[ownerIndex].color, backgroundColor: `${players[ownerIndex].color}15` } : {}}
                         onClick={() => {
-                          // Find first player without character or allow reassignment
-                          const availablePlayerIndex = players.findIndex(p => !p.character);
-                          if (availablePlayerIndex >= 0) {
-                            selectCharacter(availablePlayerIndex, character);
+                          if (isSelected) {
+                            // If character is already selected, unselect it
+                            const updatedPlayers = [...players];
+                            updatedPlayers[ownerIndex].character = undefined;
+                            setPlayers(updatedPlayers);
+                          } else {
+                            // Find first player without character
+                            const availablePlayerIndex = players.findIndex(p => !p.character);
+                            if (availablePlayerIndex >= 0) {
+                              selectCharacter(availablePlayerIndex, character);
+                            }
                           }
                         }}
                       >
@@ -622,7 +631,7 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                   })}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Click on a character to assign it to the next available player. Characters show which player has selected them.
+                  Click on any character to assign it to the next available player. Click on a selected character to unselect it.
                 </p>
               </div>
 
