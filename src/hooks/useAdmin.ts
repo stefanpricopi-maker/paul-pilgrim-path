@@ -18,31 +18,27 @@ export function useAdmin() {
         return;
       }
 
-      //const { data: session } = await supabase.auth.getSession();
-      //console.log("Session check:", session);
-
-
-
-      
       try {
-      const { data, error } = await supabase.rpc('get_profile_admin_status', { user_id: user.id });
+        const { data, error } = await supabase.rpc('get_profile_admin_status', { user_id: user.id });
 
-      console.log('RPC data:', data);
-      console.log('RPC error:', error);
+        if (error) {
+          console.error('RLS or permission error checking admin status:', error);
+          // Fallback to false if RLS prevents access
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(data?.[0]?.is_admin ?? false);
+        }
+      } catch (error) {
+        console.error('Error checking admin status:', error);
+        // Graceful degradation - assume non-admin on error
+        setIsAdmin(false);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-      setIsAdmin(data?.[0]?.is_admin ?? false);
-    } catch (error) {
-      console.error('Error checking admin status:', error);
-      setIsAdmin(false);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  if (user) {
     checkAdminStatus();
-  }
-}, [user]);
+  }, [user]);
 
   return { isAdmin, loading };
 }

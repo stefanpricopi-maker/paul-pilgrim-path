@@ -574,6 +574,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_admin_rate_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       check_rate_limit: {
         Args: {
           p_action_type: string
