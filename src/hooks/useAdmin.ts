@@ -19,18 +19,17 @@ export function useAdmin() {
       }
 
       try {
-        const { data, error } = await supabase.rpc('get_profile_admin_status', { user_id: user.id });
+        const { data, error } = await supabase.rpc('check_my_admin_status');
 
         if (error) {
           console.error('RLS or permission error checking admin status:', error);
-          // Fallback to false if RLS prevents access
           setIsAdmin(false);
         } else {
+          console.log('Admin status check result:', data);
           setIsAdmin(data?.[0]?.is_admin ?? false);
         }
       } catch (error) {
         console.error('Error checking admin status:', error);
-        // Graceful degradation - assume non-admin on error
         setIsAdmin(false);
       } finally {
         setLoading(false);
