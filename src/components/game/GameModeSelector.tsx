@@ -1,9 +1,10 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Users, Wifi, Monitor, Settings, LogOut } from 'lucide-react';
+import { Users, Wifi, Monitor, Settings, LogOut, Shield } from 'lucide-react';
 import { useAdmin } from '@/hooks/useAdmin';
 import { useAuth } from '@/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import AdminSetup from '@/components/admin/AdminSetup';
 
 interface GameModeSelectorProps {
   onSelectMode: (mode: 'online' | 'local') => void;
@@ -139,6 +140,11 @@ export default function GameModeSelector({ onSelectMode }: GameModeSelectorProps
             </CardContent>
           </Card>
         </div>
+
+        {/* Admin Setup - Only show if user is not admin */}
+        {user && !isAdmin && (
+          <AdminSetup />
+        )}
       </div>
     </div>
   );

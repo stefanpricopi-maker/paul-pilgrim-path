@@ -578,6 +578,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: boolean
       }
+      check_my_admin_status: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          is_admin: boolean
+          profile_exists: boolean
+          user_id: string
+        }[]
+      }
       check_rate_limit: {
         Args: {
           p_action_type: string
@@ -658,6 +666,10 @@ export type Database = {
           p_target_type?: string
         }
         Returns: undefined
+      }
+      make_current_user_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
       }
       secure_build_structure: {
         Args: { p_building_type: string; p_game_id: string; p_tile_id: number }
