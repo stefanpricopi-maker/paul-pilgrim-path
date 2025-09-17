@@ -65,9 +65,9 @@ const CharacterEditor = () => {
 
   useEffect(() => {
     loadCharacters();
-  }, [toast]); // Add toast to dependency array to ensure fresh data on navigation
+  }, []);
 
-  // Also reload characters when component becomes visible again
+  // Reload characters when component mounts or becomes visible again
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (!document.hidden) {
@@ -75,8 +75,23 @@ const CharacterEditor = () => {
       }
     };
 
+    const handleFocus = () => {
+      loadCharacters();
+    };
+
+    // Reload on tab/window focus and visibility change
     document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
+
+  // Reload characters whenever the component mounts (for tab switching)
+  useEffect(() => {
+    loadCharacters();
   }, []);
 
   const handleSave = async () => {

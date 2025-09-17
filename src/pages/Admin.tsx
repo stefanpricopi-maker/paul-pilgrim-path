@@ -204,7 +204,7 @@ const Admin = () => {
             </TabsContent>
 
             <TabsContent value="characters">
-              <CharacterEditor />
+              <CharacterEditor key="characters-editor" />
             </TabsContent>
 
             <TabsContent value="buildings">
