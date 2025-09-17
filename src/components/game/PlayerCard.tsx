@@ -47,6 +47,12 @@ const PlayerCard = ({
           alt={player.name}
           className="h-full w-full object-cover object-top"
         />
+      ) : (player.character as any).full_image_url ? (
+        <img
+          src={(player.character as any).full_image_url}
+          alt={player.character.name || 'Avatar'}
+          className="h-full w-full object-cover object-top"
+        />
       ) : typeof player.character.avatar === 'string' &&
         /\.(png|jpe?g|gif|webp|svg)$/i.test(player.character.avatar) ? (
         <img
