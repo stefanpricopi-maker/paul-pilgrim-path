@@ -171,8 +171,6 @@ const CharacterEditor = () => {
       const fileExt = file.name.split('.').pop();
       const fileName = `character-${characterId}-${imageType}.${fileExt}`;
       const bucket = imageType === 'face' ? 'character-faces' : 'character-full';
-      
-      console.log(`Using bucket: ${bucket}, filename: ${fileName}`);
 
       // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
@@ -193,7 +191,6 @@ const CharacterEditor = () => {
 
       // Update character record
       const updateField = imageType === 'face' ? 'face_image_url' : 'full_image_url';
-      console.log(`Updating field: ${updateField} with URL: ${imageUrl}`);
       
       const { error: updateError } = await supabase
         .from('characters')
