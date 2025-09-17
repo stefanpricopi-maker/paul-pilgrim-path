@@ -164,10 +164,15 @@ const CharacterEditor = () => {
     setUploading(prev => ({ ...prev, [uploadKey]: true }));
 
     try {
+      // Debug log to track which image type is being uploaded
+      console.log(`Uploading ${imageType} image for character ${characterId}`);
+      
       // Create unique filename
       const fileExt = file.name.split('.').pop();
       const fileName = `character-${characterId}-${imageType}.${fileExt}`;
       const bucket = imageType === 'face' ? 'character-faces' : 'character-full';
+      
+      console.log(`Using bucket: ${bucket}, filename: ${fileName}`);
 
       // Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
@@ -188,6 +193,8 @@ const CharacterEditor = () => {
 
       // Update character record
       const updateField = imageType === 'face' ? 'face_image_url' : 'full_image_url';
+      console.log(`Updating field: ${updateField} with URL: ${imageUrl}`);
+      
       const { error: updateError } = await supabase
         .from('characters')
         .update({ [updateField]: imageUrl })
@@ -502,8 +509,12 @@ const CharacterEditor = () => {
                   </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {createImageUploadSection(character, 'face')}
-                  {createImageUploadSection(character, 'full')}
+                  <div className="order-1">
+                    {createImageUploadSection(character, 'face')}
+                  </div>
+                  <div className="order-2">
+                    {createImageUploadSection(character, 'full')}
+                  </div>
                 </div>
               </Card>
             ))}
