@@ -626,17 +626,23 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                         }}
                       >
                         <div className="text-center space-y-3">
-                          <div className="text-3xl">
-                            {character.avatar_face?.startsWith('/') ? (
-                              <img 
-                                src={character.avatar_face} 
-                                alt={character.name}
-                                className="w-16 h-16 mx-auto rounded-full object-cover"
-                              />
-                            ) : (
-                              <span>{character.avatar_face}</span>
-                            )}
-                          </div>
+                           <div className="text-3xl">
+                             {character.avatar_face ? (
+                               <img 
+                                 src={character.avatar_face} 
+                                 alt={character.name}
+                                 className="w-16 h-16 mx-auto rounded-full object-cover"
+                                 onError={(e) => {
+                                   // Fallback to a default avatar or hide image on error
+                                   e.currentTarget.style.display = 'none';
+                                 }}
+                               />
+                             ) : (
+                               <div className="w-16 h-16 mx-auto rounded-full bg-accent flex items-center justify-center text-2xl">
+                                 {character.name?.charAt(0) || '?'}
+                               </div>
+                             )}
+                           </div>
                           <div>
                             <h4 className="font-bold text-lg ancient-text">{character.name}</h4>
                             <p className="text-sm text-muted-foreground line-clamp-2">{character.description}</p>
