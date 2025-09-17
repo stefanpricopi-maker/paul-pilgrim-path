@@ -537,17 +537,23 @@ export default function LocalGameSetup({ onStartGame, onLoadGame, hasExistingGam
                           {/* Selected Character Display - Desktop */}
                           {player.character && (
                             <div className="flex items-center gap-3 p-3 bg-accent/10 rounded-md">
-                              <div className="text-xl">
-                                {player.character.avatar_face?.startsWith('/') ? (
-                                  <img 
-                                    src={player.character.avatar_face} 
-                                    alt={player.character.name}
-                                    className="w-10 h-10 rounded-full object-cover"
-                                  />
-                                ) : (
-                                  <span>{player.character.avatar_face}</span>
-                                )}
-                              </div>
+                               <div className="text-xl">
+                                 {player.character.avatar_face ? (
+                                   <img 
+                                     src={player.character.avatar_face} 
+                                     alt={player.character.name}
+                                     className="w-10 h-10 rounded-full object-cover"
+                                     onError={(e) => {
+                                       // Fallback to a default avatar or hide image on error
+                                       e.currentTarget.style.display = 'none';
+                                     }}
+                                   />
+                                 ) : (
+                                   <div className="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-sm">
+                                     {player.character.name?.charAt(0) || '?'}
+                                   </div>
+                                 )}
+                               </div>
                               <div className="flex-1">
                                 <p className="font-medium">{player.character.name}</p>
                                 <p className="text-sm text-muted-foreground">{player.character.description}</p>
