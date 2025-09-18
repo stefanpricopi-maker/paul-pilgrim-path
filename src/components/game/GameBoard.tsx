@@ -237,6 +237,12 @@ const GameBoard = ({
                                     alt={player.name}
                                     className="w-full h-full object-cover"
                                   />
+                                ) : player.character.avatar_face ? (
+                                  <img
+                                    src={player.character.avatar_face}
+                                    alt={player.character.name}
+                                    className="w-full h-full object-cover"
+                                  />
                                 ) : typeof player.character.avatar === 'string' && player.character.avatar.startsWith('/') ? (
                                   <img
                                     src={player.character.avatar}
@@ -245,7 +251,7 @@ const GameBoard = ({
                                   />
                                 ) : (
                                   <span className="text-sm">{player.character.avatar}</span>
-                                )} 
+                                )}
                               </div>
                             );
                           })}
