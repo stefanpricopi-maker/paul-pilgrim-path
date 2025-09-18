@@ -46,37 +46,37 @@ const PlayerCard = ({
           src={(player as any).avatar_url}
           alt={player.name}
           className="h-full w-full object-cover object-top"
+          onError={(e) => {
+            console.log('Failed to load avatar_url:', (player as any).avatar_url);
+            e.currentTarget.style.display = 'none';
+          }}
         />
-      ) : (player.character as any).full_image_url ? (
+      ) : player.character.avatar_face && typeof player.character.avatar_face === 'string' && 
+        /\.(png|jpe?g|gif|webp|svg)$/i.test(player.character.avatar_face) ? (
         <img
-          src={(player.character as any).full_image_url}
+          src={player.character.avatar_face}
           alt={player.character.name || 'Avatar'}
           className="h-full w-full object-cover object-top"
           onError={(e) => {
-            console.log('Failed to load full_image_url:', (player.character as any).full_image_url);
+            console.log('Failed to load avatar_face:', player.character.avatar_face);
             console.log('Player character object:', player.character);
             e.currentTarget.style.display = 'none';
           }}
         />
-      ) : typeof player.character.avatar === 'string' &&
+      ) : player.character.avatar && typeof player.character.avatar === 'string' && 
         /\.(png|jpe?g|gif|webp|svg)$/i.test(player.character.avatar) ? (
         <img
-          src={player.character.avatar.startsWith('/') ? player.character.avatar : `/${player.character.avatar}`}
+          src={player.character.avatar}
           alt={player.character.name || 'Avatar'}
           className="h-full w-full object-cover object-top"
+          onError={(e) => {
+            console.log('Failed to load avatar:', player.character.avatar);
+            e.currentTarget.style.display = 'none';
+          }}
         />
       ) : (
         <div className="h-full w-full flex items-center justify-center">
-          {player.character.avatar && typeof player.character.avatar === 'string' && 
-           /\.(png|jpe?g|gif|webp|svg)$/i.test(player.character.avatar) ? (
-            <img
-              src={player.character.avatar.startsWith('/') ? player.character.avatar : `/${player.character.avatar}`}
-              alt={player.character.name || 'Avatar'}
-              className="h-full w-full object-cover object-top"
-            />
-          ) : (
-            <span className="text-5xl">{player.character.avatar || '👤'}</span>
-          )}
+          <span className="text-5xl">{player.character.avatar_face || player.character.avatar || '👤'}</span>
         </div>
       )}
     </div>
