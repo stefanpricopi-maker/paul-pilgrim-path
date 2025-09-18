@@ -52,6 +52,11 @@ const PlayerCard = ({
           src={(player.character as any).full_image_url}
           alt={player.character.name || 'Avatar'}
           className="h-full w-full object-cover object-top"
+          onError={(e) => {
+            console.log('Failed to load full_image_url:', (player.character as any).full_image_url);
+            console.log('Player character object:', player.character);
+            e.currentTarget.style.display = 'none';
+          }}
         />
       ) : typeof player.character.avatar === 'string' &&
         /\.(png|jpe?g|gif|webp|svg)$/i.test(player.character.avatar) ? (
