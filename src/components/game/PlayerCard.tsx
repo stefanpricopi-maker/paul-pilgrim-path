@@ -62,7 +62,16 @@ const PlayerCard = ({
         />
       ) : (
         <div className="h-full w-full flex items-center justify-center">
-          <span className="text-5xl">{player.character.avatar || '👤'}</span>
+          {player.character.avatar && typeof player.character.avatar === 'string' && 
+           /\.(png|jpe?g|gif|webp|svg)$/i.test(player.character.avatar) ? (
+            <img
+              src={player.character.avatar.startsWith('/') ? player.character.avatar : `/${player.character.avatar}`}
+              alt={player.character.name || 'Avatar'}
+              className="h-full w-full object-cover object-top"
+            />
+          ) : (
+            <span className="text-5xl">{player.character.avatar || '👤'}</span>
+          )}
         </div>
       )}
     </div>
