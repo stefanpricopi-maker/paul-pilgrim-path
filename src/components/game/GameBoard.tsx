@@ -1,9 +1,10 @@
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Card as UICard } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { GameLocation, Player } from '@/types/game';
-import { Church, Building2, Anchor, Crown, MapPin, Lock, ArrowRight, Dice1, Gift, Scale, Flame, User } from 'lucide-react';
+import { Church, Building2, Anchor, Crown, MapPin, Lock, ArrowRight, Dice1, Gift, Scale, Flame, User, Book, Compass } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import AnimatedPlayerPiece from './AnimatedPlayerPiece';
 
 interface GameBoardProps {
@@ -25,8 +26,20 @@ const GameBoard = ({
   onAnimationComplete,
   gameLog
 }: GameBoardProps) => {
+  const { t, i18n } = useTranslation();
+
   const getPlayersAtLocation = (locationIndex: number) => {
     return players.filter(player => player.position === locationIndex);
+  };
+
+  const getJourneyColor = (journey: number) => {
+    const journeyColors = {
+      1: 'hsl(var(--player-1))', // Red
+      2: 'hsl(var(--player-2))', // Blue  
+      3: 'hsl(var(--player-3))', // Green
+      4: 'hsl(var(--player-4))', // Yellow
+    };
+    return journeyColors[journey as keyof typeof journeyColors] || 'hsl(var(--accent))';
   };
 
   const getLocationIcon = (location: GameLocation) => {
@@ -154,112 +167,192 @@ const GameBoard = ({
           return (
             <div key={`${rowIndex}-${colIndex}`} className="relative flex items-center justify-center -m-px">
               {location ? (
-                  <Card className={`board-cell ${tileClasses} p-0 cursor-pointer transition-all duration-200 hover:shadow-lg border-2 border-gray-400 overflow-hidden ${
-                        isCorner ? '' : 'bg-white'} -m-px`} 
-  
-                        style={isCorner ? { backgroundColor: location.color || '#4a5568' } : {}}
-                        onClick={() => onLocationClick(location)}>
-  
-                  <div className={`h-full flex ${contentClasses} relative`}>
-                  {/* Color strip for non-corner tiles */}
-                    {!isCorner && (
-                      <div 
-                          className={stripOrientation}
-                          style={{ backgroundColor: location.color || '#4a5568' }}
-                      />
-                    )}
-                    {/* Content area */}
-                    <div className="flex-1 p-2 flex flex-col justify-between min-h-0">
-                      {/* City name and ownership */}
-                      <div className="text-center space-y-1 flex-shrink-0">
-                        <h4 className="text-[15px] font-semibold leading-snug text-black truncate">
-                          {location.name}
-                        </h4>
-                        
-                        {/* Enhanced ownership indicator */}
-                        {location.owner && (
-                          <div className="flex justify-center">
-                            <div 
-                              className="w-4 h-4 rounded-full border border-white shadow-sm"
-                              style={{ 
-                                backgroundColor: players.find(p => p.id === location.owner)?.color || '#666'
-                              }}
-                              title={`Owned by ${players.find(p => p.id === location.owner)?.name}`}
-                            />
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Card 
+                        className={`board-cell ${tileClasses} p-0 cursor-pointer transition-all duration-300 hover:shadow-elevated border-2 overflow-hidden -m-px ${
+                          isCorner ? 'corner' : ''
+                        }`}
+                        style={{
+                          backgroundColor: isCorner 
+                            ? (location.visualTheme?.primaryColor || location.color || 'hsl(var(--accent))')
+                            : 'hsl(var(--card))',
+                          borderColor: location.visualTheme?.accentColor || getJourneyColor(location.journey)
+                        }}
+                        onClick={() => onLocationClick(location)}
+                      >
+                        <div className={`h-full flex ${contentClasses} relative`}>
+                          {/* Journey indicator strip for non-corner tiles */}
+                          {!isCorner && (
+                            <div className="relative">
+                              <div 
+                                className={`${stripOrientation} relative`}
+                                style={{ 
+                                  backgroundColor: location.visualTheme?.primaryColor || getJourneyColor(location.journey)
+                                }}
+                              />
+                              {/* Journey number badge */}
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-accent text-accent-foreground rounded-full flex items-center justify-center text-xs font-bold">
+                                {location.journey}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Location icon for corners */}
+                          {isCorner && (
+                            <div className="absolute top-2 left-2">
+                              {getLocationIcon(location)}
+                            </div>
+                          )}
+                          
+                          {/* Scripture reference indicator */}
+                          {location.scriptureReferences && location.scriptureReferences.length > 0 && (
+                            <div className="absolute top-1 right-1">
+                              <Book className="w-3 h-3 text-primary opacity-70" />
+                            </div>
+                          )}
+
+                          {/* Content area */}
+                          <div className="flex-1 p-2 flex flex-col justify-between min-h-0">
+                            {/* City name and metadata */}
+                            <div className="text-center space-y-1 flex-shrink-0">
+                              <h4 className="text-[13px] font-semibold leading-tight text-foreground truncate ancient-text">
+                                {location.name}
+                              </h4>
+                              
+                              {/* Journey phase indicator */}
+                              {location.journeyPhase && (
+                                <div className="text-xs text-muted-foreground font-medium">
+                                  {t(`journeyPhases.${location.journeyPhase}`)}
+                                </div>
+                              )}
+                              
+                              {/* Enhanced ownership indicator */}
+                              {location.owner && (
+                                <div className="flex justify-center">
+                                  <div 
+                                    className="w-4 h-4 rounded-full border-2 border-card shadow-sm"
+                                    style={{ 
+                                      backgroundColor: players.find(p => p.id === location.owner)?.color || 'hsl(var(--muted))'
+                                    }}
+                                    title={`Owned by ${players.find(p => p.id === location.owner)?.name}`}
+                                  />
+                                </div>
+                              )}
+                              
+                              {/* Price indicator for unowned properties */}
+                              {!location.owner && location.type === 'city' && location.price && (
+                                <div className="text-xs font-bold text-accent bg-accent/10 rounded px-1">
+                                  {location.price}
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Buildings - only for cities */}
+                            {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && (
+                              <div className="flex justify-center space-x-1 flex-shrink-0">
+                                {Array.from({ length: location.buildings.churches }).map((_, i) => (
+                                  <Church key={`church-${i}`} className="w-3 h-3 building-church" />
+                                ))}
+                                {Array.from({ length: location.buildings.synagogues }).map((_, i) => (
+                                  <Building2 key={`synagogue-${i}`} className="w-3 h-3 building-synagogue" />
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Players */}
+                            {playersHere.length > 0 && (
+                              <div className="flex justify-center flex-wrap gap-1 flex-shrink-0">
+                                {playersHere.map((player) => {
+                                  const isAnimating = animatingPlayer === player.id && targetPosition !== undefined;
+                                  return isAnimating ? (
+                                    <AnimatedPlayerPiece
+                                      key={player.id}
+                                      player={player}
+                                      isMoving={true}
+                                      targetPosition={targetPosition}
+                                      onAnimationComplete={onAnimationComplete}
+                                    />
+                                  ) : (
+                                    <div 
+                                      key={player.id} 
+                                      className="player-piece w-5 h-5 flex items-center justify-center rounded-full overflow-hidden shadow-sm"
+                                      style={{
+                                        borderColor: player.color,
+                                        backgroundColor: 'hsl(var(--card))'
+                                      }}
+                                    >
+                                      {(player as any).avatar_url ? (
+                                        <img
+                                          src={(player as any).avatar_url}
+                                          alt={player.name}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : player.character.avatar_face ? (
+                                        <img
+                                          src={player.character.avatar_face}
+                                          alt={player.character.name}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : typeof player.character.avatar === 'string' && player.character.avatar.startsWith('/') ? (
+                                        <img
+                                          src={player.character.avatar}
+                                          alt={player.character.name}
+                                          className="w-full h-full object-cover"
+                                        />
+                                      ) : (
+                                        <span className="text-xs">{player.character.avatar}</span>
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
-                        )}
-                        
-                        {/* Price indicator for unowned properties */}
-                        {!location.owner && location.type === 'city' && location.price && (
-                          <div className="text-sm font-bold text-green-700">
-                            {location.price}
-                          </div>
+                        </div>
+                      </Card>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs p-3 space-y-2">
+                      <div className="space-y-1">
+                        <h5 className="font-semibold text-sm ancient-title">{location.name}</h5>
+                        {location.journeyPhase && (
+                          <p className="text-xs text-muted-foreground">
+                            {t('common.journey')} {location.journey} • {t(`journeyPhases.${location.journeyPhase}`)}
+                          </p>
                         )}
                       </div>
-
-                      {/* Buildings - only for cities */}
-                      {location.type === 'city' && (location.buildings.churches > 0 || location.buildings.synagogues > 0) && (
-                        <div className="flex justify-center space-x-1 flex-shrink-0">
-                          {Array.from({ length: location.buildings.churches }).map((_, i) => (
-                            <Church key={`church-${i}`} className="w-3 h-3 text-yellow-600" />
-                          ))}
-                          {Array.from({ length: location.buildings.synagogues }).map((_, i) => (
-                            <Building2 key={`synagogue-${i}`} className="w-3 h-3 text-blue-600" />
-                          ))}
+                      
+                      {location.significance && (
+                        <div>
+                          <p className="text-xs font-medium text-primary">{t('locationDetails.significance')}:</p>
+                          <p className="text-xs text-muted-foreground scripture-text">
+                            {location.significance[i18n.language as 'en' | 'ro'] || location.significance.en}
+                          </p>
                         </div>
                       )}
-
-                       {/* Players */}
-                      {playersHere.length > 0 && (
-                        <div className="flex justify-center flex-wrap gap-1 flex-shrink-0">
-                          {playersHere.map((player) => {
-                            const isAnimating = animatingPlayer === player.id && targetPosition !== undefined;
-                            return isAnimating ? (
-                              <AnimatedPlayerPiece
-                                key={player.id}
-                                player={player}
-                                isMoving={true}
-                                targetPosition={targetPosition}
-                                onAnimationComplete={onAnimationComplete}
-                              />
-                            ) : (
-                              <div 
-                                key={player.id} 
-                                className="player-piece text-sm bg-white rounded-full w-5 h-5 flex items-center justify-center border transition-all duration-200 flex-shrink-0 overflow-hidden"
-                                style={{
-                                  borderColor: player.color,
-                                  filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))'
-                                }}
-                              >
-                                {(player as any).avatar_url ? (
-                                  <img
-                                    src={(player as any).avatar_url}
-                                    alt={player.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : player.character.avatar_face ? (
-                                  <img
-                                    src={player.character.avatar_face}
-                                    alt={player.character.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : typeof player.character.avatar === 'string' && player.character.avatar.startsWith('/') ? (
-                                  <img
-                                    src={player.character.avatar}
-                                    alt={player.character.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <span className="text-sm">{player.character.avatar}</span>
-                                )}
-                              </div>
-                            );
-                          })}
+                      
+                      {location.scriptureReferences && location.scriptureReferences.length > 0 && (
+                        <div>
+                          <p className="text-xs font-medium text-primary flex items-center gap-1">
+                            <Book className="w-3 h-3" />
+                            {t('locationDetails.scriptureReferences')}:
+                          </p>
+                          <p className="text-xs text-accent">{location.scriptureReferences.join(', ')}</p>
                         </div>
                       )}
-                    </div>
-                  </div>
-                </Card>
+                      
+                      {location.interestingFacts && (
+                        <div>
+                          <p className="text-xs font-medium text-primary">{t('locationDetails.interestingFacts')}:</p>
+                          <p className="text-xs text-muted-foreground">
+                            {location.interestingFacts[i18n.language as 'en' | 'ro'] || location.interestingFacts.en}
+                          </p>
+                        </div>
+                      )}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               ) : (
                 <div className={`${tileClasses}`} />
               )}
