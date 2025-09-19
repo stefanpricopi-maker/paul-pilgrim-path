@@ -40,6 +40,53 @@ export interface GameLocation {
   };
   description: string;
   color?: string; // For matching image colors
+  
+  // Enhanced metadata for richer gameplay and visuals
+  historicalContext?: {
+    en: string;
+    ro: string;
+  };
+  journeyOrder?: number; // Chronological order within journey (1st visit, 2nd visit, etc.)
+  scriptureReferences?: string[]; // Array of Bible verses (e.g., "Acts 13:4-12")
+  significance?: {
+    en: string;
+    ro: string;
+  };
+  backgroundImage?: string; // URL/path to location-specific background
+  iconType?: string; // Specific icon identifier for visual representation
+  nameVariants?: {
+    en: string;
+    ro: string;
+    historical?: string; // Original Greek/Latin name
+  };
+  journeyPhase?: 'departure' | 'ministry' | 'persecution' | 'return' | 'transition'; // More specific phase
+  connections?: string[]; // Array of location IDs this connects to for routes
+  events?: {
+    en: string[];
+    ro: string[];
+  }; // Significant events that happened here
+  
+  // Enhanced visual metadata
+  visualTheme?: {
+    primaryColor: string;
+    accentColor: string;
+    gradientDirection?: string;
+    textColor: string;
+  };
+  
+  // Interactive content for tooltips and detailed views
+  shortDescription?: {
+    en: string;
+    ro: string;
+  };
+  extendedDescription?: {
+    en: string;
+    ro: string;
+  };
+  interestingFacts?: {
+    en: string[];
+    ro: string[];
+  };
 }
 
 export interface GameState {
